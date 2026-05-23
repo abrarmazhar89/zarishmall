@@ -505,7 +505,7 @@ function findImage(handle, idx, onFound, onFail){
   let i=0;
   function tryNext(){
     if(i>=IMG_EXTS.length){ if(onFail) onFail(); return; }
-    const url=`images/${handle}/${idx}.${IMG_EXTS[i]}`;
+    const url=`${handle}/${idx}.${IMG_EXTS[i]}`;
     const p=new Image(); p.onload=()=>onFound(url); p.onerror=()=>{i++;tryNext();}; p.src=url;
   }
   tryNext();
@@ -618,7 +618,7 @@ function buildGallery(p){
   const videoExts = ['mp4','mov','webm'];
   function tryVideo(i){
     if(i>=videoExts.length) return;
-    const url = `images/${p.handle}/video.${videoExts[i]}`;
+    const url = `${p.handle}/video.${videoExts[i]}`;
     const v = document.createElement('video');
     v.src = url; v.preload='metadata';
     v.addEventListener('loadedmetadata',()=>{
