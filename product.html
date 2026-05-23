@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Product – Zarish Mall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        teal:    { DEFAULT:'#1A5276', light:'#2471A3', dark:'#154360' },
+        gold:    { DEFAULT:'#D4AC0D', light:'#F1C40F', dark:'#B7950B' },
+        cream:   '#F8F8F6',
+        charcoal:'#2C2C2C'
+      },
+      fontFamily: {
+        heading: ['"Cormorant Garamond"','serif'],
+        body:    ['"DM Sans"','sans-serif'],
+        brand:   ['Pacifico','cursive']
+      }
+    }
+  }
+}
+</script>
+<style>
+  :root{ --teal:#1A5276; --gold:#D4AC0D; --cream:#F8F8F6; --charcoal:#2C2C2C; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--charcoal); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar{ width:6px; }
+  ::-webkit-scrollbar-thumb{ background:var(--teal); border-radius:3px; }
+
+  /* NAV */
+  #navbar{ backdrop-filter:blur(12px); background:rgba(26,82,118,0.96); }
+  .nav-link{ position:relative; color:rgba(255,255,255,0.85); transition:color 0.3s; }
+  .nav-link::after{ content:''; position:absolute; bottom:-3px; left:0; width:0; height:2px; background:var(--gold); transition:width 0.3s; }
+  .nav-link:hover{ color:#fff; }
+  .nav-link:hover::after{ width:100%; }
+
+  /* BUTTONS */
+  .btn-gold{ background:var(--gold); color:#fff; font-weight:600; letter-spacing:0.04em; transition:transform 0.2s, box-shadow 0.2s, background 0.2s; }
+  .btn-gold:hover{ background:#F1C40F; transform:scale(1.03); box-shadow:0 8px 24px rgba(212,172,13,0.4); }
+  .btn-teal{ background:var(--teal); color:#fff; font-weight:600; transition:transform 0.2s, background 0.2s; }
+  .btn-teal:hover{ background:var(--teal-light); transform:scale(1.03); }
+  .btn-wa{ background:#25D366; color:#fff; font-weight:600; transition:transform 0.2s, box-shadow 0.2s; }
+  .btn-wa:hover{ background:#128C7E; transform:scale(1.03); box-shadow:0 8px 24px rgba(37,211,102,0.35); }
+
+  /* GALLERY */
+  #main-img-wrap{ position:relative; overflow:hidden; border-radius:1rem; background:#f0f4f8; aspect-ratio:1/1; }
+  #main-img{ width:100%; height:100%; object-fit:cover; transition:transform 0.4s; }
+  #main-img:hover{ transform:scale(1.05); }
+  #main-video{ width:100%; height:100%; object-fit:cover; display:none; }
+  .thumb{ width:70px; height:70px; object-fit:cover; border-radius:0.5rem; cursor:pointer; border:2px solid transparent; transition:border 0.2s, transform 0.2s; flex-shrink:0; }
+  .thumb:hover{ transform:scale(1.07); }
+  .thumb.active{ border-color:var(--gold); }
+  .thumb-video{ width:70px; height:70px; border-radius:0.5rem; cursor:pointer; border:2px solid transparent; background:var(--teal); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.5rem; flex-shrink:0; transition:border 0.2s; }
+  .thumb-video.active{ border-color:var(--gold); }
+  .gallery-arrow{ position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.9); border:none; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; color:var(--teal); font-size:1.1rem; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:background 0.2s; }
+  .gallery-arrow:hover{ background:#fff; }
+
+  /* QTY */
+  .qty-btn{ width:38px; height:38px; border:2px solid var(--teal); border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--teal); background:#fff; font-size:1.1rem; transition:all 0.2s; }
+  .qty-btn:hover{ background:var(--teal); color:#fff; }
+  #qty-val{ width:52px; text-align:center; font-size:1.1rem; font-weight:700; border:2px solid #e5e7eb; border-radius:8px; padding:5px; }
+
+  /* FORM */
+  .form-input{ width:100%; border:2px solid #e5e7eb; border-radius:0.6rem; padding:0.65rem 0.9rem; font-size:0.95rem; outline:none; transition:border 0.2s; font-family:'DM Sans',sans-serif; }
+  .form-input:focus{ border-color:var(--teal); }
+
+  /* CHECKOUT MODAL */
+  .modal-bg{ position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+  .modal-bg.open{ opacity:1; pointer-events:all; }
+  .modal-box{ background:#fff; border-radius:1.25rem; width:100%; max-width:460px; max-height:90vh; overflow-y:auto; transform:translateY(28px); transition:transform 0.3s; }
+  .modal-bg.open .modal-box{ transform:translateY(0); }
+
+  /* RELATED CARDS */
+  .rel-card{ background:#fff; border-radius:1rem; overflow:hidden; cursor:pointer; transition:transform 0.3s, box-shadow 0.3s; }
+  .rel-card:hover{ transform:translateY(-5px); box-shadow:0 16px 40px rgba(26,82,118,0.13); }
+  .rel-card img{ width:100%; aspect-ratio:1/1; object-fit:cover; }
+
+  /* BREADCRUMB */
+  .breadcrumb a{ color:var(--teal); }
+  .breadcrumb a:hover{ text-decoration:underline; }
+
+  /* MOBILE MENU */
+  #mobile-menu{ max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+  #mobile-menu.open{ max-height:400px; }
+
+  /* FOOTER */
+  footer{ background:#0f3244; }
+
+  /* WA pulse */
+  @keyframes pulse-wa{ 0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,0.5);}50%{box-shadow:0 0 0 12px rgba(37,211,102,0);} }
+  .wa-pulse{ animation:pulse-wa 2.5s infinite; }
+
+  /* SECTION TITLE */
+  .section-title{ font-family:'Cormorant Garamond',serif; font-weight:700; }
+  .gold-line{ display:inline-block; width:50px; height:3px; background:var(--gold); border-radius:2px; }
+
+  /* FADE */
+  .fade-in{ opacity:0; transform:translateY(20px); transition:opacity 0.6s, transform 0.6s; }
+  .fade-in.visible{ opacity:1; transform:translateY(0); }
+
+  /* TABS */
+  .tab-btn{ padding:0.5rem 1.2rem; border-bottom:3px solid transparent; font-weight:500; color:#888; cursor:pointer; transition:all 0.2s; font-size:0.9rem; }
+  .tab-btn.active{ color:var(--teal); border-bottom-color:var(--gold); }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; }
+
+  /* STARS */
+  .stars{ color:var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-3 px-4 shadow-lg">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <a href="index.html" class="flex items-center gap-2">
+      <img data-logo src="" alt="Zarish Mall" class="h-10 w-auto"
+           onerror="this.outerHTML='<span class=\'font-brand text-2xl text-white\'>Zarish Mall</span>'"/>
+    </a>
+    <div class="hidden md:flex items-center gap-7">
+      <a href="index.html#home"           class="nav-link text-sm font-medium">Home</a>
+      <a href="index.html#about"          class="nav-link text-sm font-medium">About</a>
+      <a href="index.html#products"       class="nav-link text-sm font-medium">Products</a>
+      <a href="index.html#privacy-policy" class="nav-link text-sm font-medium">Privacy Policy</a>
+      <a href="index.html#contact"        class="nav-link text-sm font-medium">Contact</a>
+    </div>
+    <a href="https://wa.me/923224061289" target="_blank"
+       class="hidden md:flex items-center gap-2 btn-gold wa-pulse px-4 py-2 rounded-full text-sm">
+      <i class="ri-whatsapp-line text-lg"></i> WhatsApp
+    </a>
+    <button id="hamburger" class="md:hidden text-white text-2xl"><i class="ri-menu-line"></i></button>
+  </div>
+  <div id="mobile-menu" class="md:hidden px-4 pb-3">
+    <div class="flex flex-col gap-3 pt-3 border-t border-white/20 mt-3">
+      <a href="index.html#home"           class="nav-link text-sm py-1">Home</a>
+      <a href="index.html#about"          class="nav-link text-sm py-1">About</a>
+      <a href="index.html#products"       class="nav-link text-sm py-1">Products</a>
+      <a href="index.html#privacy-policy" class="nav-link text-sm py-1">Privacy Policy</a>
+      <a href="index.html#contact"        class="nav-link text-sm py-1">Contact</a>
+      <a href="https://wa.me/923224061289" target="_blank"
+         class="btn-gold inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm w-fit">
+        <i class="ri-whatsapp-line"></i> WhatsApp
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MAIN CONTENT ══ -->
+<main class="pt-20 pb-16 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 md:px-6">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb flex items-center gap-2 text-sm text-charcoal/50 py-5 flex-wrap">
+      <a href="index.html">Home</a>
+      <i class="ri-arrow-right-s-line"></i>
+      <a href="index.html#products">Products</a>
+      <i class="ri-arrow-right-s-line"></i>
+      <span id="bc-category" class="text-charcoal/40"></span>
+      <i class="ri-arrow-right-s-line"></i>
+      <span id="bc-name" class="text-teal font-medium truncate max-w-xs"></span>
+    </nav>
+
+    <!-- Product Section -->
+    <div class="grid md:grid-cols-2 gap-10 lg:gap-16 mb-16">
+
+      <!-- ── LEFT: GALLERY ── -->
+      <div class="fade-in">
+        <!-- Main Image -->
+        <div id="main-img-wrap">
+          <img id="main-img" src="" alt="Product"/>
+          <video id="main-video" controls></video>
+          <button class="gallery-arrow" style="left:10px;" onclick="shiftGallery(-1)"><i class="ri-arrow-left-s-line"></i></button>
+          <button class="gallery-arrow" style="right:10px;" onclick="shiftGallery(1)"><i class="ri-arrow-right-s-line"></i></button>
+        </div>
+        <!-- Thumbnails -->
+        <div id="thumbs-wrap" class="flex gap-2 mt-3 overflow-x-auto pb-1 flex-wrap"></div>
+      </div>
+
+      <!-- ── RIGHT: PRODUCT INFO ── -->
+      <div class="fade-in flex flex-col gap-4">
+
+        <!-- Badge + Category -->
+        <div class="flex items-center gap-3 flex-wrap">
+          <span id="p-category" class="text-xs font-semibold text-teal/70 uppercase tracking-wider bg-teal/8 border border-teal/15 px-3 py-1 rounded-full"></span>
+          <span id="p-badge" class="hidden text-xs font-bold text-white bg-gold px-3 py-1 rounded-full">Best Seller</span>
+        </div>
+
+        <!-- Name -->
+        <h1 id="p-name" class="section-title text-3xl md:text-4xl text-charcoal leading-tight"></h1>
+
+        <!-- Stars -->
+        <div class="flex items-center gap-3">
+          <span class="stars text-lg">★★★★★</span>
+          <span class="text-sm text-charcoal/50">4.8 · Verified Reviews</span>
+        </div>
+
+        <!-- Price -->
+        <div class="flex items-baseline gap-4">
+          <span id="p-price" class="text-3xl font-bold text-teal"></span>
+          <span id="p-compare" class="text-lg text-gray-400 line-through"></span>
+          <span id="p-discount" class="text-sm font-bold text-white bg-red-500 px-2 py-0.5 rounded-full hidden"></span>
+        </div>
+
+        <!-- Description -->
+        <p id="p-desc" class="text-charcoal/70 text-base leading-relaxed"></p>
+
+        <!-- Features -->
+        <ul id="p-features" class="space-y-2 text-sm text-charcoal/70"></ul>
+
+        <!-- Divider -->
+        <div class="border-t border-charcoal/10"></div>
+
+        <!-- COD Badge -->
+        <div class="flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+          <i class="ri-truck-line text-lg"></i>
+          <span><strong>Cash on Delivery</strong> · Open parcel before paying · 3–4 working days</span>
+        </div>
+
+        <!-- Qty + Add to Cart -->
+        <div id="buy-section">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-sm font-medium text-charcoal">Quantity:</span>
+            <button class="qty-btn" onclick="changeQty(-1)"><i class="ri-subtract-line"></i></button>
+            <input id="qty-val" type="text" value="1" readonly/>
+            <button class="qty-btn" onclick="changeQty(1)"><i class="ri-add-line"></i></button>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="openCheckout()" class="btn-gold flex-1 py-3.5 rounded-xl text-base flex items-center justify-center gap-2">
+              <i class="ri-shopping-bag-line"></i> Buy Now
+            </button>
+            <a id="wa-direct" href="#" target="_blank"
+               class="btn-wa flex-1 py-3.5 rounded-xl text-base flex items-center justify-center gap-2 wa-pulse">
+              <i class="ri-whatsapp-line text-xl"></i> Order on WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <!-- No-price section -->
+        <div id="contact-section" class="hidden">
+          <a href="https://wa.me/923224061289" target="_blank"
+             class="btn-wa w-full py-3.5 rounded-xl text-base flex items-center justify-center gap-2 wa-pulse">
+            <i class="ri-whatsapp-line text-xl"></i> Ask Price on WhatsApp
+          </a>
+        </div>
+
+        <!-- Shipping info -->
+        <div class="flex flex-wrap gap-4 text-xs text-charcoal/50 pt-1">
+          <span><i class="ri-shield-check-line text-teal mr-1"></i>100% Quality Checked</span>
+          <span><i class="ri-exchange-line text-teal mr-1"></i>Easy Returns via WhatsApp</span>
+          <span><i class="ri-secure-payment-line text-teal mr-1"></i>No Card Required</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TABS: Description / Shipping / Reviews ── -->
+    <div class="bg-white rounded-2xl shadow-sm mb-16 fade-in overflow-hidden">
+      <div class="flex border-b border-gray-100">
+        <button class="tab-btn active" onclick="switchTab('desc')">Description</button>
+        <button class="tab-btn" onclick="switchTab('shipping')">Shipping & Returns</button>
+        <button class="tab-btn" onclick="switchTab('reviews')">Reviews</button>
+      </div>
+      <div class="p-6">
+        <div id="tab-desc" class="tab-panel active text-sm text-charcoal/75 leading-relaxed space-y-3">
+          <p id="tab-desc-text"></p>
+          <ul id="tab-features-list" class="space-y-2 mt-3"></ul>
+        </div>
+        <div id="tab-shipping" class="tab-panel text-sm text-charcoal/75 leading-relaxed space-y-3">
+          <p><strong class="text-teal">Delivery:</strong> 3–4 working days across all of Pakistan via TCS / Leopards / Postex.</p>
+          <p><strong class="text-teal">Payment:</strong> Cash on Delivery (COD) — pay when your parcel arrives.</p>
+          <p><strong class="text-teal">Open Parcel Policy:</strong> You can inspect the item before paying. If you're not satisfied, refuse the delivery.</p>
+          <p><strong class="text-teal">Shipping Fee:</strong> PKR 200 flat rate nationwide.</p>
+          <p><strong class="text-teal">Returns:</strong> Contact us on WhatsApp within 24 hours of delivery if there's an issue. We'll arrange a replacement or refund.</p>
+        </div>
+        <div id="tab-reviews" class="tab-panel">
+          <div class="space-y-5">
+            <div class="flex gap-4 items-start">
+              <div class="w-10 h-10 bg-teal/10 rounded-full flex items-center justify-center text-teal font-bold flex-shrink-0">A</div>
+              <div>
+                <p class="font-semibold text-sm text-charcoal">Ayesha K. <span class="text-gray-400 font-normal">· Lahore</span></p>
+                <div class="stars text-xs mb-1">★★★★★</div>
+                <p class="text-sm text-charcoal/70">Bht acha product hai, delivery bhi fast thi. Highly recommended!</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div class="w-10 h-10 bg-gold/10 rounded-full flex items-center justify-center text-gold font-bold flex-shrink-0">M</div>
+              <div>
+                <p class="font-semibold text-sm text-charcoal">Muhammad R. <span class="text-gray-400 font-normal">· Karachi</span></p>
+                <div class="stars text-xs mb-1">★★★★★</div>
+                <p class="text-sm text-charcoal/70">Quality is exactly as shown. COD made it easy to order with confidence.</p>
+              </div>
+            </div>
+            <div class="flex gap-4 items-start">
+              <div class="w-10 h-10 bg-teal/10 rounded-full flex items-center justify-center text-teal font-bold flex-shrink-0">S</div>
+              <div>
+                <p class="font-semibold text-sm text-charcoal">Sana F. <span class="text-gray-400 font-normal">· Islamabad</span></p>
+                <div class="stars text-xs mb-1">★★★★☆</div>
+                <p class="text-sm text-charcoal/70">Good product, good packaging. Would buy again from Zarish Mall.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RELATED PRODUCTS ── -->
+    <div class="fade-in mb-16">
+      <div class="mb-6">
+        <span class="gold-line mb-3 block"></span>
+        <h2 class="section-title text-3xl text-teal">You May Also Like</h2>
+      </div>
+      <div id="related-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ══ CHECKOUT MODAL ══ -->
+<div id="checkout-modal" class="modal-bg" onclick="if(event.target===this)closeCheckout()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-5">
+        <h2 class="section-title text-2xl text-teal">Complete Your Order</h2>
+        <button onclick="closeCheckout()" class="text-gray-400 hover:text-charcoal text-xl"><i class="ri-close-line"></i></button>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="bg-cream rounded-xl p-4 mb-5 border border-teal/10">
+        <p class="text-xs font-semibold text-teal uppercase tracking-wide mb-3">Order Summary</p>
+        <div class="flex justify-between text-sm mb-1">
+          <span id="co-name-summary" class="pr-2 font-medium text-charcoal"></span>
+          <span id="co-subtotal" class="font-semibold flex-shrink-0 text-charcoal"></span>
+        </div>
+        <div class="flex justify-between text-sm text-charcoal/50 mb-1">
+          <span>Shipping</span><span>PKR 200</span>
+        </div>
+        <div class="border-t border-charcoal/10 mt-3 pt-3 flex justify-between font-bold text-teal text-base">
+          <span>Grand Total</span><span id="co-grand"></span>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="space-y-4 mb-5">
+        <div>
+          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Full Name *</label>
+          <input id="co-name" type="text" placeholder="Your full name" class="form-input"/>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Phone Number *</label>
+          <input id="co-phone" type="tel" placeholder="e.g. 03001234567" class="form-input"/>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Delivery Address *</label>
+          <textarea id="co-address" rows="3" placeholder="House/Street, City, Province" class="form-input resize-none"></textarea>
+        </div>
+      </div>
+      <p id="co-error" class="text-red-500 text-xs mb-3 hidden">Please fill in all required fields.</p>
+      <button onclick="sendOrder()" class="w-full btn-wa py-3.5 rounded-xl flex items-center justify-center gap-2 text-base wa-pulse">
+        <i class="ri-whatsapp-line text-xl"></i> Send Order via WhatsApp
+      </button>
+      <p class="text-center text-xs text-charcoal/40 mt-3">Cash on Delivery · Open parcel before paying</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer class="py-12 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <div>
+        <img data-logo src="" alt="Zarish Mall" class="h-10 mb-4"
+             onerror="this.outerHTML='<span class=\'font-brand text-white text-2xl\'>Zarish Mall</span>'"/>
+        <p class="text-white/60 text-sm leading-relaxed mb-5">Pakistan's trusted online store. Cash on Delivery nationwide.</p>
+        <a href="https://wa.me/923224061289" target="_blank"
+           class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all wa-pulse">
+          <i class="ri-whatsapp-line"></i> WhatsApp Us
+        </a>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-5">Quick Links</h4>
+        <ul class="space-y-3 text-sm">
+          <li><a href="index.html" class="text-white/60 hover:text-yellow-400 transition-colors">Home</a></li>
+          <li><a href="index.html#about" class="text-white/60 hover:text-yellow-400 transition-colors">About</a></li>
+          <li><a href="index.html#products" class="text-white/60 hover:text-yellow-400 transition-colors">Products</a></li>
+          <li><a href="index.html#privacy-policy" class="text-white/60 hover:text-yellow-400 transition-colors">Privacy Policy</a></li>
+          <li><a href="index.html#contact" class="text-white/60 hover:text-yellow-400 transition-colors">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold mb-5">Follow Us</h4>
+        <div class="flex gap-4">
+          <a href="#" class="w-10 h-10 bg-white/10 hover:bg-yellow-500 rounded-full flex items-center justify-center text-white transition-all"><i class="ri-facebook-line"></i></a>
+          <a href="#" class="w-10 h-10 bg-white/10 hover:bg-yellow-500 rounded-full flex items-center justify-center text-white transition-all"><i class="ri-instagram-line"></i></a>
+          <a href="https://wa.me/923224061289" target="_blank" class="w-10 h-10 bg-white/10 hover:bg-green-500 rounded-full flex items-center justify-center text-white transition-all"><i class="ri-whatsapp-line"></i></a>
+        </div>
+        <p class="text-white/40 text-xs mt-6">COD · Open Parcel Policy · 3–4 Days Delivery</p>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-6 text-center">
+      <p class="text-white/40 text-xs">© 2025 Zarish Mall. All Rights Reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ JAVASCRIPT ══ -->
+<script>
+// ── PRODUCT DATABASE (same as index.html) ──
+const PRODUCTS = [
+  { id:1,  name:"Aura Plus Clear Radiance Serum (30ml)", price:2999, compare:3999, category:"Beauty & Skincare", handle:"aura-plus-clear-radiance-serum-anti-acne-glow", images:5,
+    desc:"A powerful anti-acne, dark spot removal serum formulated for Pakistani skin. Lightweight and fast-absorbing for a clear, glass-like glow.", features:["Targets acne & dark spots","Oil control without stripping moisture","Brightening formula for radiant skin","Safe for all skin types"] },
+  { id:2,  name:"Body Shaper For Women & Men", price:1589, compare:2995, category:"Personal Care", handle:"body-shapers-for-women", images:1,
+    desc:"A high-compression body shaper designed to slim and contour your figure comfortably. Suitable for both women and men under everyday clothing.", features:["High-compression slimming design","Breathable & comfortable fabric","Suitable for daily use","Unisex – fits women & men"] },
+  { id:3,  name:"5-in-1 Multifunctional Mandoline Slicer & Vegetable Chopper", price:1999, compare:5000, category:"Kitchen & Dining", handle:"multi-purpose-vegetable-slicer-mandoline-chopper", images:3,
+    desc:"5 interchangeable blades for slicing, dicing, julienne, shredding, and more. Saves hours in the kitchen with one compact tool.", features:["5 adjustable blade settings","Includes hand guard for safety","BPA-free food-safe materials","Easy to clean & store"] },
+  { id:4,  name:"3-in-1 Multifunctional Manual Vegetable Cutter", price:1750, compare:2500, category:"Kitchen & Dining", handle:"3-in-1-manual-vegetable-cutter-rotary-drum-slicer", images:1,
+    desc:"A rotary drum grater with 3 stainless steel blades for slicing, grating, and shredding vegetables by hand — no electricity needed.", features:["3 stainless steel blade drums","No power needed – hand-operated","Tabletop suction base for stability","Compact and easy to store"] },
+  { id:5,  name:"2L Manual Food Processor & Vegetable Chopper", price:1649, compare:2349, category:"Kitchen & Dining", handle:"multifunctional-manual-food-push-chopper-for-vegetables-meat-2l", images:4,
+    desc:"A large 2-litre hand-push food chopper for mincing vegetables, meat, onions, and herbs quickly without any electricity.", features:["2-litre large capacity bowl","Multi-blade stainless steel insert","Easy hand-push mechanism","Dishwasher-safe parts"] },
+  { id:6,  name:"RAF Electric Grinder (Masala & Coffee)", price:1999, compare:3000, category:"Kitchen & Dining", handle:"raf-electric-masala-grinder-machine", images:5,
+    desc:"A powerful 220V stainless steel electric grinder for grinding spices, coffee, nuts, and dry ingredients in seconds.", features:["220V powerful motor","Stainless steel grinding bowl","One-touch operation","Compact design for easy storage"] },
+  { id:7,  name:"5-in-1 Stainless Steel Vegetable Slicer & Cutter", price:999, compare:1500, category:"Kitchen & Dining", handle:"5-in-1-stainless-steel-multifunctional-vegetable-slicer-cutter", images:4,
+    desc:"An affordable professional mandoline slicer with stainless steel blades for uniform slicing, shredding, and julienne cuts.", features:["Stainless steel durable blades","5 interchangeable cutting styles","Non-slip base for safety","Ideal for daily kitchen use"] },
+  { id:8,  name:"2-in-1 Waterproof Hair Dye Comb", price:1449, compare:2700, category:"Personal Care", handle:"water-and-sweat-prrof-hair-comb-dye", images:1,
+    desc:"A sweat-proof and waterproof hair dye comb for easy, mess-free colour application at home. Works on all hair types.", features:["Waterproof & sweat-proof design","Even colour distribution","Reusable & easy to clean","Works with most hair colours"] },
+  { id:9,  name:"Original Spring Facial Hair Remover for Women", price:1099, compare:2000, category:"Personal Care", handle:"facial-hair-remover-for-women", images:8,
+    desc:"A portable threading tool that removes upper lip, chin, and neck hair naturally without creams or wax.", features:["Painless spring threading action","No chemicals or wax","Reusable & long-lasting","Compact for travel use"] },
+  { id:10, name:"Teflon Iron Cover Protector", price:900, compare:1199, category:"Home & Storage", handle:"non-stick-teflon-iron-shoe-cover", images:10,
+    desc:"A non-stick Teflon cover that fits over your iron's soleplate to prevent burning delicate fabrics and reduce ironing effort.", features:["Non-stick Teflon surface","Protects delicate fabrics","Fits most standard irons","Easy slide-on design"] },
+  { id:11, name:"Luxury Stackable Vanity Organizer with Carry Handle", price:550, compare:750, category:"Home & Storage", handle:"luxury-multi-compartment-vanity-organizer-with-carry-handle-stackable-makeup-bathroom-storage-box-1", images:1,
+    desc:"A multi-compartment stackable organizer with a built-in carry handle — perfect for makeup, skincare, or bathroom essentials.", features:["Stackable modular design","Carry handle for portability","Multiple compartments","Clear panels for easy viewing"] },
+  { id:12, name:"6-Piece Luxury Travel Packing Cubes (Waterproof)", price:1250, compare:2000, category:"Travel & Bags", handle:"luxury-6pc-travel-packing-cubes-waterproof-organizer", images:3,
+    desc:"A set of 6 waterproof packing cubes plus laundry pouch to keep luggage organised and clothes separate on every trip.", features:["6 waterproof packing cubes","Includes laundry pouch","Lightweight & durable zippers","Fits most suitcase sizes"] },
+  { id:13, name:"Storage Bag (Imported)", price:1950, compare:3500, category:"Home & Storage", handle:"storage-bag", images:5,
+    desc:"A high-quality imported storage bag for clothes, bedding, or seasonal items. Keeps contents dust-free and compressed.", features:["Heavy-duty imported material","Airtight compression seal","Protects from dust & moisture","Multiple size options"] },
+  { id:14, name:"Desktop Perfume And Cosmetic Organizer", price:1785, compare:2500, category:"Home & Storage", handle:"desktop-perfume-and-cosmetic-organizer", images:8,
+    desc:"A sleek desktop organizer with multiple tiers for perfumes, skincare bottles, lipsticks, and cosmetic accessories.", features:["Multi-tier display design","Holds perfume & cosmetics","Sturdy base, elegant finish","Easy to assemble & clean"] },
+  { id:15, name:"2 in 1 Oil Jug (Oil & Vinegar Dispenser)", price:1000, compare:2000, category:"Kitchen & Dining", handle:"2-in-1-oil-jug", images:7,
+    desc:"A dual-function oil and vinegar dispenser in one ergonomic jug — keeps your kitchen counter tidy and pours cleanly.", features:["Two separate chambers","Drip-free pouring spout","BPA-free food-grade material","Easy-grip handle design"] },
+  { id:16, name:'Door Foam Draft Stopper 40"', price:200, compare:0, category:"Home & Storage", handle:"door-foam-draft-40", images:3,
+    desc:"A foam door draft stopper that seals gaps under doors to block cold air, dust, insects, and noise effectively.", features:['Fits doors up to 40"','Blocks cold air & dust','Easy peel-and-stick install','Weatherproof foam material'] },
+  { id:17, name:"Silicone Face Ice Roller", price:600, compare:950, category:"Beauty & Skincare", handle:"silicone-face-ice-roller", images:10,
+    desc:"A silicone ice roller for the face that reduces puffiness, tightens pores, soothes redness, and refreshes skin.", features:["Food-grade silicone material","Reduces puffiness & pores","Works with ice or cold water","Ergonomic rolling handle"] },
+  { id:18, name:"Refrigerator Safety Lock", price:350, compare:650, category:"Home & Storage", handle:"refrigerator-safety-lock", images:7,
+    desc:"A child-proof safety lock for refrigerators, freezers, and cabinets — keeps toddlers and kids safe without tools.", features:["No drilling required","Adhesive mount installation","Adjustable strap length","Works on most fridge models"] },
+  { id:19, name:"Luxury Rotating Tray", price:1350, compare:0, category:"Home & Storage", handle:"luxury-rotating-tray-1", images:12,
+    desc:"A 360° rotating lazy susan tray for kitchen counters, dining tables, or vanity tops.", features:["Full 360° smooth rotation","Non-slip base","Suitable for kitchen & vanity","Elegant premium finish"] },
+  { id:20, name:"Facial Steamer & Face Humidifier", price:500, compare:650, category:"Beauty & Skincare", handle:"face-humidifier-facial-steamer-mist-sprayer-spa-steaming-machine-2", images:7,
+    desc:"A portable facial steamer and mist sprayer for deep pore cleansing, hydration, and an at-home spa experience.", features:["Fine mist nano-spray technology","Opens pores for deep cleanse","USB-powered & portable","Suitable for all skin types"] },
+  { id:21, name:"Refrigerator Food Storage Box (4pcs)", price:415, compare:1000, category:"Kitchen & Dining", handle:"refrigerator-food-storage-box-1", images:9,
+    desc:"A set of 4 airtight food storage containers designed for refrigerator use — keeps food fresh longer.", features:["Set of 4 containers","Airtight sealing lids","BPA-free food-safe plastic","Stackable for space saving"] },
+  { id:23, name:"New 360° Rotating Makeup Brush Holder", price:1750, compare:2500, category:"Beauty & Skincare", handle:"new-360-rotating-makeup-brush-holder-1", images:8,
+    desc:"A 360° rotating makeup brush holder that keeps all your brushes clean, organised, and within easy reach.", features:["Full 360° smooth rotation","Multiple brush slot compartments","Dust-free design","Non-slip weighted base"] },
+  { id:24, name:"Dustproof Multilayer Shoe Rack", price:3950, compare:4500, category:"Home & Storage", handle:"dustproof-multilayer-shoe-rack", images:7,
+    desc:"A multilayer dustproof shoe organizer rack with a fabric cover to keep shoes clean and protected.", features:["Multilayer expandable design","Full dustproof fabric cover","Easy self-assembly","Holds up to 30+ pairs"] },
+  { id:25, name:"Egg Shell Opener", price:320, compare:0, category:"Kitchen & Dining", handle:"egg-shell-opener", images:6,
+    desc:"A handy kitchen tool that cracks egg shells cleanly and safely — no mess, no shell fragments in your food.", features:["Clean crack every time","Safe for children to use","Compact & easy to store","Works with all egg sizes"] },
+  { id:26, name:"Stainless Steel Dough Mixer", price:299, compare:550, category:"Kitchen & Dining", handle:"stainless-steel-dough-mixer", images:8,
+    desc:"A stainless steel hand dough mixer for kneading bread, roti, and pastry dough quickly and evenly.", features:["Food-grade stainless steel","Ergonomic grip handle","Easy to clean","Works for all dough types"] },
+  { id:27, name:"Leather Travel Cosmetic Organizer", price:1099, compare:2000, category:"Travel & Bags", handle:"leather-travel-cosmetic-organizer-1", images:7,
+    desc:"A leather-finish travel cosmetic bag with multiple interior pockets for organising makeup, skincare, and toiletries.", features:["PU leather exterior","Multiple inner compartments","Durable zipper closure","Compact for carry-on travel"] },
+  { id:28, name:"Luxury Rotating Makeup Brush Holder", price:2200, compare:2700, category:"Beauty & Skincare", handle:"luxury-360-rotating-makeup-brush-holder-1", images:6,
+    desc:"A premium 360° rotating makeup brush organizer with a transparent acrylic design.", features:["Transparent acrylic design","Full 360° rotation","Holds 20+ brushes","Non-slip base pad"] },
+  { id:29, name:"Lint Remover", price:1550, compare:0, category:"Home & Storage", handle:"lint-remover-1", images:5,
+    desc:"An electric fabric lint remover that shaves off pilling, lint, and fluff from clothes and sofas.", features:["3-blade precision shaving head","USB rechargeable","Works on all fabric types","Includes lint collection tray"] },
+  { id:30, name:"LED Light Makeup Mirror", price:1650, compare:0, category:"Beauty & Skincare", handle:"led-light-makeup-mirror-1", images:4,
+    desc:"A lighted vanity mirror with bright LED illumination for flawless makeup application in any lighting.", features:["Bright LED ring light","Adjustable brightness settings","360° tilt adjustment","Compact desktop design"] },
+  { id:31, name:"Cute Panda Silicone LED Lamp Light", price:1599, compare:2350, category:"Home & Storage", handle:"cute-panda-silicon-led-lamp-light", images:1,
+    desc:"An adorable panda-shaped silicone LED night lamp perfect for children's bedrooms or as a desk decoration.", features:["Soft silicone body – child safe","Touch-on/off control","Warm ambient glow","Rechargeable via USB"] },
+  { id:32, name:"2 Set of 6 Pcs Ear Wax Removal Kit", price:699, compare:2000, category:"Health & Wellness", handle:"6pcs-stainless-steel-ear-wax-removal-kit-for-ear-care-cleaning-copy-1", images:8,
+    desc:"A 12-piece stainless steel ear care and cleaning kit for safe and effective earwax removal.", features:["12 tools total (2 × 6 set)","Medical-grade stainless steel","Multiple tip shapes","Includes travel storage case"] },
+  { id:33, name:"3 Bundle Winter Silicone Socks & Gloves", price:999, compare:1799, category:"Personal Care", handle:"winter-silicone-socks-and-gloves", images:10,
+    desc:"A deep moisturizing bundle of silicone socks and gloves that locks in cream for soft, crack-free hands and feet.", features:["Deep moisturizing gel lining","Reusable silicone material","Repairs cracked heels & hands","Suitable for all sizes"] },
+  { id:34, name:"Melodine Japanese Pain Relief Gel", price:999, compare:1800, category:"Health & Wellness", handle:"japanese-instant-pain-relief-gel", images:7,
+    desc:"A fast-acting Japanese-formula topical gel for muscle pain, joint stiffness, back pain, and body aches.", features:["Fast-acting cooling + warming effect","Targets muscle & joint pain","Non-greasy formula","Safe for daily external use"] },
+  { id:35, name:"1Pc Wall Mounted Soap Holder with Drain Tray", price:580, compare:700, category:"Home & Storage", handle:"luxury-wall-mounted-soap-holder-drain-tray-pakistan", images:8,
+    desc:"A no-drill adhesive wall mounted soap holder with a built-in drain tray for bathroom or kitchen.", features:["No-drill adhesive installation","Built-in drainage holes","Holds standard bar soaps","Random color dispatch"] },
+  { id:36, name:"Metal Flexible 60cm Drain Cleaner Spring", price:499, compare:999, category:"Home & Storage", handle:"metal-flexible-60cm-drain-cleaner-pipe-dredging-tool-pakistan", images:8,
+    desc:"A 60cm flexible metal drain cleaning spring for unclogging sinks, pipes, and sewers without harsh chemicals.", features:["60cm flexible metal spring","Fits standard pipe sizes","Removes hair & debris","Reusable & easy to rinse"] },
+  { id:37, name:"Anti-Loss Strip", price:0, compare:0, category:"Home & Storage", handle:"anti-los-strip", images:12,
+    desc:"A smart anti-loss adhesive strip to secure small items and prevent accidental loss at home or while travelling.", features:["Strong adhesive backing","Reusable strip design","Works on multiple surfaces","Discreet & compact"] },
+  { id:38, name:"Spa Silicone Socks", price:0, compare:0, category:"Personal Care", handle:"spa-silicon-socks", images:6,
+    desc:"Spa-grade silicone socks for overnight foot moisturization — wake up to baby-soft feet.", features:["Spa-quality silicone material","Locks in moisturizer overnight","One size fits most","Washable & reusable"] },
+  { id:39, name:"2 LED Light Makeup Mirror", price:0, compare:0, category:"Beauty & Skincare", handle:"2-led-light-makeup-mirror", images:6,
+    desc:"A dual-sided LED lighted makeup mirror with magnification on one side for detailed makeup application.", features:["LED ring illumination","1× and magnification sides","Touch control brightness","Foldable compact design"] },
+];
+
+// ── HELPERS ──
+const IMG_EXTS = ['jpg','jpeg','webp','png'];
+function fmtPrice(n){ return 'PKR ' + n.toLocaleString('en-PK'); }
+function placeholderSvg(label){
+  return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><rect fill='%23e8f0f7' width='400' height='400'/><text x='50%25' y='50%25' fill='%231A5276' text-anchor='middle' dy='.3em' font-size='16' font-family='sans-serif'>${encodeURIComponent(label.slice(0,22))}</text></svg>`;
+}
+
+function findImage(handle, idx, onFound, onFail){
+  let i=0;
+  function tryNext(){
+    if(i>=IMG_EXTS.length){ if(onFail) onFail(); return; }
+    const url=`images/${handle}/${idx}.${IMG_EXTS[i]}`;
+    const p=new Image(); p.onload=()=>onFound(url); p.onerror=()=>{i++;tryNext();}; p.src=url;
+  }
+  tryNext();
+}
+
+// ── STATE ──
+let currentProduct = null;
+let currentQty = 1;
+let galleryItems = []; // {type:'img'|'video', src}
+let galleryIdx = 0;
+
+// ── LOAD PAGE ──
+function loadPage(){
+  const params = new URLSearchParams(window.location.search);
+  const id = parseInt(params.get('id'));
+  const p = PRODUCTS.find(x => x.id === id);
+
+  if(!p){
+    document.querySelector('main').innerHTML = `
+      <div class="flex flex-col items-center justify-center min-h-screen text-center px-4">
+        <i class="ri-error-warning-line text-6xl text-teal/30 mb-4"></i>
+        <h2 class="text-2xl font-bold text-teal mb-3">Product Not Found</h2>
+        <p class="text-charcoal/60 mb-6">The product you're looking for doesn't exist.</p>
+        <a href="index.html" class="btn-gold px-6 py-3 rounded-full">← Back to Store</a>
+      </div>`;
+    return;
+  }
+
+  currentProduct = p;
+
+  // Page title
+  document.title = `${p.name} – Zarish Mall`;
+
+  // Breadcrumb
+  document.getElementById('bc-category').textContent = p.category;
+  document.getElementById('bc-name').textContent = p.name;
+
+  // Category + badge
+  document.getElementById('p-category').textContent = p.category;
+  const isBestSeller = [...PRODUCTS].filter(x=>x.price>0&&x.compare>0)
+    .sort((a,b)=>(b.compare-b.price)/b.compare-(a.compare-a.price)/a.compare)
+    .slice(0,3).some(x=>x.id===p.id);
+  if(isBestSeller) document.getElementById('p-badge').classList.remove('hidden');
+
+  // Name
+  document.getElementById('p-name').textContent = p.name;
+
+  // Price
+  if(p.price === 0){
+    document.getElementById('p-price').textContent = 'Contact for Price';
+    document.getElementById('buy-section').classList.add('hidden');
+    document.getElementById('contact-section').classList.remove('hidden');
+  } else {
+    document.getElementById('p-price').textContent = fmtPrice(p.price);
+    if(p.compare>0){
+      document.getElementById('p-compare').textContent = fmtPrice(p.compare);
+      const disc = Math.round((p.compare-p.price)/p.compare*100);
+      const discEl = document.getElementById('p-discount');
+      discEl.textContent = `-${disc}%`;
+      discEl.classList.remove('hidden');
+    }
+    // WhatsApp direct link
+    document.getElementById('wa-direct').href =
+      `https://wa.me/923224061289?text=${encodeURIComponent(`Hi, I want to order: ${p.name}\nPrice: ${fmtPrice(p.price)}\nPlease confirm availability.`)}`;
+  }
+
+  // Description
+  document.getElementById('p-desc').textContent = p.desc;
+  document.getElementById('tab-desc-text').textContent = p.desc;
+
+  // Features
+  const featHTML = p.features.map(f=>`<li class="flex items-center gap-2"><i class="ri-checkbox-circle-line text-teal flex-shrink-0"></i>${f}</li>`).join('');
+  document.getElementById('p-features').innerHTML = featHTML;
+  document.getElementById('tab-features-list').innerHTML = featHTML;
+
+  // Build gallery
+  buildGallery(p);
+
+  // Related products (same category, exclude self)
+  loadRelated(p);
+
+  // Fade-in
+  observeFadeIns();
+}
+
+// ── GALLERY ──
+function buildGallery(p){
+  galleryItems = [];
+  galleryIdx = 0;
+  const thumbsWrap = document.getElementById('thumbs-wrap');
+  thumbsWrap.innerHTML = '';
+
+  for(let i=1; i<=p.images; i++){
+    const idx = i;
+    findImage(p.handle, idx, (url)=>{
+      const item = {type:'img', src:url};
+      galleryItems.push(item);
+
+      const thumb = document.createElement('img');
+      thumb.src = url;
+      thumb.className = 'thumb' + (galleryItems.length===1?' active':'');
+      thumb.addEventListener('click', ()=>{ setGallery(galleryItems.indexOf(item)); });
+      thumbsWrap.appendChild(thumb);
+
+      if(galleryItems.length===1) setMainImage(url);
+    }, null);
+  }
+
+  // Video auto-detect
+  const videoExts = ['mp4','mov','webm'];
+  function tryVideo(i){
+    if(i>=videoExts.length) return;
+    const url = `images/${p.handle}/video.${videoExts[i]}`;
+    const v = document.createElement('video');
+    v.src = url; v.preload='metadata';
+    v.addEventListener('loadedmetadata',()=>{
+      const item = {type:'video', src:url};
+      galleryItems.push(item);
+      const btn = document.createElement('div');
+      btn.className = 'thumb-video';
+      btn.innerHTML = '<i class="ri-play-circle-line"></i>';
+      btn.title = 'Play Video';
+      btn.addEventListener('click',()=>{ setGallery(galleryItems.indexOf(item)); });
+      thumbsWrap.appendChild(btn);
+    });
+    v.addEventListener('error',()=>tryVideo(i+1));
+  }
+  tryVideo(0);
+}
+
+function setMainImage(url){
+  const img = document.getElementById('main-img');
+  const vid = document.getElementById('main-video');
+  img.src = url;
+  img.style.display = 'block';
+  vid.style.display = 'none';
+  vid.pause();
+}
+
+function setMainVideo(url){
+  const img = document.getElementById('main-img');
+  const vid = document.getElementById('main-video');
+  vid.src = url;
+  vid.style.display = 'block';
+  img.style.display = 'none';
+}
+
+function setGallery(idx){
+  const thumbs = document.getElementById('thumbs-wrap').children;
+  Array.from(thumbs).forEach((t,i)=>t.classList.toggle('active', i===idx));
+  galleryIdx = idx;
+  const item = galleryItems[idx];
+  if(!item) return;
+  if(item.type==='img') setMainImage(item.src);
+  else setMainVideo(item.src);
+}
+
+function shiftGallery(dir){
+  if(galleryItems.length===0) return;
+  setGallery((galleryIdx+dir+galleryItems.length)%galleryItems.length);
+}
+
+// ── RELATED PRODUCTS ──
+function loadRelated(p){
+  const related = PRODUCTS.filter(x=>x.id!==p.id && x.category===p.category).slice(0,4);
+  const grid = document.getElementById('related-grid');
+  if(related.length===0){ grid.closest('.fade-in').style.display='none'; return; }
+
+  grid.innerHTML = related.map(r=>{
+    const imgId = `rel-img-${r.id}`;
+    setTimeout(()=>{
+      const el = document.getElementById(imgId);
+      if(el) findImage(r.handle,1,(url)=>el.src=url, ()=>el.src=placeholderSvg(r.name));
+    },0);
+    return `
+    <div class="rel-card" onclick="window.location.href='product.html?id=${r.id}'">
+      <img id="${imgId}" src="${placeholderSvg(r.name)}" alt="${r.name}"/>
+      <div class="p-3">
+        <p class="text-xs text-charcoal/50 mb-1">${r.category}</p>
+        <h4 class="font-heading font-bold text-sm text-charcoal leading-snug mb-2 line-clamp-2">${r.name}</h4>
+        <p class="font-bold text-teal text-sm">${r.price===0?'Contact for Price':fmtPrice(r.price)}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── QTY ──
+function changeQty(d){
+  currentQty = Math.max(1, currentQty+d);
+  document.getElementById('qty-val').value = currentQty;
+}
+
+// ── CHECKOUT ──
+function openCheckout(){
+  const p = currentProduct;
+  const sub = p.price * currentQty;
+  const grand = sub + 200;
+  document.getElementById('co-name-summary').textContent = `${p.name} × ${currentQty}`;
+  document.getElementById('co-subtotal').textContent = fmtPrice(sub);
+  document.getElementById('co-grand').textContent = fmtPrice(grand);
+  document.getElementById('co-name').value='';
+  document.getElementById('co-phone').value='';
+  document.getElementById('co-address').value='';
+  document.getElementById('co-error').classList.add('hidden');
+  document.getElementById('checkout-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeCheckout(){
+  document.getElementById('checkout-modal').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function sendOrder(){
+  const name    = document.getElementById('co-name').value.trim();
+  const phone   = document.getElementById('co-phone').value.trim();
+  const address = document.getElementById('co-address').value.trim();
+  if(!name||!phone||!address){ document.getElementById('co-error').classList.remove('hidden'); return; }
+  const p = currentProduct;
+  const sub = p.price * currentQty;
+  const grand = sub + 200;
+  const msg = `🛍️ *New Order – Zarish Mall*\n\n📦 Product: ${p.name}\n🔢 Quantity: ${currentQty}\n💰 Product Total: ${fmtPrice(sub)}\n🚚 Shipping: PKR 200\n✅ Grand Total: ${fmtPrice(grand)}\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📍 Address: ${address}\n\nKindly confirm my order. Thank you!`;
+  window.open(`https://wa.me/923224061289?text=${encodeURIComponent(msg)}`,'_blank');
+}
+
+// ── TABS ──
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    const ids = ['desc','shipping','reviews'];
+    b.classList.toggle('active', ids[i]===id);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ── LOGO SMART LOAD ──
+function loadLogo(){
+  document.querySelectorAll('img[data-logo]').forEach(el=>{
+    const exts=['png','jpg','jpeg','webp','svg']; let i=0;
+    function t(){ if(i>=exts.length){ el.outerHTML='<span class="font-brand text-2xl text-white">Zarish Mall</span>'; return; }
+      const p=new Image(); p.onload=()=>el.src=`logo.${exts[i]}`; p.onerror=()=>{i++;t();}; p.src=`logo.${exts[i]}`; }
+    t();
+  });
+}
+
+// ── FADE-IN ──
+function observeFadeIns(){
+  const obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible'); obs.unobserve(e.target);} });
+  },{threshold:0.1});
+  document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+}
+
+// ── NAV ──
+document.getElementById('hamburger').addEventListener('click',()=>{
+  document.getElementById('mobile-menu').classList.toggle('open');
+});
+window.addEventListener('scroll',()=>{
+  document.getElementById('navbar').style.boxShadow = window.scrollY>10?'0 4px 30px rgba(0,0,0,0.25)':'';
+});
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+  loadLogo();
+  loadPage();
+  // Immediate fade-in for above-fold elements
+  document.querySelectorAll('.fade-in').forEach((el,i)=>{
+    if(i<3) setTimeout(()=>el.classList.add('visible'), i*150);
+  });
+});
+</script>
+</body>
+</html>
