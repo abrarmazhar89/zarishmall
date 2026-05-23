@@ -893,7 +893,7 @@ function findImage(handle, idx, onFound, onFail) {
   let attempt = 0;
   function tryNext() {
     if (attempt >= IMG_EXTS.length) { if (onFail) onFail(); return; }
-    const url = `${handle}/${idx}.${IMG_EXTS[attempt]}`;
+    const url = `/${handle}/${idx}.${IMG_EXTS[attempt]}`;
     const probe = new Image();
     probe.onload = () => onFound(url);
     probe.onerror = () => { attempt++; tryNext(); };
