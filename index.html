@@ -85,6 +85,10 @@ tailwind.config = {
   .cat-card:hover img { transform: scale(1.08); }
   .cat-card .overlay { position:absolute; inset:0; background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.05) 100%); display:flex; align-items:flex-end; padding:1rem; }
 
+  /* ── SEARCH BAR ── */
+  #search-input { font-family: 'DM Sans', sans-serif; color: var(--charcoal); }
+  #search-input::placeholder { color: #aaa; }
+
   /* ── FILTER BTNS ── */
   .filter-btn { border: 2px solid var(--teal); color: var(--teal); border-radius: 999px; padding: 0.45rem 1.2rem; font-weight: 500; cursor:pointer; transition: all 0.25s; font-size:0.875rem; }
   .filter-btn:hover, .filter-btn.active { background: var(--teal); color: #fff; }
@@ -296,13 +300,7 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- ══════════ CATEGORIES ══════════ -->
-<section class="py-20" style="background:#fff;">
-  <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-12 fade-in">
-      <span class="gold-line mb-4 mx-auto block"></span>
-      <h2 class="section-title text-4xl md:text-5xl text-teal">Shop by Category</h2>
-    </div>
+<!-- ══════════ CATEGORIES REMOVED ══════════ --><div style="display:none">
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
 
       <!-- Beauty & Skincare -->
@@ -513,18 +511,33 @@ tailwind.config = {
 
     </div>
   </div>
-</section>
+</div><!-- end hidden categories -->
 
 <!-- ══════════ PRODUCTS GRID ══════════ -->
 <section id="products" class="py-20 bg-cream">
   <div class="max-w-7xl mx-auto px-6">
-    <div class="text-center mb-10 fade-in">
+    <div class="text-center mb-8 fade-in">
       <span class="gold-line mb-4 mx-auto block"></span>
       <h2 class="section-title text-4xl md:text-5xl text-teal mb-2">Premium Collection</h2>
       <p class="text-charcoal/60 text-sm">Cash on Delivery available across Pakistan. Open your parcel before paying!</p>
     </div>
-    <!-- Filter Buttons -->
-    <div class="flex flex-wrap gap-3 justify-center mb-10 fade-in" id="filter-btns">
+
+    <!-- ── SEARCH BAR ── -->
+    <div class="max-w-2xl mx-auto mb-8 fade-in">
+      <div class="relative">
+        <i class="ri-search-line absolute left-4 top-1/2 -translate-y-1/2 text-teal text-xl pointer-events-none"></i>
+        <input id="search-input" type="text" placeholder="Search products… e.g. mirror, organizer, slicer"
+               class="w-full pl-12 pr-12 py-3.5 rounded-full border-2 border-teal/20 bg-white text-charcoal text-sm outline-none transition-all focus:border-teal shadow-sm focus:shadow-md"
+               oninput="handleSearch(this.value)"/>
+        <button id="search-clear" onclick="clearSearch()" class="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal/30 hover:text-charcoal text-xl hidden">
+          <i class="ri-close-line"></i>
+        </button>
+      </div>
+      <p id="search-results-count" class="text-center text-xs text-charcoal/50 mt-2 hidden"></p>
+    </div>
+
+    <!-- ── CATEGORY PILLS ── -->
+    <div class="flex flex-wrap gap-2 justify-center mb-8 fade-in" id="filter-btns">
       <button class="filter-btn active" onclick="filterProducts('all', this)">All Products</button>
       <button class="filter-btn" onclick="filterProducts('Beauty & Skincare', this)">Beauty & Skincare</button>
       <button class="filter-btn" onclick="filterProducts('Kitchen & Dining', this)">Kitchen & Dining</button>
@@ -533,8 +546,16 @@ tailwind.config = {
       <button class="filter-btn" onclick="filterProducts('Personal Care', this)">Personal Care</button>
       <button class="filter-btn" onclick="filterProducts('Travel & Bags', this)">Travel & Bags</button>
     </div>
+
     <!-- Grid -->
     <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <!-- No results -->
+    <div id="no-results" class="hidden text-center py-20">
+      <i class="ri-search-line text-5xl text-charcoal/20 mb-4 block"></i>
+      <p class="text-charcoal/50 text-lg font-medium">No products found</p>
+      <p class="text-charcoal/40 text-sm mt-1">Try a different search term or browse all products</p>
+      <button onclick="clearSearch()" class="mt-5 btn-teal px-6 py-2.5 rounded-full text-sm">Show All Products</button>
+    </div>
   </div>
 </section>
 
@@ -763,88 +784,82 @@ tailwind.config = {
 <script>
 // ── PRODUCT DATA ──
 const PRODUCTS = [
-  { id:1, name:"Aura Plus Clear Radiance Serum (30ml)", price:2999, compare:3999, category:"Beauty & Skincare", handle:"aura-plus-clear-radiance-serum-anti-acne-glow", images:5, hasVideo:false,
+  { id:1,  name:"Aura Plus Clear Radiance Serum (30ml)", price:2999, compare:3999, category:"Beauty & Skincare", handle:"aura-plus-clear-radiance-serum-anti-acne-glow", images:5,
     desc:"A powerful anti-acne, dark spot removal serum formulated for Pakistani skin. Lightweight and fast-absorbing for a clear, glass-like glow.", features:["Targets acne & dark spots","Oil control without stripping moisture","Brightening formula for radiant skin","Safe for all skin types"] },
-  { id:2, name:"Body Shaper For Women & Men", price:1589, compare:2995, category:"Personal Care", handle:"body-shapers-for-women", images:1, hasVideo:false,
+  { id:2,  name:"Body Shaper For Women & Men", price:1589, compare:2995, category:"Personal Care", handle:"body-shapers-for-women", images:1,
     desc:"A high-compression body shaper designed to slim and contour your figure comfortably. Suitable for both women and men under everyday clothing.", features:["High-compression slimming design","Breathable & comfortable fabric","Suitable for daily use","Unisex – fits women & men"] },
-  { id:3, name:"5-in-1 Multifunctional Mandoline Slicer & Vegetable Chopper", price:1999, compare:5000, category:"Kitchen & Dining", handle:"multi-purpose-vegetable-slicer-mandoline-chopper", images:3, hasVideo:false,
+  { id:3,  name:"5-in-1 Multifunctional Mandoline Slicer & Vegetable Chopper", price:1999, compare:5000, category:"Kitchen & Dining", handle:"multi-purpose-vegetable-slicer-mandoline-chopper", images:3,
     desc:"5 interchangeable blades for slicing, dicing, julienne, shredding, and more. Saves hours in the kitchen with one compact tool.", features:["5 adjustable blade settings","Includes hand guard for safety","BPA-free food-safe materials","Easy to clean & store"] },
-  { id:4, name:"3-in-1 Multifunctional Manual Vegetable Cutter", price:1750, compare:2500, category:"Kitchen & Dining", handle:"3-in-1-manual-vegetable-cutter-rotary-drum-slicer", images:1, hasVideo:false,
+  { id:4,  name:"3-in-1 Multifunctional Manual Vegetable Cutter", price:1750, compare:2500, category:"Kitchen & Dining", handle:"3-in-1-manual-vegetable-cutter-rotary-drum-slicer", images:1,
     desc:"A rotary drum grater with 3 stainless steel blades for slicing, grating, and shredding vegetables by hand — no electricity needed.", features:["3 stainless steel blade drums","No power needed – hand-operated","Tabletop suction base for stability","Compact and easy to store"] },
-  { id:5, name:"2L Manual Food Processor & Vegetable Chopper", price:1649, compare:2349, category:"Kitchen & Dining", handle:"multifunctional-manual-food-push-chopper-for-vegetables-meat-2l", images:4, hasVideo:false,
+  { id:5,  name:"2L Manual Food Processor & Vegetable Chopper", price:1649, compare:2349, category:"Kitchen & Dining", handle:"multifunctional-manual-food-push-chopper-for-vegetables-meat-2l", images:4,
     desc:"A large 2-litre hand-push food chopper for mincing vegetables, meat, onions, and herbs quickly without any electricity.", features:["2-litre large capacity bowl","Multi-blade stainless steel insert","Easy hand-push mechanism","Dishwasher-safe parts"] },
-  { id:6, name:"RAF Electric Grinder (Masala & Coffee)", price:1999, compare:3000, category:"Kitchen & Dining", handle:"raf-electric-masala-grinder-machine", images:5, hasVideo:false,
+  { id:6,  name:"RAF Electric Grinder (Masala & Coffee)", price:1999, compare:3000, category:"Kitchen & Dining", handle:"raf-electric-masala-grinder-machine", images:5,
     desc:"A powerful 220V stainless steel electric grinder for grinding spices, coffee, nuts, and dry ingredients in seconds.", features:["220V powerful motor","Stainless steel grinding bowl","One-touch operation","Compact design for easy storage"] },
-  { id:7, name:"5-in-1 Stainless Steel Vegetable Slicer & Cutter", price:999, compare:1500, category:"Kitchen & Dining", handle:"5-in-1-stainless-steel-multifunctional-vegetable-slicer-cutter", images:4, hasVideo:false,
+  { id:7,  name:"5-in-1 Stainless Steel Vegetable Slicer & Cutter", price:999, compare:1500, category:"Kitchen & Dining", handle:"5-in-1-stainless-steel-multifunctional-vegetable-slicer-cutter", images:4,
     desc:"An affordable professional mandoline slicer with stainless steel blades for uniform slicing, shredding, and julienne cuts.", features:["Stainless steel durable blades","5 interchangeable cutting styles","Non-slip base for safety","Ideal for daily kitchen use"] },
-  { id:8, name:"2-in-1 Waterproof Hair Dye Comb", price:1449, compare:2700, category:"Personal Care", handle:"water-and-sweat-prrof-hair-comb-dye", images:1, hasVideo:false,
+  { id:8,  name:"2-in-1 Waterproof Hair Dye Comb", price:1449, compare:2700, category:"Personal Care", handle:"water-and-sweat-prrof-hair-comb-dye", images:1,
     desc:"A sweat-proof and waterproof hair dye comb for easy, mess-free colour application at home. Works on all hair types.", features:["Waterproof & sweat-proof design","Even colour distribution","Reusable & easy to clean","Works with most hair colours"] },
-  { id:9, name:"Original Spring Facial Hair Remover for Women", price:1099, compare:2000, category:"Personal Care", handle:"facial-hair-remover-for-women", images:8, hasVideo:false,
-    desc:"A portable threading tool that removes upper lip, chin, and neck hair naturally without creams or wax. Pack of 2, 4, or 6.", features:["Painless spring threading action","No chemicals or wax","Reusable & long-lasting","Compact for travel use"] },
-  { id:10, name:"Teflon Iron Cover Protector", price:900, compare:1199, category:"Home & Storage", handle:"non-stick-teflon-iron-shoe-cover", images:10, hasVideo:false,
+  { id:9,  name:"Original Spring Facial Hair Remover for Women", price:1099, compare:2000, category:"Personal Care", handle:"facial-hair-remover-for-women", images:8,
+    desc:"A portable threading tool that removes upper lip, chin, and neck hair naturally without creams or wax.", features:["Painless spring threading action","No chemicals or wax","Reusable & long-lasting","Compact for travel use"] },
+  { id:10, name:"Teflon Iron Cover Protector", price:900, compare:1199, category:"Home & Storage", handle:"non-stick-teflon-iron-shoe-cover", images:10,
     desc:"A non-stick Teflon cover that fits over your iron's soleplate to prevent burning delicate fabrics and reduce ironing effort.", features:["Non-stick Teflon surface","Protects delicate fabrics","Fits most standard irons","Easy slide-on design"] },
-  { id:11, name:"Luxury Stackable Vanity Organizer with Carry Handle", price:550, compare:750, category:"Home & Storage", handle:"luxury-multi-compartment-vanity-organizer-with-carry-handle-stackable-makeup-bathroom-storage-box-1", images:1, hasVideo:false,
+  { id:11, name:"Luxury Stackable Vanity Organizer with Carry Handle", price:550, compare:750, category:"Home & Storage", handle:"luxury-multi-compartment-vanity-organizer-with-carry-handle-stackable-makeup-bathroom-storage-box-1", images:1,
     desc:"A multi-compartment stackable organizer with a built-in carry handle — perfect for makeup, skincare, or bathroom essentials.", features:["Stackable modular design","Carry handle for portability","Multiple compartments","Clear panels for easy viewing"] },
-  { id:12, name:"6-Piece Luxury Travel Packing Cubes (Waterproof)", price:1250, compare:2000, category:"Travel & Bags", handle:"luxury-6pc-travel-packing-cubes-waterproof-organizer", images:3, hasVideo:false,
+  { id:12, name:"6-Piece Luxury Travel Packing Cubes (Waterproof)", price:1250, compare:2000, category:"Travel & Bags", handle:"luxury-6pc-travel-packing-cubes-waterproof-organizer", images:3,
     desc:"A set of 6 waterproof packing cubes plus laundry pouch to keep luggage organised and clothes separate on every trip.", features:["6 waterproof packing cubes","Includes laundry pouch","Lightweight & durable zippers","Fits most suitcase sizes"] },
-  { id:13, name:"Storage Bag (Imported)", price:1950, compare:3500, category:"Home & Storage", handle:"storage-bag", images:5, hasVideo:false,
-    desc:"A high-quality imported storage bag for clothes, bedding, or seasonal items. Keeps contents dust-free and compressed for maximum space.", features:["Heavy-duty imported material","Airtight compression seal","Protects from dust & moisture","Multiple size options"] },
-  { id:14, name:"Desktop Perfume And Cosmetic Organizer", price:1785, compare:2500, category:"Home & Storage", handle:"desktop-perfume-and-cosmetic-organizer", images:8, hasVideo:false,
+  { id:13, name:"Storage Bag (Imported)", price:1950, compare:3500, category:"Home & Storage", handle:"storage-bag", images:5,
+    desc:"A high-quality imported storage bag for clothes, bedding, or seasonal items. Keeps contents dust-free and compressed.", features:["Heavy-duty imported material","Airtight compression seal","Protects from dust & moisture","Multiple size options"] },
+  { id:14, name:"Desktop Perfume And Cosmetic Organizer", price:1785, compare:2500, category:"Home & Storage", handle:"desktop-perfume-and-cosmetic-organizer", images:8,
     desc:"A sleek desktop organizer with multiple tiers for perfumes, skincare bottles, lipsticks, and cosmetic accessories.", features:["Multi-tier display design","Holds perfume & cosmetics","Sturdy base, elegant finish","Easy to assemble & clean"] },
-  { id:15, name:"2 in 1 Oil Jug (Oil & Vinegar Dispenser)", price:1000, compare:2000, category:"Kitchen & Dining", handle:"2-in-1-oil-jug", images:7, hasVideo:false,
-    desc:"A dual-function oil and vinegar dispenser in one ergonomic jug — keeps your kitchen counter tidy and pours cleanly every time.", features:["Two separate chambers","Drip-free pouring spout","BPA-free food-grade material","Easy-grip handle design"] },
-  { id:16, name:'Door Foam Draft Stopper 40"', price:200, compare:0, category:"Home & Storage", handle:"door-foam-draft-40", images:3, hasVideo:false,
+  { id:15, name:"2 in 1 Oil Jug (Oil & Vinegar Dispenser)", price:1000, compare:2000, category:"Kitchen & Dining", handle:"2-in-1-oil-jug", images:7,
+    desc:"A dual-function oil and vinegar dispenser in one ergonomic jug — keeps your kitchen counter tidy and pours cleanly.", features:["Two separate chambers","Drip-free pouring spout","BPA-free food-grade material","Easy-grip handle design"] },
+  { id:16, name:'Door Foam Draft Stopper 40"', price:200, compare:0, category:"Home & Storage", handle:"door-foam-draft-40", images:3,
     desc:"A foam door draft stopper that seals gaps under doors to block cold air, dust, insects, and noise effectively.", features:['Fits doors up to 40"','Blocks cold air & dust','Easy peel-and-stick install','Weatherproof foam material'] },
-  { id:17, name:"Silicone Face Ice Roller", price:600, compare:950, category:"Beauty & Skincare", handle:"silicone-face-ice-roller", images:10, hasVideo:false,
-    desc:"A silicone ice roller for the face that reduces puffiness, tightens pores, soothes redness, and refreshes skin after skincare routines.", features:["Food-grade silicone material","Reduces puffiness & pores","Works with ice or cold water","Ergonomic rolling handle"] },
-  { id:18, name:"Refrigerator Safety Lock", price:350, compare:650, category:"Home & Storage", handle:"refrigerator-safety-lock", images:7, hasVideo:false,
+  { id:17, name:"Silicone Face Ice Roller", price:600, compare:950, category:"Beauty & Skincare", handle:"silicone-face-ice-roller", images:10,
+    desc:"A silicone ice roller for the face that reduces puffiness, tightens pores, soothes redness, and refreshes skin.", features:["Food-grade silicone material","Reduces puffiness & pores","Works with ice or cold water","Ergonomic rolling handle"] },
+  { id:18, name:"Refrigerator Safety Lock", price:350, compare:650, category:"Home & Storage", handle:"refrigerator-safety-lock", images:7,
     desc:"A child-proof safety lock for refrigerators, freezers, and cabinets — keeps curious toddlers and kids safe without tools.", features:["No drilling required","Adhesive mount installation","Adjustable strap length","Works on most fridge models"] },
-  { id:19, name:"Luxury Rotating Tray", price:1350, compare:0, category:"Home & Storage", handle:"luxury-rotating-tray-1", images:12, hasVideo:false,
+  { id:19, name:"Luxury Rotating Tray", price:1350, compare:0, category:"Home & Storage", handle:"luxury-rotating-tray-1", images:12,
     desc:"A 360° rotating lazy susan tray for kitchen counters, dining tables, or vanity tops — organise and access items effortlessly.", features:["Full 360° smooth rotation","Non-slip base","Suitable for kitchen & vanity","Elegant premium finish"] },
-  { id:20, name:"Facial Steamer & Face Humidifier", price:500, compare:650, category:"Beauty & Skincare", handle:"face-humidifier-facial-steamer-mist-sprayer-spa-steaming-machine-2", images:7, hasVideo:false,
+  { id:20, name:"Facial Steamer & Face Humidifier", price:500, compare:650, category:"Beauty & Skincare", handle:"face-humidifier-facial-steamer-mist-sprayer-spa-steaming-machine-2", images:7,
     desc:"A portable facial steamer and mist sprayer for deep pore cleansing, hydration, and an at-home spa experience.", features:["Fine mist nano-spray technology","Opens pores for deep cleanse","USB-powered & portable","Suitable for all skin types"] },
-  { id:21, name:"Refrigerator Food Storage Box (4pcs)", price:415, compare:1000, category:"Kitchen & Dining", handle:"refrigerator-food-storage-box-1", images:9, hasVideo:false,
+  { id:21, name:"Refrigerator Food Storage Box (4pcs)", price:415, compare:1000, category:"Kitchen & Dining", handle:"refrigerator-food-storage-box-1", images:9,
     desc:"A set of 4 airtight food storage containers designed for refrigerator use — keeps fruits, vegetables, and leftovers fresh longer.", features:["Set of 4 containers","Airtight sealing lids","BPA-free food-safe plastic","Stackable for space saving"] },
-  // { id:22, name:"Luxury Pink Hair Accessories Storage Box", price:2500, compare:4000, category:"Beauty & Skincare", handle:"luxury-pink-hair-accessories-storage-box-premium-organizer-for-scrunchies-clips-girls-essentials-homducts-pk-1", images:1, hasVideo:false,
-    // desc:"A premium pink storage box for scrunchies, hair clips, pins, and other hair accessories — perfect for girls and vanity tables.", features:["Multiple compartments inside","Elegant pink luxury design","Dust-free lidded storage","Ideal gift for girls"] },
-  { id:23, name:"New 360° Rotating Makeup Brush Holder", price:1750, compare:2500, category:"Beauty & Skincare", handle:"new-360-rotating-makeup-brush-holder-1", images:8, hasVideo:false,
+  { id:23, name:"New 360° Rotating Makeup Brush Holder", price:1750, compare:2500, category:"Beauty & Skincare", handle:"new-360-rotating-makeup-brush-holder-1", images:8,
     desc:"A 360° rotating makeup brush holder that keeps all your brushes clean, organised, and within easy reach on your vanity.", features:["Full 360° smooth rotation","Multiple brush slot compartments","Dust-free design","Non-slip weighted base"] },
-  { id:24, name:"Dustproof Multilayer Shoe Rack", price:3950, compare:4500, category:"Home & Storage", handle:"dustproof-multilayer-shoe-rack", images:7, hasVideo:false,
+  { id:24, name:"Dustproof Multilayer Shoe Rack", price:3950, compare:4500, category:"Home & Storage", handle:"dustproof-multilayer-shoe-rack", images:7,
     desc:"A multilayer dustproof shoe organizer rack with a fabric cover to keep shoes clean, sorted, and protected from dust.", features:["Multilayer expandable design","Full dustproof fabric cover","Easy self-assembly","Holds up to 30+ pairs"] },
-  { id:25, name:"Egg Shell Opener", price:320, compare:0, category:"Kitchen & Dining", handle:"egg-shell-opener", images:6, hasVideo:false,
+  { id:25, name:"Egg Shell Opener", price:320, compare:0, category:"Kitchen & Dining", handle:"egg-shell-opener", images:6,
     desc:"A handy kitchen tool that cracks egg shells cleanly and safely — no mess, no shell fragments in your food.", features:["Clean crack every time","Safe for children to use","Compact & easy to store","Works with all egg sizes"] },
-  { id:26, name:"Stainless Steel Dough Mixer", price:299, compare:550, category:"Kitchen & Dining", handle:"stainless-steel-dough-mixer", images:8, hasVideo:false,
+  { id:26, name:"Stainless Steel Dough Mixer", price:299, compare:550, category:"Kitchen & Dining", handle:"stainless-steel-dough-mixer", images:8,
     desc:"A stainless steel hand dough mixer for kneading bread, roti, and pastry dough quickly and evenly without getting your hands messy.", features:["Food-grade stainless steel","Ergonomic grip handle","Easy to clean","Works for all dough types"] },
-  { id:27, name:"Leather Travel Cosmetic Organizer", price:1099, compare:2000, category:"Travel & Bags", handle:"leather-travel-cosmetic-organizer-1", images:7, hasVideo:false,
+  { id:27, name:"Leather Travel Cosmetic Organizer", price:1099, compare:2000, category:"Travel & Bags", handle:"leather-travel-cosmetic-organizer-1", images:7,
     desc:"A leather-finish travel cosmetic bag with multiple interior pockets for organising makeup, skincare, and toiletries neatly.", features:["PU leather exterior","Multiple inner compartments","Durable zipper closure","Compact for carry-on travel"] },
-  { id:28, name:"Luxury Rotating Makeup Brush Holder", price:2200, compare:2700, category:"Beauty & Skincare", handle:"luxury-360-rotating-makeup-brush-holder-1", images:6, hasVideo:false,
+  { id:28, name:"Luxury Rotating Makeup Brush Holder", price:2200, compare:2700, category:"Beauty & Skincare", handle:"luxury-360-rotating-makeup-brush-holder-1", images:6,
     desc:"A premium 360° rotating makeup brush organizer with a transparent acrylic design that displays your brushes like a luxury vanity.", features:["Transparent acrylic design","Full 360° rotation","Holds 20+ brushes","Non-slip base pad"] },
-  { id:29, name:"Lint Remover", price:1550, compare:0, category:"Home & Storage", handle:"lint-remover-1", images:5, hasVideo:false,
+  { id:29, name:"Lint Remover", price:1550, compare:0, category:"Home & Storage", handle:"lint-remover-1", images:5,
     desc:"An electric fabric lint remover that shaves off pilling, lint, and fluff from clothes, sofas, and blankets to restore their like-new look.", features:["3-blade precision shaving head","USB rechargeable","Works on all fabric types","Includes lint collection tray"] },
-  { id:30, name:"LED Light Makeup Mirror", price:1650, compare:0, category:"Beauty & Skincare", handle:"led-light-makeup-mirror-1", images:4, hasVideo:false,
+  { id:30, name:"LED Light Makeup Mirror", price:1650, compare:0, category:"Beauty & Skincare", handle:"led-light-makeup-mirror-1", images:4,
     desc:"A lighted vanity mirror with bright LED illumination for flawless makeup application in any lighting condition.", features:["Bright LED ring light","Adjustable brightness settings","360° tilt adjustment","Compact desktop design"] },
-  { id:31, name:"Cute Panda Silicone LED Lamp Light", price:1599, compare:2350, category:"Home & Storage", handle:"cute-panda-silicon-led-lamp-light", images:1, hasVideo:false,
+  { id:31, name:"Cute Panda Silicone LED Lamp Light", price:1599, compare:2350, category:"Home & Storage", handle:"cute-panda-silicon-led-lamp-light", images:1,
     desc:"An adorable panda-shaped silicone LED night lamp perfect for children's bedrooms, nurseries, or as a cute desk decoration.", features:["Soft silicone body – child safe","Touch-on/off control","Warm ambient glow","Rechargeable via USB"] },
-  { id:32, name:"2 Set of 6 Pcs Ear Wax Removal Kit", price:699, compare:2000, category:"Health & Wellness", handle:"6pcs-stainless-steel-ear-wax-removal-kit-for-ear-care-cleaning-copy-1", images:8, hasVideo:false,
+  { id:32, name:"2 Set of 6 Pcs Ear Wax Removal Kit", price:699, compare:2000, category:"Health & Wellness", handle:"6pcs-stainless-steel-ear-wax-removal-kit-for-ear-care-cleaning-copy-1", images:8,
     desc:"A 12-piece stainless steel ear care and cleaning kit with 2 sets of 6 different-shaped tools for safe and effective earwax removal.", features:["12 tools total (2 × 6 set)","Medical-grade stainless steel","Multiple tip shapes","Includes travel storage case"] },
-  { id:33, name:"3 Bundle Winter Silicone Socks & Gloves", price:999, compare:1799, category:"Personal Care", handle:"winter-silicone-socks-and-gloves", images:10, hasVideo:false,
+  { id:33, name:"3 Bundle Winter Silicone Socks & Gloves", price:999, compare:1799, category:"Personal Care", handle:"winter-silicone-socks-and-gloves", images:10,
     desc:"A deep moisturizing bundle of silicone socks and gloves that locks in cream for soft, crack-free hands and feet overnight.", features:["Deep moisturizing gel lining","Reusable silicone material","Repairs cracked heels & hands","Suitable for all sizes"] },
-  { id:34, name:"Melodine Japanese Pain Relief Gel", price:999, compare:1800, category:"Health & Wellness", handle:"japanese-instant-pain-relief-gel", images:7, hasVideo:false,
+  { id:34, name:"Melodine Japanese Pain Relief Gel", price:999, compare:1800, category:"Health & Wellness", handle:"japanese-instant-pain-relief-gel", images:7,
     desc:"A fast-acting Japanese-formula topical gel for muscle pain, joint stiffness, back pain, and body aches. Non-greasy and quick-absorbing.", features:["Fast-acting cooling + warming effect","Targets muscle & joint pain","Non-greasy formula","Safe for daily external use"] },
-  { id:35, name:"1Pc Wall Mounted Soap Holder with Drain Tray", price:580, compare:700, category:"Home & Storage", handle:"luxury-wall-mounted-soap-holder-drain-tray-pakistan", images:8, hasVideo:false,
-    desc:"A no-drill adhesive wall mounted soap holder with a built-in drain tray to keep your bathroom or kitchen sink clean and soap residue-free.", features:["No-drill adhesive installation","Built-in drainage holes","Holds standard bar soaps","Random color dispatch"] },
-  { id:36, name:"Metal Flexible 60cm Drain Cleaner Spring", price:499, compare:999, category:"Home & Storage", handle:"metal-flexible-60cm-drain-cleaner-pipe-dredging-tool-pakistan", images:8, hasVideo:false,
+  { id:35, name:"1Pc Wall Mounted Soap Holder with Drain Tray", price:580, compare:700, category:"Home & Storage", handle:"luxury-wall-mounted-soap-holder-drain-tray-pakistan", images:8,
+    desc:"A no-drill adhesive wall mounted soap holder with a built-in drain tray to keep your bathroom or kitchen sink clean.", features:["No-drill adhesive installation","Built-in drainage holes","Holds standard bar soaps","Random color dispatch"] },
+  { id:36, name:"Metal Flexible 60cm Drain Cleaner Spring", price:499, compare:999, category:"Home & Storage", handle:"metal-flexible-60cm-drain-cleaner-pipe-dredging-tool-pakistan", images:8,
     desc:"A 60cm flexible metal drain cleaning spring for unclogging sinks, pipes, and sewers without harsh chemicals.", features:["60cm flexible metal spring","Fits standard pipe sizes","Removes hair & debris","Reusable & easy to rinse"] },
-  { id:37, name:"Anti-Loss Strip", price:0, compare:0, category:"Home & Storage", handle:"anti-los-strip", images:12, hasVideo:false,
+  { id:37, name:"Anti-Loss Strip", price:0, compare:0, category:"Home & Storage", handle:"anti-los-strip", images:12,
     desc:"A smart anti-loss adhesive strip to secure small items and prevent accidental loss at home or while travelling.", features:["Strong adhesive backing","Reusable strip design","Works on multiple surfaces","Discreet & compact"] },
-  { id:38, name:"Spa Silicone Socks", price:0, compare:0, category:"Personal Care", handle:"spa-silicon-socks", images:6, hasVideo:false,
+  { id:38, name:"Spa Silicone Socks", price:0, compare:0, category:"Personal Care", handle:"spa-silicon-socks", images:6,
     desc:"Spa-grade silicone socks for overnight foot moisturization — simply apply cream, wear, and wake up to baby-soft feet.", features:["Spa-quality silicone material","Locks in moisturizer overnight","One size fits most","Washable & reusable"] },
-  { id:39, name:"2 LED Light Makeup Mirror", price:0, compare:0, category:"Beauty & Skincare", handle:"2-led-light-makeup-mirror", images:6, hasVideo:false,
-    desc:"A dual-sided LED lighted makeup mirror with magnification on one side for detailed makeup application and grooming.", features:["LED ring illumination","1× and magnification sides","Touch control brightness","Foldable compact design"] },
-  // { id:40, name:"Waterproof Organizer Bags", price:0, compare:0, category:"Travel & Bags", handle:"waterproof-organizer-bags", images:3, hasVideo:false,
-  //   desc:"A set of waterproof organizer bags in various sizes for keeping clothes, electronics, and toiletries dry and sorted while travelling.", features:["100% waterproof material","Multiple size set","Double-zip closure","Transparent window panels"] },
-  // { id:41, name:"Orange Exfoliating Dead Skin Remover Gel", price:0, compare:0, category:"Beauty & Skincare", handle:"orange-exfoliating-dead-skin-remover-gel", images:3, hasVideo:false,
-  //   desc:"An orange-extract exfoliating gel that rolls off dead skin cells to reveal smoother, brighter skin without harsh scrubbing.", features:["Natural orange extract formula","No scrubbing needed – rolls off dead skin","Suitable for face & body","Leaves skin visibly smooth"] }
+  { id:39, name:"2 LED Light Makeup Mirror", price:0, compare:0, category:"Beauty & Skincare", handle:"2-led-light-makeup-mirror", images:6,
+    desc:"A dual-sided LED lighted makeup mirror with magnification on one side for detailed makeup application and grooming.", features:["LED ring illumination","1× and magnification sides","Touch control brightness","Foldable compact design"] }
 ];
 
 // Best sellers: top 3 by highest discount %
@@ -906,19 +921,14 @@ function renderCard(p) {
     ? `<span class="text-teal font-bold text-sm">Contact for Price</span>`
     : `<span class="font-bold text-teal text-lg">${fmtPrice(p.price)}</span>${p.compare > 0 ? ` <span class="text-xs text-gray-400 line-through">${fmtPrice(p.compare)}</span>` : ''}`;
 
-  const btnHTML = p.price === 0
-    ? `<a href="https://wa.me/923224061289?text=Hi%2C%20I'm%20interested%20in%20${encodeURIComponent(p.name)}" target="_blank" class="btn-gold w-full py-2 rounded-lg text-sm text-center block">Ask on WhatsApp</a>`
-    : `<button onclick="openProductModal(${p.id})" class="btn-gold w-full py-2 rounded-lg text-sm">Buy Now</button>`;
-
   const cardId = `card-img-${p.id}`;
-  // Queue image resolution after render
   setTimeout(() => {
     const el = document.getElementById(cardId);
     if (el) setImgSmart(el, p.handle, 1, p.name);
   }, 0);
 
   return `
-  <div class="product-card fade-in" data-category="${p.category}" onclick="openProductModal(${p.id})">
+  <div class="product-card fade-in" data-category="${p.category}" data-search="${(p.name+" "+p.category+" "+p.desc).toLowerCase()}" onclick="window.location.href='product.html?id=${p.id}'">
     <div class="card-img-wrap">
       <img id="${cardId}" src="${placeholderSvg(p.name)}" alt="${p.name}" style="background:#e8f0f7;"/>
     </div>
@@ -930,7 +940,9 @@ function renderCard(p) {
       <h3 class="font-heading font-bold text-base text-charcoal leading-snug mb-1 line-clamp-2">${p.name}</h3>
       <p class="text-xs text-charcoal/60 mb-3 leading-relaxed line-clamp-2">${shortDesc(p.desc)}</p>
       <div class="flex items-center gap-2 mb-3">${priceHTML}</div>
-      <div onclick="event.stopPropagation()">${btnHTML}</div>
+      <a href="product.html?id=${p.id}" onclick="event.stopPropagation()" class="btn-gold w-full py-2 rounded-lg text-sm text-center block">
+        ${p.price === 0 ? 'Ask on WhatsApp' : 'Buy Now'}
+      </a>
     </div>
   </div>`;
 }
@@ -944,7 +956,7 @@ function renderBSCard(p) {
     if (el) setImgSmart(el, p.handle, 1, p.name);
   }, 0);
   return `
-  <div class="product-card fade-in cursor-pointer" onclick="openProductModal(${p.id})">
+  <div class="product-card fade-in cursor-pointer" onclick="window.location.href='product.html?id=${p.id}'">
     <div class="card-img-wrap relative">
       <img id="${bsId}" src="${placeholderSvg(p.name)}" alt="${p.name}" style="background:#e8f0f7;"/>
       <span class="bs-badge absolute top-3 left-3">Best Seller</span>
@@ -958,7 +970,7 @@ function renderBSCard(p) {
         <span class="font-bold text-teal text-xl">${fmtPrice(p.price)}</span>
         <span class="text-sm text-gray-400 line-through">${fmtPrice(p.compare)}</span>
       </div>
-      <button class="btn-teal w-full py-2.5 rounded-xl text-sm">View Details</button>
+      <a href="product.html?id=${p.id}" onclick="event.stopPropagation()" class="btn-teal w-full py-2.5 rounded-xl text-sm text-center block">View Details</a>
     </div>
   </div>`;
 }
@@ -970,25 +982,70 @@ function initGrids() {
   observeFadeIns();
 }
 
-// ── FILTER ──
+// ── ACTIVE FILTER & SEARCH STATE ──
+let activeCategory = 'all';
+let activeSearch = '';
+
+// ── FILTER BY CATEGORY ──
 function filterProducts(cat, btn) {
+  activeCategory = cat;
+  activeSearch = '';
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').classList.add('hidden');
+  document.getElementById('search-results-count').classList.add('hidden');
   if (btn) {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
-  document.querySelectorAll('#products-grid .product-card').forEach(card => {
-    const show = cat === 'all' || card.dataset.category === cat;
+  applyFilters();
+  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── SEARCH ──
+function handleSearch(val) {
+  activeSearch = val.trim().toLowerCase();
+  document.getElementById('search-clear').classList.toggle('hidden', !val);
+  // Reset category filter to all when searching
+  if (activeSearch) {
+    activeCategory = 'all';
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.filter-btn').classList.add('active');
+  }
+  applyFilters();
+}
+
+function clearSearch() {
+  activeSearch = '';
+  activeCategory = 'all';
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').classList.add('hidden');
+  document.getElementById('search-results-count').classList.add('hidden');
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn').classList.add('active');
+  applyFilters();
+}
+
+// ── APPLY BOTH FILTERS ──
+function applyFilters() {
+  const cards = document.querySelectorAll('#products-grid .product-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const matchCat = activeCategory === 'all' || card.dataset.category === activeCategory;
+    const matchSearch = !activeSearch || card.dataset.search.includes(activeSearch);
+    const show = matchCat && matchSearch;
     card.style.display = show ? 'block' : 'none';
+    if (show) visible++;
   });
-  if (cat !== 'all') {
-    document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
-    // Sync filter btn
-    document.querySelectorAll('.filter-btn').forEach(b => {
-      if (b.textContent.trim() === cat) {
-        document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
-        b.classList.add('active');
-      }
-    });
+  // Show/hide no-results
+  document.getElementById('no-results').classList.toggle('hidden', visible > 0);
+  document.getElementById('products-grid').classList.toggle('hidden', visible === 0);
+  // Show count when searching
+  const countEl = document.getElementById('search-results-count');
+  if (activeSearch) {
+    countEl.textContent = `${visible} product${visible !== 1 ? 's' : ''} found for "${activeSearch}"`;
+    countEl.classList.remove('hidden');
+  } else {
+    countEl.classList.add('hidden');
   }
 }
 
@@ -1052,7 +1109,7 @@ function buildGallery(p) {
   const videoFormats = ['mp4', 'mov', 'webm'];
   function tryVideoFormat(i) {
     if (i >= videoFormats.length) return;
-    const videoSrc = `images/${p.handle}/video.${videoFormats[i]}`;
+    const videoSrc = `${p.handle}/video.${videoFormats[i]}`;
     const vid = document.createElement('video');
     vid.src = videoSrc;
     vid.controls = true;
