@@ -109,6 +109,11 @@ tailwind.config = {
   .fade-in{ opacity:0; transform:translateY(20px); transition:opacity 0.6s, transform 0.6s; }
   .fade-in.visible{ opacity:1; transform:translateY(0); }
 
+  /* SHARE BUTTONS */
+  .share-btn { cursor:pointer; border:none; transform:scale(1); }
+  .share-btn:hover { transform:scale(1.07); filter:brightness(1.1); }
+  .share-btn:active { transform:scale(0.97); }
+
   /* TABS */
   .tab-btn{ padding:0.5rem 1.2rem; border-bottom:3px solid transparent; font-weight:500; color:#888; cursor:pointer; transition:all 0.2s; font-size:0.9rem; }
   .tab-btn.active{ color:var(--teal); border-bottom-color:var(--gold); }
@@ -260,6 +265,69 @@ tailwind.config = {
           <span><i class="ri-exchange-line text-teal mr-1"></i>Easy Returns via WhatsApp</span>
           <span><i class="ri-secure-payment-line text-teal mr-1"></i>No Card Required</span>
         </div>
+
+        <!-- ── SHARE SECTION ── -->
+        <div class="border-t border-charcoal/10 pt-4">
+          <p class="text-xs font-semibold text-charcoal/50 uppercase tracking-wider mb-3">Share this product</p>
+          <div class="flex items-center gap-3 flex-wrap">
+
+            <!-- WhatsApp -->
+            <button onclick="shareProduct('whatsapp')" title="Share on WhatsApp"
+              class="share-btn group flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold text-white transition-all"
+              style="background:#25D366;">
+              <i class="ri-whatsapp-line text-lg"></i>
+              <span class="hidden sm:inline">WhatsApp</span>
+            </button>
+
+            <!-- Facebook -->
+            <button onclick="shareProduct('facebook')" title="Share on Facebook"
+              class="share-btn group flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold text-white transition-all"
+              style="background:#1877F2;">
+              <i class="ri-facebook-fill text-lg"></i>
+              <span class="hidden sm:inline">Facebook</span>
+            </button>
+
+            <!-- Instagram -->
+            <button onclick="shareProduct('instagram')" title="Share on Instagram"
+              class="share-btn group flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold text-white transition-all"
+              style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);">
+              <i class="ri-instagram-line text-lg"></i>
+              <span class="hidden sm:inline">Instagram</span>
+            </button>
+
+            <!-- TikTok -->
+            <button onclick="shareProduct('tiktok')" title="Share on TikTok"
+              class="share-btn group flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold text-white transition-all"
+              style="background:#010101;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
+              </svg>
+              <span class="hidden sm:inline">TikTok</span>
+            </button>
+
+            <!-- Copy Link -->
+            <button onclick="copyLink()" id="copy-link-btn" title="Copy link"
+              class="share-btn flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all border-2 border-charcoal/15 text-charcoal/60 hover:border-teal hover:text-teal bg-white">
+              <i class="ri-link text-lg"></i>
+              <span class="hidden sm:inline" id="copy-link-text">Copy Link</span>
+            </button>
+
+            <!-- Download Share Image -->
+            <button onclick="downloadShareCard()" title="Download share image"
+              class="share-btn flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all border-2 border-gold/40 text-gold hover:bg-gold hover:text-white bg-white">
+              <i class="ri-image-download-line text-lg"></i>
+              <span class="hidden sm:inline">Save Image</span>
+            </button>
+
+          </div>
+
+          <!-- Share toast -->
+          <div id="share-toast" class="hidden mt-3 text-xs text-green-600 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2 w-fit">
+            <i class="ri-checkbox-circle-line"></i>
+            <span id="share-toast-msg">Link copied!</span>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -731,6 +799,282 @@ function sendOrder(){
   window.open(`https://wa.me/923224061289?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
+// ── SHARE WITH IMAGE ──
+
+// Get the current main product image URL
+function getCurrentImageUrl() {
+  const mainImg = document.getElementById('main-img');
+  if (mainImg && mainImg.src && !mainImg.src.startsWith('data:')) return mainImg.src;
+  if (galleryItems.length > 0 && galleryItems[0].type === 'img') return galleryItems[0].src;
+  return null;
+}
+
+// Build a share card canvas: product image + branding overlay
+async function buildShareCanvas() {
+  const p = currentProduct;
+  const imgUrl = getCurrentImageUrl();
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1080;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#F8F8F6';
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Draw product image if available
+  if (imgUrl) {
+    await new Promise((res) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        // Cover-fit image in top 720px
+        const iw = img.width, ih = img.height;
+        const scale = Math.max(1080 / iw, 720 / ih);
+        const sw = iw * scale, sh = ih * scale;
+        const sx = (1080 - sw) / 2, sy = (720 - sh) / 2;
+        ctx.drawImage(img, sx, sy, sw, sh);
+        res();
+      };
+      img.onerror = res;
+      img.src = imgUrl;
+    });
+  } else {
+    // Placeholder gradient
+    const grad = ctx.createLinearGradient(0, 0, 1080, 720);
+    grad.addColorStop(0, '#1A5276');
+    grad.addColorStop(1, '#2471A3');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1080, 720);
+  }
+
+  // Dark gradient overlay on image bottom
+  const fadeGrad = ctx.createLinearGradient(0, 500, 0, 720);
+  fadeGrad.addColorStop(0, 'rgba(0,0,0,0)');
+  fadeGrad.addColorStop(1, 'rgba(0,0,0,0.55)');
+  ctx.fillStyle = fadeGrad;
+  ctx.fillRect(0, 0, 1080, 720);
+
+  // Bottom info panel
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 720, 1080, 360);
+
+  // Teal top bar on panel
+  ctx.fillStyle = '#1A5276';
+  ctx.fillRect(0, 720, 1080, 8);
+
+  // Brand name
+  ctx.fillStyle = '#1A5276';
+  ctx.font = 'bold 42px sans-serif';
+  ctx.fillText('Zarish Mall', 60, 805);
+
+  // Gold underline
+  ctx.fillStyle = '#D4AC0D';
+  ctx.fillRect(60, 818, 200, 4);
+
+  // Product name (wrap text)
+  ctx.fillStyle = '#1C1C1C';
+  ctx.font = 'bold 52px serif';
+  const name = p.name;
+  const maxW = 960;
+  const words = name.split(' ');
+  let line = '', lines = [];
+  for (const w of words) {
+    const test = line + (line ? ' ' : '') + w;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+    else line = test;
+  }
+  if (line) lines.push(line);
+  lines.slice(0, 2).forEach((l, i) => ctx.fillText(l, 60, 890 + i * 62));
+
+  // Price
+  const price = p.price > 0 ? `PKR ${p.price.toLocaleString('en-PK')}` : 'Contact for Price';
+  ctx.fillStyle = '#D4AC0D';
+  ctx.font = 'bold 56px sans-serif';
+  ctx.fillText(price, 60, lines.length > 1 ? 1020 : 970);
+
+  // Compare price
+  if (p.compare > 0) {
+    ctx.fillStyle = '#999';
+    ctx.font = '36px sans-serif';
+    const compareText = `PKR ${p.compare.toLocaleString('en-PK')}`;
+    const priceX = ctx.measureText(price).width + 80;
+    ctx.save();
+    const cy = lines.length > 1 ? 1020 : 970;
+    ctx.fillText(compareText, priceX, cy);
+    ctx.strokeStyle = '#999';
+    ctx.lineWidth = 2;
+    const tw = ctx.measureText(compareText).width;
+    ctx.beginPath();
+    ctx.moveTo(priceX, cy - 24);
+    ctx.lineTo(priceX + tw, cy - 24);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // COD badge
+  ctx.fillStyle = '#e8f5e9';
+  ctx.beginPath();
+  ctx.roundRect(60, 1040, 340, 52, 26);
+  ctx.fill();
+  ctx.fillStyle = '#2e7d32';
+  ctx.font = 'bold 28px sans-serif';
+  ctx.fillText('✓ Cash on Delivery', 80, 1074);
+
+  // Stars
+  ctx.fillStyle = '#D4AC0D';
+  ctx.font = '36px sans-serif';
+  ctx.fillText('★★★★★', 440, 1074);
+
+  return canvas;
+}
+
+// Convert canvas to File
+async function canvasToFile(canvas, filename) {
+  return new Promise(res => {
+    canvas.toBlob(blob => {
+      res(new File([blob], filename, { type: 'image/png' }));
+    }, 'image/png');
+  });
+}
+
+// Download the share card
+async function downloadShareCard() {
+  const canvas = await buildShareCanvas();
+  const a = document.createElement('a');
+  a.download = `zarish-mall-${currentProduct.handle}.png`;
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+
+// Main share function
+async function shareProduct(platform) {
+  const p = currentProduct;
+  if (!p) return;
+
+  const price = p.price > 0 ? `PKR ${p.price.toLocaleString('en-PK')}` : 'Contact for Price';
+  const pageUrl = window.location.href;
+  const textMsg = `🛍️ *${p.name}*\n💰 ${price}\n\n✅ Cash on Delivery across Pakistan\n🔗 ${pageUrl}\n\n_Zarish Mall – Quality Products, Delivered to Your Door_`;
+
+  // --- WhatsApp: native share with image on mobile, text link on desktop ---
+  if (platform === 'whatsapp') {
+    // Try native Web Share API with image (works on mobile browsers)
+    if (navigator.canShare) {
+      try {
+        const canvas = await buildShareCanvas();
+        const file = await canvasToFile(canvas, `${p.name}.png`);
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: p.name, text: textMsg });
+          return;
+        }
+      } catch(e) { /* fall through */ }
+    }
+    // Fallback: WhatsApp web text link
+    window.open(`https://wa.me/?text=${encodeURIComponent(textMsg)}`, '_blank', 'width=600,height=500');
+    return;
+  }
+
+  // --- Instagram & TikTok: download card + copy text + instructions ---
+  if (platform === 'instagram' || platform === 'tiktok') {
+    showShareModal(platform);
+    return;
+  }
+
+  // --- Facebook: share URL (Facebook fetches og:image from the page) ---
+  if (platform === 'facebook') {
+    const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
+    window.open(fbUrl, '_blank', 'width=600,height=500');
+    return;
+  }
+}
+
+// ── SHARE MODAL (Instagram / TikTok) ──
+async function showShareModal(platform) {
+  const p = currentProduct;
+  const price = p.price > 0 ? `PKR ${p.price.toLocaleString('en-PK')}` : 'Contact for Price';
+  const caption = `🛍️ ${p.name}\n💰 ${price}\n✅ Cash on Delivery\n\n#ZarishMall #OnlineShopping #Pakistan`;
+
+  // Build canvas & show preview
+  const modal = document.getElementById('share-img-modal');
+  const preview = document.getElementById('share-preview-img');
+  const platformLabel = document.getElementById('share-platform-label');
+  const captionBox = document.getElementById('share-caption-text');
+
+  platformLabel.textContent = platform === 'instagram' ? 'Instagram' : 'TikTok';
+  captionBox.value = caption;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Show loading state
+  preview.src = '';
+  preview.style.opacity = '0.3';
+  document.getElementById('share-generating').classList.remove('hidden');
+
+  const canvas = await buildShareCanvas();
+  preview.src = canvas.toDataURL('image/png');
+  preview.style.opacity = '1';
+  document.getElementById('share-generating').classList.add('hidden');
+
+  // Store canvas for download
+  window._shareCanvas = canvas;
+}
+
+function closeShareModal() {
+  document.getElementById('share-img-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+async function downloadAndOpen(platform) {
+  // Download image
+  if (window._shareCanvas) {
+    const a = document.createElement('a');
+    a.download = `zarish-mall-${currentProduct.handle}.png`;
+    a.href = window._shareCanvas.toDataURL('image/png');
+    a.click();
+  }
+  // Copy caption
+  const caption = document.getElementById('share-caption-text').value;
+  try { await navigator.clipboard.writeText(caption); } catch(e) {}
+
+  // Open app
+  setTimeout(() => {
+    if (platform === 'instagram') window.open('https://www.instagram.com', '_blank');
+    else if (platform === 'tiktok') window.open('https://www.tiktok.com', '_blank');
+    closeShareModal();
+    showShareToast('Image downloaded & caption copied! Paste in your post.');
+  }, 500);
+}
+
+async function copyLink() {
+  const txt = document.getElementById('copy-link-text');
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+  } catch(e) {
+    const ta = document.createElement('textarea');
+    ta.value = window.location.href;
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  txt.textContent = 'Copied!';
+  document.getElementById('copy-link-btn').style.borderColor = '#1A5276';
+  document.getElementById('copy-link-btn').style.color = '#1A5276';
+  showShareToast('Product link copied to clipboard!');
+  setTimeout(() => {
+    txt.textContent = 'Copy Link';
+    document.getElementById('copy-link-btn').style.borderColor = '';
+    document.getElementById('copy-link-btn').style.color = '';
+  }, 2500);
+}
+
+function showShareToast(msg) {
+  const toast = document.getElementById('share-toast');
+  document.getElementById('share-toast-msg').textContent = msg;
+  toast.classList.remove('hidden');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 4000);
+}
+
 // ── TABS ──
 function switchTab(id){
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
@@ -777,5 +1121,59 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 });
 </script>
+<!-- ══ SHARE IMAGE MODAL (Instagram / TikTok) ══ -->
+<div id="share-img-modal" class="modal-bg" onclick="if(event.target===this)closeShareModal()">
+  <div class="modal-box max-w-lg" onclick="event.stopPropagation()">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="section-title text-xl text-teal">Share on <span id="share-platform-label"></span></h3>
+        <button onclick="closeShareModal()" class="text-gray-400 hover:text-charcoal text-xl"><i class="ri-close-line"></i></button>
+      </div>
+
+      <!-- Image Preview -->
+      <div class="relative rounded-xl overflow-hidden bg-gray-100 mb-4" style="aspect-ratio:1/1;">
+        <img id="share-preview-img" src="" alt="Share Card" class="w-full h-full object-cover transition-opacity"/>
+        <div id="share-generating" class="absolute inset-0 flex flex-col items-center justify-center bg-white/80">
+          <div class="w-10 h-10 border-4 border-teal/30 border-t-teal rounded-full animate-spin mb-3"></div>
+          <p class="text-sm text-charcoal/60">Generating share card…</p>
+        </div>
+      </div>
+
+      <!-- Steps -->
+      <div class="bg-cream rounded-xl p-4 mb-4 text-sm text-charcoal/70 space-y-2">
+        <p class="font-semibold text-charcoal mb-1">How to share:</p>
+        <p><span class="bg-teal text-white text-xs font-bold px-2 py-0.5 rounded-full mr-2">1</span>Click <strong>"Download & Open"</strong> below</p>
+        <p><span class="bg-teal text-white text-xs font-bold px-2 py-0.5 rounded-full mr-2">2</span>Image downloads + caption is copied automatically</p>
+        <p><span class="bg-teal text-white text-xs font-bold px-2 py-0.5 rounded-full mr-2">3</span>Open the app, create a post/story, upload the image & paste caption</p>
+      </div>
+
+      <!-- Caption Preview -->
+      <div class="mb-5">
+        <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Caption (auto-copied)</label>
+        <textarea id="share-caption-text" rows="4" class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm font-mono text-charcoal/80 resize-none focus:border-teal outline-none"></textarea>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex gap-3">
+        <button id="share-dl-btn" onclick="downloadAndOpen(document.getElementById('share-platform-label').textContent.toLowerCase())"
+          class="flex-1 btn-gold py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold">
+          <i class="ri-download-line text-lg"></i> Download & Open
+        </button>
+        <button onclick="closeShareModal()" class="px-5 py-3 rounded-xl border-2 border-gray-200 text-sm text-charcoal/60 hover:border-teal hover:text-teal transition-all">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Share modal spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .animate-spin { animation: spin 0.8s linear infinite; }
+  /* Share modal */
+  #share-img-modal .modal-box { max-width: 500px; }
+</style>
+
 </body>
 </html>
