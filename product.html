@@ -4,6 +4,23 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Product – Zarish Mall</title>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2489193084877209');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2489193084877209&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet"/>
@@ -66,6 +83,60 @@ tailwind.config = {
   .gallery-arrow{ position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.9); border:none; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; color:var(--teal); font-size:1.1rem; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition:background 0.2s; }
   .gallery-arrow:hover{ background:#fff; }
 
+  /* ── DEAL OPTIONS ── */
+  .deal-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    background: #fff;
+    user-select: none;
+  }
+  .deal-option:hover { border-color: #1A5276; background: #f8fbff; }
+  .deal-option.selected { border-color: #22c55e; background: #f0fdf4; }
+  .deal-option.selected .deal-radio-custom { border-color: #22c55e; background: #22c55e; }
+  .deal-radio { display: none; }
+  .deal-radio-custom {
+    width: 20px; height: 20px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    background: #fff;
+  }
+  .deal-radio-custom::after {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #fff;
+    display: none;
+  }
+  .deal-option.selected .deal-radio-custom::after { display: block; }
+  .deal-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+  .most-popular-badge {
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .deal-content { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+
   /* QTY */
   .qty-btn{ width:38px; height:38px; border:2px solid var(--teal); border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--teal); background:#fff; font-size:1.1rem; transition:all 0.2s; }
   .qty-btn:hover{ background:var(--teal); color:#fff; }
@@ -104,6 +175,11 @@ tailwind.config = {
   /* SECTION TITLE */
   .section-title{ font-family:'Cormorant Garamond',serif; font-weight:700; }
   .gold-line{ display:inline-block; width:50px; height:3px; background:var(--gold); border-radius:2px; }
+
+  /* PRODUCT COLUMNS - always visible, gentle entry animation */
+  @keyframes slideUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+  .product-gallery-col { animation: slideUp 0.5s ease forwards; }
+  .product-info-col    { animation: slideUp 0.5s ease 0.1s forwards; opacity:0; }
 
   /* FADE */
   .fade-in{ opacity:0; transform:translateY(20px); transition:opacity 0.6s, transform 0.6s; }
@@ -180,7 +256,7 @@ tailwind.config = {
     <div class="grid md:grid-cols-2 gap-10 lg:gap-16 mb-16">
 
       <!-- ── LEFT: GALLERY ── -->
-      <div class="fade-in">
+      <div class="product-gallery-col">
         <!-- Main Image -->
         <div id="main-img-wrap">
           <img id="main-img" src="" alt="Product"/>
@@ -193,7 +269,7 @@ tailwind.config = {
       </div>
 
       <!-- ── RIGHT: PRODUCT INFO ── -->
-      <div class="fade-in flex flex-col gap-4">
+      <div class="product-info-col flex flex-col gap-4">
 
         <!-- Badge + Category -->
         <div class="flex items-center gap-3 flex-wrap">
@@ -234,12 +310,71 @@ tailwind.config = {
 
         <!-- Qty + Add to Cart -->
         <div id="buy-section">
-          <div class="flex items-center gap-3 mb-4">
-            <span class="text-sm font-medium text-charcoal">Quantity:</span>
-            <button class="qty-btn" onclick="changeQty(-1)"><i class="ri-subtract-line"></i></button>
-            <input id="qty-val" type="text" value="1" readonly/>
-            <button class="qty-btn" onclick="changeQty(1)"><i class="ri-add-line"></i></button>
+
+          <!-- ── SELECT YOUR DEAL ── -->
+          <div class="mb-4">
+            <p class="text-sm font-semibold text-charcoal mb-3 flex items-center gap-2">
+              <i class="ri-price-tag-3-line text-teal"></i> Select your deal
+            </p>
+            <div class="flex flex-col gap-3" id="deals-container">
+
+              <!-- Deal 1: Single -->
+              <label class="deal-option selected" data-deal="1" onclick="selectDeal(1)">
+                <input type="radio" name="deal" value="1" checked class="deal-radio"/>
+                <div class="deal-radio-custom"></div>
+                <div class="deal-content">
+                  <span class="font-semibold text-charcoal text-sm">Single</span>
+                </div>
+                <span id="deal-price-1" class="deal-price ml-auto font-bold text-teal text-sm flex-shrink-0"></span>
+              </label>
+
+              <!-- Deal 2: Buy 2 -->
+              <label class="deal-option" data-deal="2" onclick="selectDeal(2)">
+                <input type="radio" name="deal" value="2" class="deal-radio"/>
+                <div class="deal-radio-custom"></div>
+                <div class="deal-content flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-semibold text-charcoal text-sm">Buy 2 & Get Special Discount</span>
+                    <span class="deal-badge bg-green-100 text-green-700">10% off</span>
+                  </div>
+                  <p class="text-xs text-green-600 mt-0.5">+ Free Delivery</p>
+                </div>
+                <div class="flex flex-col items-end flex-shrink-0 ml-2">
+                  <span class="most-popular-badge">Most Popular</span>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <span id="deal-original-2" class="text-xs text-gray-400 line-through"></span>
+                    <span id="deal-price-2" class="font-bold text-teal text-sm"></span>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Deal 3: Buy 3 -->
+              <label class="deal-option" data-deal="3" onclick="selectDeal(3)">
+                <input type="radio" name="deal" value="3" class="deal-radio"/>
+                <div class="deal-radio-custom"></div>
+                <div class="deal-content flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-semibold text-charcoal text-sm">Buy 3 & Get Free Delivery</span>
+                    <span class="deal-badge bg-green-100 text-green-700">20% off</span>
+                  </div>
+                  <p class="text-xs text-green-600 mt-0.5">Free Home Delivery</p>
+                </div>
+                <div class="flex flex-col items-end flex-shrink-0 ml-2">
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <span id="deal-original-3" class="text-xs text-gray-400 line-through"></span>
+                    <span id="deal-price-3" class="font-bold text-teal text-sm"></span>
+                  </div>
+                </div>
+              </label>
+
+            </div>
+
+            <!-- Deal Total -->
+            <div class="flex justify-end mt-3">
+              <p class="text-sm font-semibold text-charcoal">Total: <span id="deal-total" class="text-teal font-bold"></span></p>
+            </div>
           </div>
+
           <div class="flex flex-col sm:flex-row gap-3">
             <button onclick="openCheckout()" class="btn-gold flex-1 py-3.5 rounded-xl text-base flex items-center justify-center gap-2">
               <i class="ri-shopping-bag-line"></i> Buy Now
@@ -410,7 +545,7 @@ tailwind.config = {
           <span id="co-subtotal" class="font-semibold flex-shrink-0 text-charcoal"></span>
         </div>
         <div class="flex justify-between text-sm text-charcoal/50 mb-1">
-          <span>Shipping</span><span>PKR 200</span>
+          <span>Shipping</span><span class="co-shipping-val">PKR 200</span>
         </div>
         <div class="border-t border-charcoal/10 mt-3 pt-3 flex justify-between font-bold text-teal text-base">
           <span>Grand Total</span><span id="co-grand"></span>
@@ -562,47 +697,196 @@ const PRODUCTS = [
     desc:"A dual-sided LED lighted makeup mirror with magnification on one side for detailed makeup application.", features:["LED ring illumination","1× and magnification sides","Touch control brightness","Foldable compact design"] },
 ];
 
-// ── HELPERS ──
-const IMG_EXTS = ['jpg','jpeg','webp','png'];
+// ── SLUG HELPER ──
+function toSlug(name) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')   // remove special chars
+    .trim()
+    .replace(/\s+/g, '-')            // spaces to dashes
+    .replace(/-+/g, '-');            // collapse dashes
+}
+
+// ── PRODUCT URL HELPER ──
+function productUrl(p) {
+  return `product.html?product=${p.handle}`;
+}
 function fmtPrice(n){ return 'PKR ' + n.toLocaleString('en-PK'); }
 function placeholderSvg(label){
   return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><rect fill='%23e8f0f7' width='400' height='400'/><text x='50%25' y='50%25' fill='%231A5276' text-anchor='middle' dy='.3em' font-size='16' font-family='sans-serif'>${encodeURIComponent(label.slice(0,22))}</text></svg>`;
 }
 
-function findImage(handle, idx, onFound, onFail){
-  let i=0;
-  function tryNext(){
-    if(i>=IMG_EXTS.length){ if(onFail) onFail(); return; }
-    const url=`${handle}/${idx}.${IMG_EXTS[i]}`;
-    const p=new Image(); p.onload=()=>onFound(url); p.onerror=()=>{i++;tryNext();}; p.src=url;
+// ── SMART IMAGE LOADER ──
+// Sets img.src trying each extension via onerror chain — no Image() probing needed
+function setImgWithFallback(imgEl, handle, idx, onSuccess) {
+  const exts = ['jpg', 'jpeg', 'webp', 'png'];
+  let i = 0;
+  function tryNext() {
+    const url = `${handle}/${idx}.${exts[i]}`;
+    imgEl.onerror = () => {
+      i++;
+      if (i < exts.length) { imgEl.src = `${handle}/${idx}.${exts[i]}`; }
+      else { imgEl.onerror = null; imgEl.src = placeholderSvg('No Image'); }
+    };
+    imgEl.onload = () => { imgEl.onerror = null; if(onSuccess) onSuccess(url); };
+    imgEl.src = url;
   }
   tryNext();
+}
+
+// Legacy findImage kept for related products (still works)
+function findImage(handle, idx, onFound, onFail){
+  const img = document.createElement('img');
+  setImgWithFallback(img, handle, idx, onFound);
+  img.onerror = onFail || null;
+}
+
+// ── GALLERY ──
+function buildGallery(p){
+  galleryItems = [];
+  galleryIdx = 0;
+  const mainImg   = document.getElementById('main-img');
+  const mainVid   = document.getElementById('main-video');
+  const thumbsWrap = document.getElementById('thumbs-wrap');
+  thumbsWrap.innerHTML = '';
+
+  // Show placeholder immediately so layout doesn't collapse
+  mainImg.src = placeholderSvg(p.name);
+  mainImg.style.display = 'block';
+  mainVid.style.display = 'none';
+
+  // Load images in ORDER using index-based approach
+  let firstLoaded = false;
+
+  for (let i = 1; i <= p.images; i++) {
+    const itemIndex = i - 1;
+    const item = { type: 'img', src: '', loaded: false };
+    galleryItems.push(item); // reserve slot
+
+    // Create thumb
+    const thumb = document.createElement('img');
+    thumb.className = 'thumb';
+    thumb.style.background = '#e8f0f7';
+    thumbsWrap.appendChild(thumb);
+
+    // Load with fallback — using closure to capture correct itemIndex
+    (function(idx, thumbEl, galleryItem) {
+      const exts = ['jpg', 'jpeg', 'webp', 'png'];
+      let e = 0;
+      function tryExt() {
+        const url = `${p.handle}/${idx}.${exts[e]}`;
+        const probe = new Image();
+        probe.onload = () => {
+          galleryItem.src = url;
+          galleryItem.loaded = true;
+          thumbEl.src = url;
+          thumbEl.className = 'thumb' + (idx === 1 ? ' active' : '');
+          thumbEl.onclick = () => setGallery(itemIndex);
+          // Set main image to first one that loads
+          if (idx === 1 || !firstLoaded) {
+            firstLoaded = true;
+            setMainImage(url);
+            thumbEl.className = 'thumb active';
+          }
+        };
+        probe.onerror = () => {
+          e++;
+          if (e < exts.length) tryExt();
+          else {
+            // Remove this item from gallery
+            galleryItem.loaded = false;
+            thumbEl.style.display = 'none';
+          }
+        };
+        probe.src = url;
+      }
+      tryExt();
+    })(i, thumb, item);
+  }
+
+  // Video auto-detect
+  const videoExts = ['mp4', 'mov', 'webm'];
+  function tryVideo(vi) {
+    if (vi >= videoExts.length) return;
+    const url = `${p.handle}/video.${videoExts[vi]}`;
+    const v = document.createElement('video');
+    v.preload = 'metadata';
+    v.addEventListener('loadedmetadata', () => {
+      const item = { type: 'video', src: url };
+      galleryItems.push(item);
+      const btn = document.createElement('div');
+      btn.className = 'thumb-video';
+      btn.innerHTML = '<i class="ri-play-circle-line"></i>';
+      btn.title = 'Play Video';
+      const vidIdx = galleryItems.length - 1;
+      btn.addEventListener('click', () => setGallery(vidIdx));
+      thumbsWrap.appendChild(btn);
+    });
+    v.addEventListener('error', () => tryVideo(vi + 1));
+    v.src = url;
+  }
+  tryVideo(0);
 }
 
 // ── STATE ──
 let currentProduct = null;
 let currentQty = 1;
-let galleryItems = []; // {type:'img'|'video', src}
+let galleryItems = [];
 let galleryIdx = 0;
 
 // ── LOAD PAGE ──
 function loadPage(){
   const params = new URLSearchParams(window.location.search);
-  const id = parseInt(params.get('id'));
-  const p = PRODUCTS.find(x => x.id === id);
+  const slug = params.get('product');
+  const idParam = params.get('id');
+
+  let p = null;
+
+  if (slug) {
+    const decoded = decodeURIComponent(slug).trim().toLowerCase();
+    // Try exact handle match first
+    p = PRODUCTS.find(x => x.handle === decoded);
+    // Try handle case-insensitive
+    if (!p) p = PRODUCTS.find(x => x.handle.toLowerCase() === decoded);
+    // Try slug from name
+    if (!p) p = PRODUCTS.find(x => toSlug(x.name) === decoded);
+    // Try partial handle match
+    if (!p) p = PRODUCTS.find(x => x.handle.includes(decoded) || decoded.includes(x.handle));
+  } else if (idParam) {
+    p = PRODUCTS.find(x => x.id === parseInt(idParam));
+  }
+
+  // Last resort: check hash (#id=1 or #product=slug)
+  if (!p && window.location.hash) {
+    const hash = window.location.hash.replace('#','');
+    const hp = new URLSearchParams(hash);
+    const hSlug = hp.get('product');
+    const hId = parseInt(hp.get('id'));
+    if (hSlug) p = PRODUCTS.find(x => x.handle === decodeURIComponent(hSlug));
+    else if (hId) p = PRODUCTS.find(x => x.id === hId);
+  }
 
   if(!p){
+    const debugSlug = new URLSearchParams(window.location.search).get('product') || new URLSearchParams(window.location.search).get('id') || 'none';
     document.querySelector('main').innerHTML = `
       <div class="flex flex-col items-center justify-center min-h-screen text-center px-4">
         <i class="ri-error-warning-line text-6xl text-teal/30 mb-4"></i>
         <h2 class="text-2xl font-bold text-teal mb-3">Product Not Found</h2>
-        <p class="text-charcoal/60 mb-6">The product you're looking for doesn't exist.</p>
-        <a href="index.html" class="btn-gold px-6 py-3 rounded-full">← Back to Store</a>
+        <p class="text-charcoal/60 mb-2">Could not find product: <code class="bg-gray-100 px-2 py-0.5 rounded text-sm">${debugSlug}</code></p>
+        <a href="index.html" class="btn-gold px-6 py-3 rounded-full mt-4 inline-block">← Back to Store</a>
       </div>`;
     return;
   }
 
   currentProduct = p;
+
+  // Rewrite URL to use slug (clean URL in browser bar)
+  const cleanUrl = `product.html?product=${p.handle}`;
+  try {
+    if (window.location.search !== `?product=${p.handle}`) {
+      window.history.replaceState({}, '', cleanUrl);
+    }
+  } catch(e) { /* file:// may block replaceState in some browsers */ }
 
   // Page title
   document.title = `${p.name} – Zarish Mall`;
@@ -649,14 +933,32 @@ function loadPage(){
   document.getElementById('p-features').innerHTML = featHTML;
   document.getElementById('tab-features-list').innerHTML = featHTML;
 
+  // Init deals pricing
+  currentDeal = 1;
+  currentQty  = 1;
+  initDeals(p);
+  updateWALink();
+
   // Build gallery
   buildGallery(p);
 
   // Related products (same category, exclude self)
   loadRelated(p);
 
-  // Fade-in
-  observeFadeIns();
+  // Fade-in for below-fold sections
+  setTimeout(observeFadeIns, 200);
+
+  // Meta Pixel – ViewContent event
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'ViewContent', {
+      content_name: p.name,
+      content_category: p.category,
+      content_ids: [String(p.id)],
+      content_type: 'product',
+      value: p.price > 0 ? p.price : 0,
+      currency: 'PKR'
+    });
+  }
 }
 
 // ── GALLERY ──
@@ -746,10 +1048,10 @@ function loadRelated(p){
     const imgId = `rel-img-${r.id}`;
     setTimeout(()=>{
       const el = document.getElementById(imgId);
-      if(el) findImage(r.handle,1,(url)=>el.src=url, ()=>el.src=placeholderSvg(r.name));
-    },0);
+      if(el) setImgWithFallback(el, r.handle, 1, null);
+    }, 0);
     return `
-    <div class="rel-card" onclick="window.location.href='product.html?id=${r.id}'">
+    <div class="rel-card" onclick="window.location.href='${productUrl(r)}'">
       <img id="${imgId}" src="${placeholderSvg(r.name)}" alt="${r.name}"/>
       <div class="p-3">
         <p class="text-xs text-charcoal/50 mb-1">${r.category}</p>
@@ -760,19 +1062,78 @@ function loadRelated(p){
   }).join('');
 }
 
-// ── QTY ──
-function changeQty(d){
-  currentQty = Math.max(1, currentQty+d);
-  document.getElementById('qty-val').value = currentQty;
+// ── DEALS ──
+let currentDeal = 1;
+
+function initDeals(p) {
+  if (p.price === 0) return;
+  const price = p.price;
+  const d2 = Math.round(price * 2 * 0.90);
+  const d3 = Math.round(price * 3 * 0.80);
+  document.getElementById('deal-price-1').textContent = fmtPrice(price);
+  document.getElementById('deal-price-2').textContent = fmtPrice(d2);
+  document.getElementById('deal-price-3').textContent = fmtPrice(d3);
+  document.getElementById('deal-original-2').textContent = fmtPrice(price * 2);
+  document.getElementById('deal-original-3').textContent = fmtPrice(price * 3);
+  updateDealTotal();
+}
+
+function selectDeal(deal) {
+  currentDeal = deal;
+  currentQty  = deal;
+  document.querySelectorAll('.deal-option').forEach(el => {
+    el.classList.toggle('selected', parseInt(el.dataset.deal) === deal);
+  });
+  updateDealTotal();
+  updateWALink();
+}
+
+function updateDealTotal() {
+  const p = currentProduct;
+  if (!p || p.price === 0) return;
+  const { grand } = getDealInfo();
+  document.getElementById('deal-total').textContent = fmtPrice(grand);
+}
+
+function getDealInfo() {
+  const p = currentProduct;
+  let qty, subtotal, shipping, dealLabel;
+  if (currentDeal === 1) {
+    qty=1; subtotal=p.price; shipping=200; dealLabel='Single';
+  } else if (currentDeal === 2) {
+    qty=2; subtotal=Math.round(p.price*2*0.90); shipping=0; dealLabel='Buy 2 – 10% off + Free Delivery';
+  } else {
+    qty=3; subtotal=Math.round(p.price*3*0.80); shipping=0; dealLabel='Buy 3 – 20% off + Free Delivery';
+  }
+  return { qty, subtotal, shipping, grand: subtotal + shipping, dealLabel };
+}
+
+function updateWALink() {
+  const p = currentProduct;
+  if (!p || p.price === 0) return;
+  const { qty, subtotal, shipping, grand, dealLabel } = getDealInfo();
+  const msg = `Hi, I want to order:\n📦 ${p.name}\n🎁 Deal: ${dealLabel}\n🔢 Qty: ${qty}\n💰 Subtotal: ${fmtPrice(subtotal)}\n🚚 Shipping: ${shipping===0?'Free':'PKR 200'}\n✅ Total: ${fmtPrice(grand)}\nPlease confirm availability.`;
+  const waEl = document.getElementById('wa-direct');
+  if (waEl) waEl.href = `https://wa.me/923224061289?text=${encodeURIComponent(msg)}`;
+}
+
+// Keep for any legacy use
+function changeQty(d) {
+  currentQty = Math.max(1, currentQty + d);
+  const el = document.getElementById('qty-val');
+  if (el) el.value = currentQty;
 }
 
 // ── CHECKOUT ──
 function openCheckout(){
   const p = currentProduct;
-  const sub = p.price * currentQty;
-  const grand = sub + 200;
-  document.getElementById('co-name-summary').textContent = `${p.name} × ${currentQty}`;
-  document.getElementById('co-subtotal').textContent = fmtPrice(sub);
+  const { qty, subtotal, shipping, grand, dealLabel } = getDealInfo();
+  const shippingLabel = shipping === 0 ? 'Free' : 'PKR 200';
+  document.getElementById('co-name-summary').textContent = `${p.name} × ${qty} (${dealLabel})`;
+  document.getElementById('co-subtotal').textContent = fmtPrice(subtotal);
+  // Update shipping line in modal
+  const shipEl = document.querySelector('#checkout-modal .co-shipping-val');
+  if (shipEl) shipEl.textContent = shippingLabel;
   document.getElementById('co-grand').textContent = fmtPrice(grand);
   document.getElementById('co-name').value='';
   document.getElementById('co-phone').value='';
@@ -780,6 +1141,13 @@ function openCheckout(){
   document.getElementById('co-error').classList.add('hidden');
   document.getElementById('checkout-modal').classList.add('open');
   document.body.style.overflow='hidden';
+
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'InitiateCheckout', {
+      content_name: p.name, content_ids:[String(p.id)],
+      content_type:'product', value:grand, currency:'PKR', num_items:qty
+    });
+  }
 }
 
 function closeCheckout(){
@@ -793,10 +1161,17 @@ function sendOrder(){
   const address = document.getElementById('co-address').value.trim();
   if(!name||!phone||!address){ document.getElementById('co-error').classList.remove('hidden'); return; }
   const p = currentProduct;
-  const sub = p.price * currentQty;
-  const grand = sub + 200;
-  const msg = `🛍️ *New Order – Zarish Mall*\n\n📦 Product: ${p.name}\n🔢 Quantity: ${currentQty}\n💰 Product Total: ${fmtPrice(sub)}\n🚚 Shipping: PKR 200\n✅ Grand Total: ${fmtPrice(grand)}\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📍 Address: ${address}\n\nKindly confirm my order. Thank you!`;
+  const { qty, subtotal, shipping, grand, dealLabel } = getDealInfo();
+  const shippingText = shipping === 0 ? 'Free (Deal Offer)' : 'PKR 200';
+  const msg = `🛍️ *New Order – Zarish Mall*\n\n📦 Product: ${p.name}\n🎁 Deal: ${dealLabel}\n🔢 Quantity: ${qty}\n💰 Subtotal: ${fmtPrice(subtotal)}\n🚚 Shipping: ${shippingText}\n✅ Grand Total: ${fmtPrice(grand)}\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📍 Address: ${address}\n\nKindly confirm my order. Thank you!`;
   window.open(`https://wa.me/923224061289?text=${encodeURIComponent(msg)}`,'_blank');
+
+  if (typeof fbq !== 'undefined') {
+    fbq('track', 'Purchase', {
+      content_name:p.name, content_ids:[String(p.id)],
+      content_type:'product', value:grand, currency:'PKR', num_items:qty
+    });
+  }
 }
 
 // ── SHARE WITH IMAGE ──
@@ -1098,9 +1473,9 @@ function loadLogo(){
 // ── FADE-IN ──
 function observeFadeIns(){
   const obs = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting){e.target.classList.add('visible'); obs.unobserve(e.target);} });
-  },{threshold:0.1});
-  document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  },{threshold:0.05});
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
 }
 
 // ── NAV ──
@@ -1115,10 +1490,6 @@ window.addEventListener('scroll',()=>{
 document.addEventListener('DOMContentLoaded',()=>{
   loadLogo();
   loadPage();
-  // Immediate fade-in for above-fold elements
-  document.querySelectorAll('.fade-in').forEach((el,i)=>{
-    if(i<3) setTimeout(()=>el.classList.add('visible'), i*150);
-  });
 });
 </script>
 <!-- ══ SHARE IMAGE MODAL (Instagram / TikTok) ══ -->
