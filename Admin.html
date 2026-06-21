@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel – Zarish Mall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --teal: #1A5276;
+    --teal-light: #2471A3;
+    --gold: #D4AC0D;
+    --gold-light: #F1C40F;
+    --cream: #F8F8F6;
+    --charcoal: #2C2C2C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f0f4f8; color: var(--charcoal); min-height: 100vh; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 3px; }
+
+  /* Sidebar */
+  #sidebar {
+    width: 260px; min-height: 100vh; background: #0f3244;
+    position: fixed; top: 0; left: 0; z-index: 100;
+    display: flex; flex-direction: column;
+    transition: transform 0.3s;
+  }
+  #sidebar.collapsed { transform: translateX(-260px); }
+  .sidebar-logo { padding: 1.5rem 1.4rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .sidebar-nav a {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1.4rem; color: rgba(255,255,255,0.7);
+    font-size: 0.9rem; font-weight: 500; transition: all 0.2s;
+    border-left: 3px solid transparent; cursor: pointer;
+    text-decoration: none;
+  }
+  .sidebar-nav a:hover, .sidebar-nav a.active {
+    color: #fff; background: rgba(255,255,255,0.07);
+    border-left-color: var(--gold);
+  }
+  .sidebar-nav a i { font-size: 1.15rem; width: 20px; flex-shrink: 0; }
+
+  /* Main content */
+  #main { margin-left: 260px; min-height: 100vh; transition: margin-left 0.3s; }
+  #main.expanded { margin-left: 0; }
+
+  /* Top bar */
+  #topbar { background: #fff; border-bottom: 1px solid #e5e7eb; padding: 0.9rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+
+  /* Cards */
+  .stat-card { background: #fff; border-radius: 1rem; padding: 1.25rem 1.5rem; border-left: 4px solid var(--teal); }
+  .stat-card.gold { border-left-color: var(--gold); }
+  .stat-card.green { border-left-color: #22c55e; }
+  .stat-card.purple { border-left-color: #8b5cf6; }
+
+  /* Table */
+  .data-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 1rem; overflow: hidden; }
+  .data-table th { background: #f8fafc; padding: 0.85rem 1rem; text-align: left; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; border-bottom: 1px solid #e5e7eb; }
+  .data-table td { padding: 0.85rem 1rem; font-size: 0.875rem; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #f8fafc; }
+  .data-table img { width: 48px; height: 48px; object-fit: cover; border-radius: 0.5rem; background: #e8f0f7; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.72rem; font-weight: 700; }
+  .badge-teal { background: rgba(26,82,118,0.1); color: var(--teal); }
+  .badge-gold { background: rgba(212,172,13,0.12); color: #a07e00; }
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+
+  /* Buttons */
+  .btn { padding: 0.5rem 1.1rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; border: none; display: inline-flex; align-items: center; gap: 0.4rem; }
+  .btn-primary { background: var(--teal); color: #fff; }
+  .btn-primary:hover { background: var(--teal-light); transform: translateY(-1px); }
+  .btn-gold { background: var(--gold); color: #fff; }
+  .btn-gold:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-danger { background: #fee2e2; color: #dc2626; }
+  .btn-danger:hover { background: #fecaca; }
+  .btn-ghost { background: transparent; color: #64748b; border: 1.5px solid #e5e7eb; }
+  .btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* Modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .modal-bg.open { opacity: 1; pointer-events: all; }
+  .modal-box { background: #fff; border-radius: 1.25rem; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; transform: translateY(24px); transition: transform 0.25s; }
+  .modal-bg.open .modal-box { transform: translateY(0); }
+
+  /* Form inputs */
+  .form-input { width: 100%; border: 2px solid #e5e7eb; border-radius: 0.6rem; padding: 0.6rem 0.9rem; font-size: 0.9rem; font-family: 'DM Sans', sans-serif; outline: none; transition: border 0.2s; color: var(--charcoal); }
+  .form-input:focus { border-color: var(--teal); }
+  .form-label { font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: 0.35rem; display: block; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  /* Password screen */
+  #login-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #0f3244 0%, #1A5276 100%); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+  #login-screen.hidden { display: none; }
+
+  /* Toast */
+  #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; transform: translateY(80px); opacity: 0; transition: all 0.3s; }
+  #toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Section panels */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* Search */
+  .search-box { position: relative; }
+  .search-box i { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+  .search-box input { padding-left: 2.25rem; }
+
+  /* Image input area */
+  .img-placeholder { width: 100%; aspect-ratio: 1/1; background: #f0f4f8; border: 2px dashed #cbd5e1; border-radius: 0.75rem; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: border 0.2s; font-size: 0.85rem; color: #94a3b8; }
+  .img-placeholder:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* Mobile responsive */
+  @media(max-width: 768px) {
+    #sidebar { transform: translateX(-260px); }
+    #sidebar.mobile-open { transform: translateX(0); }
+    #main { margin-left: 0; }
+  }
+
+  /* Scrollable table wrapper */
+  .table-wrap { overflow-x: auto; border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen">
+  <div style="background:#fff; border-radius:1.5rem; padding:2.5rem; width:100%; max-width:380px; box-shadow:0 25px 60px rgba(0,0,0,0.3);">
+    <div class="text-center mb-6">
+      <p style="font-family:'Pacifico',cursive; font-size:1.6rem; color:#1A5276;">Zarish Mall</p>
+      <p style="font-size:1.1rem; font-weight:600; color:#2C2C2C; margin-top:0.25rem;">Admin Panel</p>
+      <p style="font-size:0.82rem; color:#94a3b8; margin-top:0.25rem;">Secure area — staff only</p>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label class="form-label">Password</label>
+      <div style="position:relative;">
+        <input id="login-pass" type="password" class="form-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button onclick="togglePassVis()" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;"><i id="eye-icon" class="ri-eye-line"></i></button>
+      </div>
+      <p id="login-error" class="hidden" style="color:#dc2626;font-size:0.8rem;margin-top:0.4rem;"><i class="ri-error-warning-line"></i> Incorrect password</p>
+    </div>
+    <button onclick="doLogin()" class="btn btn-primary w-full" style="width:100%;justify-content:center;padding:0.75rem;font-size:0.95rem;">
+      <i class="ri-login-box-line"></i> Sign In
+    </button>
+    <p style="text-align:center;margin-top:1.25rem;font-size:0.8rem;color:#94a3b8;">
+      <a href="index.html" style="color:#1A5276;font-weight:600;">← Back to Store</a>
+    </p>
+  </div>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<div id="sidebar">
+  <div class="sidebar-logo">
+    <p style="font-family:'Pacifico',cursive; font-size:1.3rem; color:#fff;">Zarish Mall</p>
+    <p style="font-size:0.75rem; color:rgba(255,255,255,0.45); margin-top:2px;">Admin Dashboard</p>
+  </div>
+  <nav class="sidebar-nav" style="flex:1; padding:1rem 0;">
+    <a onclick="showPanel('dashboard')" class="active" id="nav-dashboard"><i class="ri-dashboard-line"></i> Dashboard</a>
+    <a onclick="showPanel('products')" id="nav-products"><i class="ri-shopping-bag-3-line"></i> Products</a>
+    <a onclick="showPanel('add-product')" id="nav-add-product"><i class="ri-add-box-line"></i> Add Product</a>
+    <div style="height:1px;background:rgba(255,255,255,0.07);margin:0.75rem 0;"></div>
+    <a href="index.html" style=""><i class="ri-store-2-line"></i> View Store</a>
+    <a onclick="logout()" style="margin-top:auto;"><i class="ri-logout-box-r-line"></i> Sign Out</a>
+  </nav>
+  <div style="padding:1rem 1.4rem 1.5rem; border-top:1px solid rgba(255,255,255,0.07);">
+    <p style="font-size:0.72rem; color:rgba(255,255,255,0.3);">Logged in as Admin</p>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+
+  <!-- Top Bar -->
+  <div id="topbar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <button id="sidebar-toggle" onclick="toggleSidebar()" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:#64748b;display:flex;align-items:center;">
+        <i class="ri-menu-line"></i>
+      </button>
+      <h1 id="page-title" style="font-size:1.05rem;font-weight:600;color:#1e293b;">Dashboard</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="index.html" class="btn btn-ghost btn-sm" style="font-size:0.8rem;padding:0.4rem 0.85rem;">
+        <i class="ri-store-2-line"></i> View Store
+      </a>
+      <div style="width:36px;height:36px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.9rem;">A</div>
+    </div>
+  </div>
+
+  <div style="padding:1.5rem;">
+
+    <!-- ══ DASHBOARD PANEL ══ -->
+    <div id="panel-dashboard" class="panel active">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.75rem;">
+        <div class="stat-card">
+          <p style="font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Total Products</p>
+          <p id="stat-total" style="font-size:2rem;font-weight:700;color:var(--teal);margin-top:0.25rem;">0</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.15rem;">In your catalog</p>
+        </div>
+        <div class="stat-card gold">
+          <p style="font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Categories</p>
+          <p id="stat-cats" style="font-size:2rem;font-weight:700;color:#a07e00;margin-top:0.25rem;">0</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.15rem;">Active categories</p>
+        </div>
+        <div class="stat-card green">
+          <p style="font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Priced Items</p>
+          <p id="stat-priced" style="font-size:2rem;font-weight:700;color:#166534;margin-top:0.25rem;">0</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.15rem;">With set prices</p>
+        </div>
+        <div class="stat-card purple">
+          <p style="font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Enquiry Only</p>
+          <p id="stat-free" style="font-size:2rem;font-weight:700;color:#6d28d9;margin-top:0.25rem;">0</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.15rem;">WhatsApp price</p>
+        </div>
+      </div>
+
+      <!-- Category breakdown -->
+      <div style="background:#fff;border-radius:1rem;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+        <h2 style="font-size:1rem;font-weight:700;color:#1e293b;margin-bottom:1rem;">Products by Category</h2>
+        <div id="cat-breakdown" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+      </div>
+    </div>
+
+    <!-- ══ PRODUCTS PANEL ══ -->
+    <div id="panel-products" class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;">
+        <div class="search-box" style="flex:1;max-width:340px;">
+          <i class="ri-search-line"></i>
+          <input type="text" id="prod-search" class="form-input" placeholder="Search products…" oninput="renderProductTable()"/>
+        </div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+          <select id="cat-filter" class="form-input" style="width:auto;padding:0.55rem 0.9rem;" onchange="renderProductTable()">
+            <option value="">All Categories</option>
+          </select>
+          <button class="btn btn-primary" onclick="showPanel('add-product')"><i class="ri-add-line"></i> Add Product</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price (PKR)</th>
+              <th>Compare At</th>
+              <th>Images</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="product-tbody"></tbody>
+        </table>
+      </div>
+      <p id="prod-count" style="font-size:0.8rem;color:#94a3b8;margin-top:0.75rem;text-align:right;"></p>
+    </div>
+
+    <!-- ══ ADD / EDIT PRODUCT PANEL ══ -->
+    <div id="panel-add-product" class="panel">
+      <div style="max-width:700px;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+          <button onclick="showPanel('products')" class="btn btn-ghost" style="padding:0.4rem 0.75rem;"><i class="ri-arrow-left-line"></i></button>
+          <h2 id="form-title" style="font-size:1.1rem;font-weight:700;color:#1e293b;">Add New Product</h2>
+        </div>
+        <div style="background:#fff;border-radius:1rem;padding:1.75rem;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+          <input type="hidden" id="edit-id"/>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div style="grid-column:1/-1;">
+              <label class="form-label">Product Name *</label>
+              <input type="text" id="f-name" class="form-input" placeholder="e.g. Luxury Rotating Tray"/>
+            </div>
+            <div>
+              <label class="form-label">Category *</label>
+              <select id="f-category" class="form-input">
+                <option value="">Select category</option>
+                <option>Beauty & Skincare</option>
+                <option>Kitchen & Dining</option>
+                <option>Home & Storage</option>
+                <option>Health & Wellness</option>
+                <option>Personal Care</option>
+                <option>Travel & Bags</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Number of Images</label>
+              <input type="number" id="f-images" class="form-input" value="1" min="1" max="20"/>
+            </div>
+            <div>
+              <label class="form-label">Price (PKR) — 0 = WhatsApp enquiry</label>
+              <input type="number" id="f-price" class="form-input" placeholder="e.g. 1500" min="0"/>
+            </div>
+            <div>
+              <label class="form-label">Compare-At Price (PKR) — 0 = no strikethrough</label>
+              <input type="number" id="f-compare" class="form-input" placeholder="e.g. 2500" min="0"/>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="form-label">URL Handle (slug) *</label>
+              <input type="text" id="f-handle" class="form-input" placeholder="e.g. luxury-rotating-tray"/>
+              <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Used for product page URL. Lowercase letters, numbers & hyphens only.</p>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="form-label">Description *</label>
+              <textarea id="f-desc" class="form-input" rows="3" placeholder="Describe the product clearly…"></textarea>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="form-label">Key Features (one per line)</label>
+              <textarea id="f-features" class="form-input" rows="4" placeholder="Fast-acting cooling effect&#10;Non-greasy formula&#10;Safe for daily use"></textarea>
+              <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Each line becomes one bullet point on the product card.</p>
+            </div>
+          </div>
+
+          <!-- Image upload note -->
+          <div style="background:#f0f4f8;border-radius:0.75rem;padding:1rem 1.25rem;margin-bottom:1.5rem;border-left:3px solid var(--teal);">
+            <p style="font-size:0.85rem;font-weight:600;color:var(--teal);margin-bottom:0.3rem;"><i class="ri-image-line"></i> Image Upload Note</p>
+            <p style="font-size:0.82rem;color:#475569;line-height:1.6;">
+              Since your site runs on GitHub Pages, images must be uploaded directly to your GitHub repository. 
+              Name your images exactly like: <code style="background:#dbeafe;padding:2px 6px;border-radius:4px;font-size:0.8rem;">{handle}/1.jpg</code>, <code style="background:#dbeafe;padding:2px 6px;border-radius:4px;font-size:0.8rem;">{handle}/2.jpg</code>, etc.
+              Set the <em>number of images</em> field above to match how many you upload.
+            </p>
+          </div>
+
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+            <button onclick="saveProduct()" class="btn btn-primary"><i class="ri-save-line"></i> <span id="save-btn-text">Add Product</span></button>
+            <button onclick="resetForm();showPanel('products')" class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ DELETE CONFIRM MODAL ══ -->
+<div id="delete-modal" class="modal-bg" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="modal-box" onclick="event.stopPropagation()" style="max-width:400px;">
+    <div style="padding:1.75rem;">
+      <div style="text-align:center;margin-bottom:1.25rem;">
+        <div style="width:56px;height:56px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;font-size:1.5rem;color:#dc2626;">
+          <i class="ri-delete-bin-6-line"></i>
+        </div>
+        <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;">Delete Product?</h3>
+        <p id="delete-name" style="font-size:0.875rem;color:#64748b;margin-top:0.35rem;"></p>
+      </div>
+      <p style="font-size:0.875rem;color:#64748b;text-align:center;margin-bottom:1.5rem;">This will remove it from the store. This action cannot be undone.</p>
+      <div style="display:flex;gap:0.75rem;">
+        <button onclick="closeDeleteModal()" class="btn btn-ghost" style="flex:1;justify-content:center;">Cancel</button>
+        <button onclick="confirmDelete()" class="btn btn-danger" style="flex:1;justify-content:center;background:#dc2626;color:#fff;">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast">
+  <div id="toast-inner" style="background:#1e293b;color:#fff;padding:0.75rem 1.25rem;border-radius:0.75rem;font-size:0.875rem;font-weight:500;display:flex;align-items:center;gap:0.5rem;box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+    <i id="toast-icon" class="ri-checkbox-circle-line" style="color:#22c55e;font-size:1.1rem;"></i>
+    <span id="toast-msg"></span>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+//  ADMIN PASSWORD (change this!)
+// ══════════════════════════════════
+const ADMIN_PASSWORD = 'zarish2025';
+
+// ══ DEFAULT PRODUCTS from your site ══
+const DEFAULT_PRODUCTS = [
+  { id:1,  name:"Aura Plus Clear Radiance Serum (30ml)", price:2999, compare:3999, category:"Beauty & Skincare", handle:"aura-plus-clear-radiance-serum-anti-acne-glow", images:5,
+    desc:"A powerful anti-acne, dark spot removal serum formulated for Pakistani skin.", features:["Targets acne & dark spots","Oil control without stripping moisture","Brightening formula for radiant skin","Safe for all skin types"] },
+  { id:2,  name:"Body Shaper For Women & Men", price:1589, compare:2995, category:"Personal Care", handle:"body-shapers-for-women", images:1,
+    desc:"A high-compression body shaper designed to slim and contour your figure.", features:["High-compression slimming design","Breathable & comfortable fabric","Suitable for daily use","Unisex – fits women & men"] },
+  { id:3,  name:"5-in-1 Multifunctional Mandoline Slicer & Vegetable Chopper", price:1999, compare:5000, category:"Kitchen & Dining", handle:"multi-purpose-vegetable-slicer-mandoline-chopper", images:3,
+    desc:"5 interchangeable blades for slicing, dicing, julienne, shredding, and more.", features:["5 adjustable blade settings","Includes hand guard for safety","BPA-free food-safe materials","Easy to clean & store"] },
+  { id:4,  name:"3-in-1 Multifunctional Manual Vegetable Cutter", price:1750, compare:2500, category:"Kitchen & Dining", handle:"3-in-1-manual-vegetable-cutter-rotary-drum-slicer", images:1,
+    desc:"A rotary drum grater with 3 stainless steel blades for slicing and grating.", features:["3 stainless steel blade drums","No power needed – hand-operated","Tabletop suction base","Compact and easy to store"] },
+  { id:5,  name:"2L Manual Food Processor & Vegetable Chopper", price:1649, compare:2349, category:"Kitchen & Dining", handle:"multifunctional-manual-food-push-chopper-for-vegetables-meat-2l", images:4,
+    desc:"A large 2-litre hand-push food chopper for mincing vegetables and herbs.", features:["2-litre large capacity bowl","Multi-blade stainless steel insert","Easy hand-push mechanism","Dishwasher-safe parts"] },
+  { id:6,  name:"RAF Electric Grinder (Masala & Coffee)", price:1999, compare:3000, category:"Kitchen & Dining", handle:"raf-electric-masala-grinder-machine", images:5,
+    desc:"A powerful 220V stainless steel electric grinder for grinding spices and coffee.", features:["220V powerful motor","Stainless steel grinding bowl","One-touch operation","Compact design"] },
+  { id:7,  name:"5-in-1 Stainless Steel Vegetable Slicer & Cutter", price:999, compare:1500, category:"Kitchen & Dining", handle:"5-in-1-stainless-steel-multifunctional-vegetable-slicer-cutter", images:4,
+    desc:"An affordable professional mandoline slicer with stainless steel blades.", features:["Stainless steel durable blades","5 interchangeable cutting styles","Non-slip base for safety","Ideal for daily kitchen use"] },
+  { id:8,  name:"2-in-1 Waterproof Hair Dye Comb", price:1449, compare:2700, category:"Personal Care", handle:"water-and-sweat-prrof-hair-comb-dye", images:1,
+    desc:"A sweat-proof and waterproof hair dye comb for easy, mess-free colour application.", features:["Waterproof & sweat-proof design","Even colour distribution","Reusable & easy to clean","Works with most hair colours"] },
+  { id:9,  name:"Original Spring Facial Hair Remover for Women", price:1099, compare:2000, category:"Personal Care", handle:"facial-hair-remover-for-women", images:8,
+    desc:"A portable threading tool that removes upper lip, chin, and neck hair naturally.", features:["Painless spring threading action","No chemicals or wax","Reusable & long-lasting","Compact for travel use"] },
+  { id:10, name:"Teflon Iron Cover Protector", price:900, compare:1199, category:"Home & Storage", handle:"non-stick-teflon-iron-shoe-cover", images:10,
+    desc:"A non-stick Teflon cover that fits over your iron's soleplate.", features:["Non-stick Teflon surface","Protects delicate fabrics","Fits most standard irons","Easy slide-on design"] },
+  { id:11, name:"Luxury Stackable Vanity Organizer with Carry Handle", price:550, compare:750, category:"Home & Storage", handle:"luxury-multi-compartment-vanity-organizer-with-carry-handle-stackable-makeup-bathroom-storage-box-1", images:1,
+    desc:"A multi-compartment stackable organizer with a built-in carry handle.", features:["Stackable modular design","Carry handle for portability","Multiple compartments","Clear panels for easy viewing"] },
+  { id:12, name:"6-Piece Luxury Travel Packing Cubes (Waterproof)", price:1250, compare:2000, category:"Travel & Bags", handle:"luxury-6pc-travel-packing-cubes-waterproof-organizer", images:3,
+    desc:"A set of 6 waterproof packing cubes plus laundry pouch.", features:["6 waterproof packing cubes","Includes laundry pouch","Lightweight & durable zippers","Fits most suitcase sizes"] },
+  { id:13, name:"Storage Bag (Imported)", price:1950, compare:3500, category:"Home & Storage", handle:"storage-bag", images:5,
+    desc:"A high-quality imported storage bag for clothes and bedding.", features:["Heavy-duty imported material","Airtight compression seal","Protects from dust & moisture","Multiple size options"] },
+  { id:14, name:"Desktop Perfume And Cosmetic Organizer", price:1785, compare:2500, category:"Home & Storage", handle:"desktop-perfume-and-cosmetic-organizer", images:8,
+    desc:"A sleek desktop organizer for perfumes, skincare, and cosmetic accessories.", features:["Multi-tier display design","Holds perfume & cosmetics","Sturdy base, elegant finish","Easy to assemble & clean"] },
+  { id:15, name:"2 in 1 Oil Jug (Oil & Vinegar Dispenser)", price:1000, compare:2000, category:"Kitchen & Dining", handle:"2-in-1-oil-jug", images:7,
+    desc:"A dual-function oil and vinegar dispenser in one ergonomic jug.", features:["Two separate chambers","Drip-free pouring spout","BPA-free food-grade material","Easy-grip handle design"] },
+  { id:16, name:'Door Foam Draft Stopper 40"', price:200, compare:0, category:"Home & Storage", handle:"door-foam-draft-40", images:3,
+    desc:"A foam door draft stopper that seals gaps under doors.", features:['Fits doors up to 40"','Blocks cold air & dust','Easy peel-and-stick install','Weatherproof foam material'] },
+  { id:17, name:"Silicone Face Ice Roller", price:600, compare:950, category:"Beauty & Skincare", handle:"silicone-face-ice-roller", images:10,
+    desc:"A silicone ice roller for the face that reduces puffiness and tightens pores.", features:["Food-grade silicone material","Reduces puffiness & pores","Works with ice or cold water","Ergonomic rolling handle"] },
+  { id:18, name:"Refrigerator Safety Lock", price:350, compare:650, category:"Home & Storage", handle:"refrigerator-safety-lock", images:7,
+    desc:"A child-proof safety lock for refrigerators, freezers, and cabinets.", features:["No drilling required","Adhesive mount installation","Adjustable strap length","Works on most fridge models"] },
+  { id:19, name:"Luxury Rotating Tray", price:1350, compare:0, category:"Home & Storage", handle:"luxury-rotating-tray-1", images:12,
+    desc:"A 360° rotating lazy susan tray for kitchen counters and dining tables.", features:["Full 360° smooth rotation","Non-slip base","Suitable for kitchen & vanity","Elegant premium finish"] },
+  { id:20, name:"Facial Steamer & Face Humidifier", price:500, compare:650, category:"Beauty & Skincare", handle:"face-humidifier-facial-steamer-mist-sprayer-spa-steaming-machine-2", images:7,
+    desc:"A portable facial steamer for deep pore cleansing and hydration.", features:["Fine mist nano-spray technology","Opens pores for deep cleanse","USB-powered & portable","Suitable for all skin types"] },
+  { id:21, name:"Refrigerator Food Storage Box (4pcs)", price:415, compare:1000, category:"Kitchen & Dining", handle:"refrigerator-food-storage-box-1", images:9,
+    desc:"A set of 4 airtight food storage containers for refrigerator use.", features:["Set of 4 containers","Airtight sealing lids","BPA-free food-safe plastic","Stackable for space saving"] },
+  { id:23, name:"New 360° Rotating Makeup Brush Holder", price:1750, compare:2500, category:"Beauty & Skincare", handle:"new-360-rotating-makeup-brush-holder-1", images:8,
+    desc:"A 360° rotating makeup brush holder to keep brushes clean and organised.", features:["Full 360° smooth rotation","Multiple brush slot compartments","Dust-free design","Non-slip weighted base"] },
+  { id:24, name:"Dustproof Multilayer Shoe Rack", price:3950, compare:4500, category:"Home & Storage", handle:"dustproof-multilayer-shoe-rack", images:7,
+    desc:"A multilayer dustproof shoe organizer rack with a fabric cover.", features:["Multilayer expandable design","Full dustproof fabric cover","Easy self-assembly","Holds up to 30+ pairs"] },
+  { id:25, name:"Egg Shell Opener", price:320, compare:0, category:"Kitchen & Dining", handle:"egg-shell-opener", images:6,
+    desc:"A handy kitchen tool that cracks egg shells cleanly and safely.", features:["Clean crack every time","Safe for children to use","Compact & easy to store","Works with all egg sizes"] },
+  { id:26, name:"Stainless Steel Dough Mixer", price:299, compare:550, category:"Kitchen & Dining", handle:"stainless-steel-dough-mixer", images:8,
+    desc:"A stainless steel hand dough mixer for kneading bread and roti dough.", features:["Food-grade stainless steel","Ergonomic grip handle","Easy to clean","Works for all dough types"] },
+  { id:27, name:"Leather Travel Cosmetic Organizer", price:1099, compare:2000, category:"Travel & Bags", handle:"leather-travel-cosmetic-organizer-1", images:7,
+    desc:"A leather-finish travel cosmetic bag with multiple interior pockets.", features:["PU leather exterior","Multiple inner compartments","Durable zipper closure","Compact for carry-on travel"] },
+  { id:28, name:"Luxury Rotating Makeup Brush Holder", price:2200, compare:2700, category:"Beauty & Skincare", handle:"luxury-360-rotating-makeup-brush-holder-1", images:6,
+    desc:"A premium 360° rotating makeup brush organizer with transparent acrylic design.", features:["Transparent acrylic design","Full 360° rotation","Holds 20+ brushes","Non-slip base pad"] },
+  { id:29, name:"Lint Remover", price:1550, compare:0, category:"Home & Storage", handle:"lint-remover-1", images:5,
+    desc:"An electric fabric lint remover that removes pilling and fluff from clothes.", features:["3-blade precision shaving head","USB rechargeable","Works on all fabric types","Includes lint collection tray"] },
+  { id:30, name:"LED Light Makeup Mirror", price:1650, compare:0, category:"Beauty & Skincare", handle:"led-light-makeup-mirror-1", images:4,
+    desc:"A lighted vanity mirror with bright LED illumination for makeup application.", features:["Bright LED ring light","Adjustable brightness settings","360° tilt adjustment","Compact desktop design"] },
+  { id:31, name:"Cute Panda Silicone LED Lamp Light", price:1599, compare:2350, category:"Home & Storage", handle:"cute-panda-silicon-led-lamp-light", images:1,
+    desc:"An adorable panda-shaped silicone LED night lamp for children's bedrooms.", features:["Soft silicone body – child safe","Touch-on/off control","Warm ambient glow","Rechargeable via USB"] },
+  { id:32, name:"2 Set of 6 Pcs Ear Wax Removal Kit", price:699, compare:2000, category:"Health & Wellness", handle:"6pcs-stainless-steel-ear-wax-removal-kit-for-ear-care-cleaning-copy-1", images:8,
+    desc:"A 12-piece stainless steel ear care and cleaning kit.", features:["12 tools total (2 × 6 set)","Medical-grade stainless steel","Multiple tip shapes","Includes travel storage case"] },
+  { id:33, name:"3 Bundle Winter Silicone Socks & Gloves", price:999, compare:1799, category:"Personal Care", handle:"winter-silicone-socks-and-gloves", images:10,
+    desc:"A deep moisturizing bundle of silicone socks and gloves.", features:["Deep moisturizing gel lining","Reusable silicone material","Repairs cracked heels & hands","Suitable for all sizes"] },
+  { id:34, name:"Melodine Japanese Pain Relief Gel", price:999, compare:1800, category:"Health & Wellness", handle:"japanese-instant-pain-relief-gel", images:7,
+    desc:"A fast-acting Japanese-formula topical gel for muscle pain and joint stiffness.", features:["Fast-acting cooling + warming effect","Targets muscle & joint pain","Non-greasy formula","Safe for daily external use"] },
+  { id:35, name:"1Pc Wall Mounted Soap Holder with Drain Tray", price:580, compare:700, category:"Home & Storage", handle:"luxury-wall-mounted-soap-holder-drain-tray-pakistan", images:8,
+    desc:"A no-drill adhesive wall mounted soap holder with built-in drain tray.", features:["No-drill adhesive installation","Built-in drainage holes","Holds standard bar soaps","Random color dispatch"] },
+  { id:36, name:"Metal Flexible 60cm Drain Cleaner Spring", price:499, compare:999, category:"Home & Storage", handle:"metal-flexible-60cm-drain-cleaner-pipe-dredging-tool-pakistan", images:8,
+    desc:"A 60cm flexible metal drain cleaning spring for unclogging sinks and pipes.", features:["60cm flexible metal spring","Fits standard pipe sizes","Removes hair & debris","Reusable & easy to rinse"] },
+  { id:37, name:"Anti-Loss Strip", price:0, compare:0, category:"Home & Storage", handle:"anti-los-strip", images:12,
+    desc:"A smart anti-loss adhesive strip to secure small items.", features:["Strong adhesive backing","Reusable strip design","Works on multiple surfaces","Discreet & compact"] },
+  { id:38, name:"Spa Silicone Socks", price:0, compare:0, category:"Personal Care", handle:"spa-silicon-socks", images:6,
+    desc:"Spa-grade silicone socks for overnight foot moisturization.", features:["Spa-quality silicone material","Locks in moisturizer overnight","One size fits most","Washable & reusable"] },
+  { id:39, name:"2 LED Light Makeup Mirror", price:0, compare:0, category:"Beauty & Skincare", handle:"2-led-light-makeup-mirror", images:6,
+    desc:"A dual-sided LED lighted makeup mirror with magnification.", features:["LED ring illumination","1× and magnification sides","Touch control brightness","Foldable compact design"] }
+];
+
+// ══ STORAGE ══
+function getProducts() {
+  const stored = localStorage.getItem('zm_products');
+  if (stored) return JSON.parse(stored);
+  // First load — seed with defaults
+  localStorage.setItem('zm_products', JSON.stringify(DEFAULT_PRODUCTS));
+  return DEFAULT_PRODUCTS;
+}
+function saveProducts(arr) { localStorage.setItem('zm_products', JSON.stringify(arr)); }
+function nextId(arr) { return arr.length ? Math.max(...arr.map(p=>p.id)) + 1 : 1; }
+
+// ══ AUTH ══
+function doLogin() {
+  const val = document.getElementById('login-pass').value;
+  if (val === ADMIN_PASSWORD) {
+    sessionStorage.setItem('zm_auth', '1');
+    document.getElementById('login-screen').classList.add('hidden');
+    initDashboard();
+  } else {
+    document.getElementById('login-error').classList.remove('hidden');
+    document.getElementById('login-pass').style.borderColor = '#dc2626';
+    setTimeout(() => { document.getElementById('login-pass').style.borderColor = ''; }, 1500);
+  }
+}
+function togglePassVis() {
+  const inp = document.getElementById('login-pass');
+  const icon = document.getElementById('eye-icon');
+  if (inp.type === 'password') { inp.type = 'text'; icon.className = 'ri-eye-off-line'; }
+  else { inp.type = 'password'; icon.className = 'ri-eye-line'; }
+}
+function logout() {
+  sessionStorage.removeItem('zm_auth');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('login-pass').value = '';
+}
+function checkAuth() {
+  if (!sessionStorage.getItem('zm_auth')) {
+    document.getElementById('login-screen').classList.remove('hidden');
+  } else {
+    document.getElementById('login-screen').classList.add('hidden');
+    initDashboard();
+  }
+}
+
+// ══ DASHBOARD ══
+function initDashboard() {
+  const prods = getProducts();
+  document.getElementById('stat-total').textContent = prods.length;
+  const cats = [...new Set(prods.map(p=>p.category))];
+  document.getElementById('stat-cats').textContent = cats.length;
+  document.getElementById('stat-priced').textContent = prods.filter(p=>p.price>0).length;
+  document.getElementById('stat-free').textContent = prods.filter(p=>p.price===0).length;
+
+  // Category breakdown
+  const counts = {};
+  prods.forEach(p => { counts[p.category] = (counts[p.category]||0) + 1; });
+  const colors = {'Beauty & Skincare':'badge-teal','Kitchen & Dining':'badge-gold','Home & Storage':'badge-green','Health & Wellness':'badge-teal','Personal Care':'badge-gold','Travel & Bags':'badge-teal'};
+  document.getElementById('cat-breakdown').innerHTML = Object.entries(counts)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([cat,n])=>`<span class="badge ${colors[cat]||'badge-teal'}" style="font-size:0.82rem;padding:4px 12px;">${cat} <strong>(${n})</strong></span>`)
+    .join('');
+
+  // Populate category filter dropdown
+  const sel = document.getElementById('cat-filter');
+  sel.innerHTML = '<option value="">All Categories</option>' + cats.sort().map(c=>`<option>${c}</option>`).join('');
+
+  renderProductTable();
+}
+
+// ══ PRODUCT TABLE ══
+function renderProductTable() {
+  const prods = getProducts();
+  const search = document.getElementById('prod-search').value.toLowerCase();
+  const cat = document.getElementById('cat-filter').value;
+
+  const filtered = prods.filter(p => {
+    const matchSearch = !search || p.name.toLowerCase().includes(search) || p.handle.includes(search);
+    const matchCat = !cat || p.category === cat;
+    return matchSearch && matchCat;
+  });
+
+  document.getElementById('prod-count').textContent = `Showing ${filtered.length} of ${prods.length} products`;
+
+  const tbody = document.getElementById('product-tbody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2.5rem;color:#94a3b8;"><i class="ri-search-line" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>No products found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => {
+    const discount = p.compare > 0 ? Math.round((p.compare - p.price) / p.compare * 100) : 0;
+    const imgSrc = `${p.handle}/1.jpg`;
+    return `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <img src="${imgSrc}" alt="${p.name}" onerror="this.src='';this.style.background='#dbeafe';this.alt='📦';" style="min-width:48px;"/>
+          <div>
+            <p style="font-weight:600;font-size:0.85rem;line-height:1.3;color:#1e293b;">${p.name}</p>
+            <p style="font-size:0.72rem;color:#94a3b8;">${p.handle}</p>
+          </div>
+        </div>
+      </td>
+      <td><span class="badge badge-teal">${p.category}</span></td>
+      <td style="font-weight:700;color:var(--teal);">${p.price > 0 ? 'PKR '+p.price.toLocaleString() : '<span class="badge badge-gold">WhatsApp</span>'}</td>
+      <td style="color:#94a3b8;text-decoration:line-through;font-size:0.85rem;">${p.compare > 0 ? 'PKR '+p.compare.toLocaleString() : '—'} ${discount > 0 ? `<span class="badge badge-green" style="text-decoration:none;">${discount}% off</span>` : ''}</td>
+      <td style="text-align:center;"><span class="badge badge-teal" style="font-size:0.8rem;">${p.images}</span></td>
+      <td>
+        <div style="display:flex;gap:0.4rem;">
+          <button onclick="editProduct(${p.id})" class="btn btn-ghost" style="padding:0.35rem 0.65rem;font-size:0.8rem;" title="Edit"><i class="ri-edit-line"></i></button>
+          <button onclick="openDeleteModal(${p.id})" class="btn btn-danger" style="padding:0.35rem 0.65rem;font-size:0.8rem;" title="Delete"><i class="ri-delete-bin-6-line"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ══ ADD / EDIT ══
+function saveProduct() {
+  const name = document.getElementById('f-name').value.trim();
+  const category = document.getElementById('f-category').value;
+  const handle = document.getElementById('f-handle').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+  const price = parseInt(document.getElementById('f-price').value) || 0;
+  const compare = parseInt(document.getElementById('f-compare').value) || 0;
+  const images = parseInt(document.getElementById('f-images').value) || 1;
+  const desc = document.getElementById('f-desc').value.trim();
+  const featRaw = document.getElementById('f-features').value.trim();
+  const features = featRaw ? featRaw.split('\n').map(s=>s.trim()).filter(Boolean) : [];
+  const editId = document.getElementById('edit-id').value;
+
+  if (!name || !category || !handle || !desc) {
+    showToast('Please fill in all required fields.', 'error');
+    return;
+  }
+
+  let prods = getProducts();
+
+  if (editId) {
+    // Edit
+    const idx = prods.findIndex(p=>p.id===parseInt(editId));
+    if (idx > -1) {
+      prods[idx] = { ...prods[idx], name, category, handle, price, compare, images, desc, features };
+      saveProducts(prods);
+      showToast('Product updated successfully!');
+      resetForm();
+      showPanel('products');
+      renderProductTable();
+    }
+  } else {
+    // Check for duplicate handle
+    if (prods.find(p=>p.handle===handle)) {
+      showToast('A product with this handle already exists.', 'error');
+      return;
+    }
+    const newProd = { id: nextId(prods), name, category, handle, price, compare, images, desc, features };
+    prods.push(newProd);
+    saveProducts(prods);
+    showToast('Product added to catalog!');
+    resetForm();
+    showPanel('products');
+    renderProductTable();
+    initDashboard();
+  }
+}
+
+function editProduct(id) {
+  const prods = getProducts();
+  const p = prods.find(x=>x.id===id);
+  if (!p) return;
+
+  document.getElementById('edit-id').value = p.id;
+  document.getElementById('f-name').value = p.name;
+  document.getElementById('f-category').value = p.category;
+  document.getElementById('f-handle').value = p.handle;
+  document.getElementById('f-price').value = p.price;
+  document.getElementById('f-compare').value = p.compare || '';
+  document.getElementById('f-images').value = p.images;
+  document.getElementById('f-desc').value = p.desc;
+  document.getElementById('f-features').value = (p.features||[]).join('\n');
+
+  document.getElementById('form-title').textContent = 'Edit Product';
+  document.getElementById('save-btn-text').textContent = 'Update Product';
+  showPanel('add-product');
+}
+
+function resetForm() {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-category').value = '';
+  document.getElementById('f-handle').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-compare').value = '';
+  document.getElementById('f-images').value = '1';
+  document.getElementById('f-desc').value = '';
+  document.getElementById('f-features').value = '';
+  document.getElementById('form-title').textContent = 'Add New Product';
+  document.getElementById('save-btn-text').textContent = 'Add Product';
+}
+
+// Auto-generate handle from name
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('f-name').addEventListener('input', function() {
+    if (!document.getElementById('edit-id').value) { // Only auto-fill on new products
+      document.getElementById('f-handle').value = this.value.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').trim();
+    }
+  });
+  checkAuth();
+});
+
+// ══ DELETE ══
+let deletePendingId = null;
+function openDeleteModal(id) {
+  deletePendingId = id;
+  const p = getProducts().find(x=>x.id===id);
+  document.getElementById('delete-name').textContent = p ? p.name : '';
+  document.getElementById('delete-modal').classList.add('open');
+}
+function closeDeleteModal() {
+  document.getElementById('delete-modal').classList.remove('open');
+  deletePendingId = null;
+}
+function confirmDelete() {
+  if (!deletePendingId) return;
+  let prods = getProducts().filter(p=>p.id!==deletePendingId);
+  saveProducts(prods);
+  closeDeleteModal();
+  showToast('Product deleted.');
+  renderProductTable();
+  initDashboard();
+}
+
+// ══ PANELS ══
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  const navEl = document.getElementById('nav-'+name);
+  if (navEl) navEl.classList.add('active');
+
+  const titles = { dashboard:'Dashboard', products:'Products', 'add-product': document.getElementById('edit-id')?.value ? 'Edit Product' : 'Add Product' };
+  document.getElementById('page-title').textContent = titles[name] || '';
+  if (name !== 'add-product') resetForm();
+}
+
+// ══ SIDEBAR ══
+let sidebarOpen = true;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  const sidebar = document.getElementById('sidebar');
+  const main = document.getElementById('main');
+  if (window.innerWidth <= 768) {
+    sidebar.classList.toggle('mobile-open');
+  } else {
+    sidebar.classList.toggle('collapsed');
+    main.classList.toggle('expanded');
+  }
+}
+
+// ══ TOAST ══
+let toastTimer;
+function showToast(msg, type='success') {
+  const toast = document.getElementById('toast');
+  const icon = document.getElementById('toast-icon');
+  document.getElementById('toast-msg').textContent = msg;
+  icon.className = type === 'error' ? 'ri-error-warning-line' : 'ri-checkbox-circle-line';
+  icon.style.color = type === 'error' ? '#ef4444' : '#22c55e';
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ══ EXPORT (bonus) ══
+// You can export product data as JSON to paste into index.html
+function exportProducts() {
+  const data = JSON.stringify(getProducts(), null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'zarish-mall-products.json';
+  a.click();
+}
+</script>
+</body>
+</html>
