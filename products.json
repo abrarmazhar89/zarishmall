@@ -606,5 +606,18 @@
       "Touch control brightness",
       "Foldable compact design"
     ]
+  },
+  {
+    "id": 40,
+    "name": "Testing products",
+    "category": "Travel & Bags",
+    "handle": "testing-products",
+    "price": 2000,
+    "compare": 2500,
+    "images": 1,
+    "desc": "Tesiting",
+    "features": [
+      "unique"
+    ]
   }
 ]
