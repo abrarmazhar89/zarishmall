@@ -722,7 +722,7 @@ function buildGallery(p){
       const exts = ['jpg', 'jpeg', 'webp', 'png'];
       let e = 0;
       function tryExt() {
-        const url = `images/${p.handle}/${idx}.${exts[e]}`;
+        const url = `${p.handle}/${idx}.${exts[e]}`;
         const probe = new Image();
         probe.onload = () => {
           galleryItem.src = url;
@@ -756,7 +756,7 @@ function buildGallery(p){
   const videoExts = ['mp4', 'mov', 'webm'];
   function tryVideo(vi) {
     if (vi >= videoExts.length) return;
-    const url = `images/${p.handle}/video.${videoExts[vi]}`;
+    const url = `${p.handle}/video.${videoExts[vi]}`;
     const v = document.createElement('video');
     v.preload = 'metadata';
     v.addEventListener('loadedmetadata', () => {
@@ -936,7 +936,7 @@ function buildGallery(p){
   const videoExts = ['mp4','mov','webm'];
   function tryVideo(i){
     if(i>=videoExts.length) return;
-    const url = `images/${p.handle}/video.${videoExts[i]}`;
+    const url = `${p.handle}/video.${videoExts[i]}`;
     const v = document.createElement('video');
     v.src = url; v.preload='metadata';
     v.addEventListener('loadedmetadata',()=>{
