@@ -907,7 +907,7 @@ function findImage(handle, idx, onFound, onFail) {
   let attempt = 0;
   function tryNext() {
     if (attempt >= IMG_EXTS.length) { if (onFail) onFail(); return; }
-    const url = `images/${handle}/${idx}.${IMG_EXTS[attempt]}`;
+    const url = `${handle}/${idx}.${IMG_EXTS[attempt]}`;
     const probe = new Image();
     probe.onload = () => onFound(url);
     probe.onerror = () => { attempt++; tryNext(); };
@@ -1123,7 +1123,7 @@ function buildGallery(p) {
   const videoFormats = ['mp4', 'mov', 'webm'];
   function tryVideoFormat(i) {
     if (i >= videoFormats.length) return;
-    const videoSrc = `images/${p.handle}/video.${videoFormats[i]}`;
+    const videoSrc = `${p.handle}/video.${videoFormats[i]}`;
     const vid = document.createElement('video');
     vid.src = videoSrc;
     vid.controls = true;
