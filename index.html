@@ -847,31 +847,36 @@ const FALLBACK_PRODUCTS = [
 ];
 
 async function loadProducts() {
-  // Try multiple URL strategies to find products.json
+  // Build correct base URL for GitHub Pages (works with subdirectory repos too)
+  const base = location.pathname.endsWith('/')
+    ? location.pathname
+    : location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
+
   const urls = [
-    'products.json',
+    location.origin + base + 'products.json',
+    base + 'products.json',
     './products.json',
-    '/' + (location.pathname.replace(/\/[^/]*$/, '') + '/products.json').replace(/^\/+/, ''),
-    location.origin + location.pathname.replace(/\/[^/]*$/, '/') + 'products.json'
+    'products.json'
   ];
 
   for (const url of urls) {
     try {
-      const res = await fetch(url + '?v=' + Date.now(), { cache: 'no-store' });
+      const res = await fetch(url + '?nocache=' + Date.now(), { cache: 'no-store' });
       if (res.ok) {
-        const data = await res.json();
+        const text = await res.text();
+        const data = JSON.parse(text);
         if (Array.isArray(data) && data.length > 0) {
           PRODUCTS = data;
-          console.log('✅ Loaded', PRODUCTS.length, 'products from', url);
+          console.log('\u2705 Loaded', PRODUCTS.length, 'products from', url);
           break;
         }
       }
-    } catch(e) { /* try next url */ }
+    } catch(e) { console.warn('fetch failed:', url, e.message); }
   }
 
   // If all fetches failed, use hardcoded fallback
   if (!PRODUCTS.length) {
-    console.warn('⚠️ products.json not reachable — using built-in fallback data');
+    console.warn('\u26a0\ufe0f products.json not reachable — using built-in fallback');
     PRODUCTS = FALLBACK_PRODUCTS;
   }
 
@@ -907,7 +912,7 @@ function findImage(handle, idx, onFound, onFail) {
   let attempt = 0;
   function tryNext() {
     if (attempt >= IMG_EXTS.length) { if (onFail) onFail(); return; }
-    const url = `${handle}/${idx}.${IMG_EXTS[attempt]}`;
+    const url = `images/${handle}/${idx}.${IMG_EXTS[attempt]}`;
     const probe = new Image();
     probe.onload = () => onFound(url);
     probe.onerror = () => { attempt++; tryNext(); };
@@ -1123,7 +1128,7 @@ function buildGallery(p) {
   const videoFormats = ['mp4', 'mov', 'webm'];
   function tryVideoFormat(i) {
     if (i >= videoFormats.length) return;
-    const videoSrc = `${p.handle}/video.${videoFormats[i]}`;
+    const videoSrc = `images/${p.handle}/video.${videoFormats[i]}`;
     const vid = document.createElement('video');
     vid.src = videoSrc;
     vid.controls = true;
