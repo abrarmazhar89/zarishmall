@@ -682,98 +682,29 @@ async function loadProducts() {
   PRODUCTS = FALLBACK_PRODUCTS;
 }
 
-// Legacy findImage kept for related products (still works)
-function findImage(handle, idx, onFound, onFail){
-  const img = document.createElement('img');
-  setImgWithFallback(img, handle, idx, onFound);
-  img.onerror = onFail || null;
+// ── HELPER FUNCTIONS ──
+function toSlug(name) {
+  return name.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').replace(/-+/g,'-');
 }
-
-// ── GALLERY ──
-function buildGallery(p){
-  galleryItems = [];
-  galleryIdx = 0;
-  const mainImg   = document.getElementById('main-img');
-  const mainVid   = document.getElementById('main-video');
-  const thumbsWrap = document.getElementById('thumbs-wrap');
-  thumbsWrap.innerHTML = '';
-
-  // Show placeholder immediately so layout doesn't collapse
-  mainImg.src = placeholderSvg(p.name);
-  mainImg.style.display = 'block';
-  mainVid.style.display = 'none';
-
-  // Load images in ORDER using index-based approach
-  let firstLoaded = false;
-
-  for (let i = 1; i <= p.images; i++) {
-    const itemIndex = i - 1;
-    const item = { type: 'img', src: '', loaded: false };
-    galleryItems.push(item); // reserve slot
-
-    // Create thumb
-    const thumb = document.createElement('img');
-    thumb.className = 'thumb';
-    thumb.style.background = '#e8f0f7';
-    thumbsWrap.appendChild(thumb);
-
-    // Load with fallback — using closure to capture correct itemIndex
-    (function(idx, thumbEl, galleryItem) {
-      const exts = ['jpg', 'jpeg', 'webp', 'png'];
-      let e = 0;
-      function tryExt() {
-        const url = `${p.handle}/${idx}.${exts[e]}`;
-        const probe = new Image();
-        probe.onload = () => {
-          galleryItem.src = url;
-          galleryItem.loaded = true;
-          thumbEl.src = url;
-          thumbEl.className = 'thumb' + (idx === 1 ? ' active' : '');
-          thumbEl.onclick = () => setGallery(itemIndex);
-          // Set main image to first one that loads
-          if (idx === 1 || !firstLoaded) {
-            firstLoaded = true;
-            setMainImage(url);
-            thumbEl.className = 'thumb active';
-          }
-        };
-        probe.onerror = () => {
-          e++;
-          if (e < exts.length) tryExt();
-          else {
-            // Remove this item from gallery
-            galleryItem.loaded = false;
-            thumbEl.style.display = 'none';
-          }
-        };
-        probe.src = url;
-      }
-      tryExt();
-    })(i, thumb, item);
+function productUrl(p) { return `product.html?product=${p.handle}`; }
+function fmtPrice(n){ return 'PKR ' + n.toLocaleString('en-PK'); }
+function placeholderSvg(label){
+  return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><rect fill='%23e8f0f7' width='400' height='400'/><text x='50%25' y='50%25' fill='%231A5276' text-anchor='middle' dy='.3em' font-size='16' font-family='sans-serif'>${encodeURIComponent(label.slice(0,22))}</text></svg>`;
+}
+function setImgWithFallback(imgEl, handle, idx, onSuccess) {
+  const exts = ['jpg','jpeg','webp','png']; let i=0;
+  function tryNext() {
+    const url = `${handle}/${idx}.${exts[i]}`;
+    imgEl.onerror = () => { i++; if(i<exts.length){imgEl.src=`${handle}/${idx}.${exts[i]}`;}else{imgEl.onerror=null;imgEl.src=placeholderSvg('No Image');} };
+    imgEl.onload = () => { imgEl.onerror=null; if(onSuccess) onSuccess(url); };
+    imgEl.src = url;
   }
-
-  // Video auto-detect
-  const videoExts = ['mp4', 'mov', 'webm'];
-  function tryVideo(vi) {
-    if (vi >= videoExts.length) return;
-    const url = `${p.handle}/video.${videoExts[vi]}`;
-    const v = document.createElement('video');
-    v.preload = 'metadata';
-    v.addEventListener('loadedmetadata', () => {
-      const item = { type: 'video', src: url };
-      galleryItems.push(item);
-      const btn = document.createElement('div');
-      btn.className = 'thumb-video';
-      btn.innerHTML = '<i class="ri-play-circle-line"></i>';
-      btn.title = 'Play Video';
-      const vidIdx = galleryItems.length - 1;
-      btn.addEventListener('click', () => setGallery(vidIdx));
-      thumbsWrap.appendChild(btn);
-    });
-    v.addEventListener('error', () => tryVideo(vi + 1));
-    v.src = url;
-  }
-  tryVideo(0);
+  tryNext();
+}
+function findImage(handle, idx, onFound, onFail){
+  const img=document.createElement('img');
+  setImgWithFallback(img, handle, idx, onFound);
+  img.onerror = onFail||null;
 }
 
 // ── STATE ──
