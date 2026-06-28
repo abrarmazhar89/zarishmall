@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel – Zarish Mall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root { --teal:#1A5276; --teal-light:#2471A3; --gold:#D4AC0D; --gold-light:#F1C40F; --cream:#F8F8F6; --charcoal:#2C2C2C; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:#f0f4f8;color:var(--charcoal);min-height:100vh;}
+  ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-thumb{background:var(--teal);border-radius:3px;}
+
+  #sidebar{width:260px;min-height:100vh;background:#0f3244;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;transition:transform 0.3s;}
+  #sidebar.collapsed{transform:translateX(-260px);}
+  .sidebar-logo{padding:1.5rem 1.4rem;border-bottom:1px solid rgba(255,255,255,0.08);}
+  .sidebar-nav a{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.4rem;color:rgba(255,255,255,0.7);font-size:0.9rem;font-weight:500;transition:all 0.2s;border-left:3px solid transparent;cursor:pointer;text-decoration:none;}
+  .sidebar-nav a:hover,.sidebar-nav a.active{color:#fff;background:rgba(255,255,255,0.07);border-left-color:var(--gold);}
+  .sidebar-nav a i{font-size:1.15rem;width:20px;flex-shrink:0;}
+
+  #main{margin-left:260px;min-height:100vh;transition:margin-left 0.3s;}
+  #main.expanded{margin-left:0;}
+  #topbar{background:#fff;border-bottom:1px solid #e5e7eb;padding:0.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+
+  .stat-card{background:#fff;border-radius:1rem;padding:1.25rem 1.5rem;border-left:4px solid var(--teal);}
+  .stat-card.gold{border-left-color:var(--gold);} .stat-card.green{border-left-color:#22c55e;} .stat-card.purple{border-left-color:#8b5cf6;}
+
+  .data-table{width:100%;border-collapse:collapse;background:#fff;border-radius:1rem;overflow:hidden;}
+  .data-table th{background:#f8fafc;padding:0.85rem 1rem;text-align:left;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;border-bottom:1px solid #e5e7eb;}
+  .data-table td{padding:0.85rem 1rem;font-size:0.875rem;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+  .data-table tr:last-child td{border-bottom:none;} .data-table tr:hover td{background:#f8fafc;}
+  .data-table img{width:48px;height:48px;object-fit:cover;border-radius:0.5rem;background:#e8f0f7;}
+
+  .badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:0.72rem;font-weight:700;}
+  .badge-teal{background:rgba(26,82,118,0.1);color:var(--teal);}
+  .badge-gold{background:rgba(212,172,13,0.12);color:#a07e00;}
+  .badge-green{background:#dcfce7;color:#166534;}
+  .badge-red{background:#fee2e2;color:#991b1b;}
+
+  .btn{padding:0.5rem 1.1rem;border-radius:0.5rem;font-weight:600;font-size:0.85rem;cursor:pointer;transition:all 0.2s;border:none;display:inline-flex;align-items:center;gap:0.4rem;}
+  .btn-primary{background:var(--teal);color:#fff;} .btn-primary:hover{background:var(--teal-light);transform:translateY(-1px);}
+  .btn-gold{background:var(--gold);color:#fff;} .btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);}
+  .btn-danger{background:#fee2e2;color:#dc2626;} .btn-danger:hover{background:#fecaca;}
+  .btn-ghost{background:transparent;color:#64748b;border:1.5px solid #e5e7eb;} .btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+  .btn-green{background:#22c55e;color:#fff;} .btn-green:hover{background:#16a34a;transform:translateY(-1px);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;}
+
+  .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity 0.25s;}
+  .modal-bg.open{opacity:1;pointer-events:all;}
+  .modal-box{background:#fff;border-radius:1.25rem;width:100%;max-width:640px;max-height:90vh;overflow-y:auto;transform:translateY(24px);transition:transform 0.25s;}
+  .modal-bg.open .modal-box{transform:translateY(0);}
+
+  .form-input{width:100%;border:2px solid #e5e7eb;border-radius:0.6rem;padding:0.6rem 0.9rem;font-size:0.9rem;font-family:'DM Sans',sans-serif;outline:none;transition:border 0.2s;color:var(--charcoal);}
+  .form-input:focus{border-color:var(--teal);}
+  .form-label{font-size:0.8rem;font-weight:600;color:#475569;margin-bottom:0.35rem;display:block;text-transform:uppercase;letter-spacing:0.04em;}
+
+  #login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0f3244 0%,#1A5276 100%);z-index:9999;display:flex;align-items:center;justify-content:center;}
+  #login-screen.hidden{display:none;}
+
+  #toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;transform:translateY(80px);opacity:0;transition:all 0.3s;}
+  #toast.show{transform:translateY(0);opacity:1;}
+
+  .panel{display:none;} .panel.active{display:block;}
+  .search-box{position:relative;} .search-box i{position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:#94a3b8;}
+  .search-box input{padding-left:2.25rem;}
+  .table-wrap{overflow-x:auto;border-radius:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+
+  /* GitHub status bar */
+  #gh-status-bar{background:#fff;border-bottom:1px solid #e5e7eb;padding:0.5rem 1.5rem;font-size:0.8rem;display:flex;align-items:center;gap:0.6rem;}
+  .gh-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .gh-dot.connected{background:#22c55e;} .gh-dot.disconnected{background:#ef4444;} .gh-dot.syncing{background:#f59e0b;animation:pulse 1s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
+  /* Setup modal */
+  #setup-modal .modal-box{max-width:520px;}
+  .step-num{width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:700;flex-shrink:0;}
+  code{background:#f1f5f9;padding:2px 7px;border-radius:4px;font-family:monospace;font-size:0.82rem;color:var(--teal);}
+
+  @media(max-width:768px){#sidebar{transform:translateX(-260px);}#sidebar.mobile-open{transform:translateX(0);}#main{margin-left:0;}}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-screen">
+  <div style="background:#fff;border-radius:1.5rem;padding:2.5rem;width:100%;max-width:380px;box-shadow:0 25px 60px rgba(0,0,0,0.3);">
+    <div style="text-align:center;margin-bottom:1.5rem;">
+      <p style="font-family:'Pacifico',cursive;font-size:1.6rem;color:#1A5276;">Zarish Mall</p>
+      <p style="font-size:1.1rem;font-weight:600;color:#2C2C2C;margin-top:0.25rem;">Admin Panel</p>
+      <p style="font-size:0.82rem;color:#94a3b8;margin-top:0.2rem;">Staff only</p>
+    </div>
+    <div style="margin-bottom:1rem;">
+      <label class="form-label">Password</label>
+      <div style="position:relative;">
+        <input id="login-pass" type="password" class="form-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button onclick="togglePassVis()" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;"><i id="eye-icon" class="ri-eye-line"></i></button>
+      </div>
+      <p id="login-error" class="hidden" style="color:#dc2626;font-size:0.8rem;margin-top:0.4rem;"><i class="ri-error-warning-line"></i> Incorrect password</p>
+    </div>
+    <button onclick="doLogin()" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.75rem;font-size:0.95rem;">
+      <i class="ri-login-box-line"></i> Sign In
+    </button>
+    <p style="text-align:center;margin-top:1.25rem;font-size:0.8rem;">
+      <a href="index.html" style="color:#1A5276;font-weight:600;">← Back to Store</a>
+    </p>
+  </div>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<div id="sidebar">
+  <div class="sidebar-logo">
+    <p style="font-family:'Pacifico',cursive;font-size:1.3rem;color:#fff;">Zarish Mall</p>
+    <p style="font-size:0.75rem;color:rgba(255,255,255,0.45);margin-top:2px;">Admin Dashboard</p>
+  </div>
+  <nav class="sidebar-nav" style="flex:1;padding:1rem 0;">
+    <a onclick="showPanel('dashboard')" class="active" id="nav-dashboard"><i class="ri-dashboard-line"></i> Dashboard</a>
+    <a onclick="showPanel('products')" id="nav-products"><i class="ri-shopping-bag-3-line"></i> Products</a>
+    <a onclick="showPanel('add-product')" id="nav-add-product"><i class="ri-add-box-line"></i> Add Product</a>
+    <div style="height:1px;background:rgba(255,255,255,0.07);margin:0.75rem 0;"></div>
+    <a onclick="openSetupModal()" id="nav-github"><i class="ri-github-line"></i> GitHub Sync</a>
+    <a href="index.html"><i class="ri-store-2-line"></i> View Store</a>
+    <a onclick="logout()"><i class="ri-logout-box-r-line"></i> Sign Out</a>
+  </nav>
+  <div style="padding:1rem 1.4rem 1.5rem;border-top:1px solid rgba(255,255,255,0.07);">
+    <p style="font-size:0.72rem;color:rgba(255,255,255,0.3);">Logged in as Admin</p>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+
+  <!-- Top Bar -->
+  <div id="topbar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <button onclick="toggleSidebar()" style="background:none;border:none;cursor:pointer;font-size:1.3rem;color:#64748b;display:flex;align-items:center;"><i class="ri-menu-line"></i></button>
+      <h1 id="page-title" style="font-size:1.05rem;font-weight:600;color:#1e293b;">Dashboard</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <button onclick="openSetupModal()" class="btn btn-ghost" style="font-size:0.8rem;padding:0.4rem 0.85rem;" title="GitHub Sync Settings">
+        <i class="ri-github-line"></i> <span id="topbar-gh-label">GitHub Sync</span>
+      </button>
+      <div style="width:36px;height:36px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.9rem;">A</div>
+    </div>
+  </div>
+
+  <!-- GitHub Status Bar -->
+  <div id="gh-status-bar">
+    <span class="gh-dot" id="gh-dot"></span>
+    <span id="gh-status-text" style="color:#64748b;">GitHub not configured — <a onclick="openSetupModal()" style="color:var(--teal);cursor:pointer;font-weight:600;">Set up sync</a> to publish changes live</span>
+  </div>
+
+  <div style="padding:1.5rem;">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div id="panel-dashboard" class="panel active">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.75rem;">
+        <div class="stat-card">
+          <p style="font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Total Products</p>
+          <p id="stat-total" style="font-size:2rem;font-weight:700;color:var(--teal);margin-top:0.25rem;">0</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.15rem;">In your catalog</p>
+        </div>
+        <div class="stat-card gold">
+          <p style="font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Categories</p>
+          <p id="stat-cats" style="font-size:2rem;font-weight:700;color:#a07e00;margin-top:0.25rem;">0</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.15rem;">Active categories</p>
+        </div>
+        <div class="stat-card green">
+          <p style="font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Priced Items</p>
+          <p id="stat-priced" style="font-size:2rem;font-weight:700;color:#166534;margin-top:0.25rem;">0</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.15rem;">With set prices</p>
+        </div>
+        <div class="stat-card purple">
+          <p style="font-size:0.78rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;">Enquiry Only</p>
+          <p id="stat-free" style="font-size:2rem;font-weight:700;color:#6d28d9;margin-top:0.25rem;">0</p>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.15rem;">WhatsApp price</p>
+        </div>
+      </div>
+      <!-- Pending sync notice -->
+      <div id="pending-notice" class="hidden" style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:0.75rem;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:0.75rem;">
+        <i class="ri-time-line" style="color:#d97706;font-size:1.2rem;flex-shrink:0;"></i>
+        <div>
+          <p style="font-weight:600;font-size:0.88rem;color:#92400e;">You have unsaved changes</p>
+          <p style="font-size:0.8rem;color:#a16207;margin-top:0.1rem;">Click "Publish to GitHub" to push them live to your store.</p>
+        </div>
+        <button onclick="publishToGitHub()" class="btn btn-green" style="margin-left:auto;flex-shrink:0;">
+          <i class="ri-cloud-upload-line"></i> Publish Now
+        </button>
+      </div>
+      <!-- Category breakdown -->
+      <div style="background:#fff;border-radius:1rem;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+        <h2 style="font-size:1rem;font-weight:700;color:#1e293b;margin-bottom:1rem;">Products by Category</h2>
+        <div id="cat-breakdown" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+      </div>
+    </div>
+
+    <!-- ══ PRODUCTS ══ -->
+    <div id="panel-products" class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;">
+        <div class="search-box" style="flex:1;max-width:340px;">
+          <i class="ri-search-line"></i>
+          <input type="text" id="prod-search" class="form-input" placeholder="Search products…" oninput="renderProductTable()"/>
+        </div>
+        <div style="display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center;">
+          <select id="cat-filter" class="form-input" style="width:auto;padding:0.55rem 0.9rem;" onchange="renderProductTable()">
+            <option value="">All Categories</option>
+          </select>
+          <button onclick="publishToGitHub()" id="publish-btn" class="btn btn-green" style="display:none;">
+            <i class="ri-cloud-upload-line"></i> Publish to GitHub
+          </button>
+          <button class="btn btn-primary" onclick="showPanel('add-product')"><i class="ri-add-line"></i> Add Product</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price (PKR)</th>
+              <th>Compare At</th>
+              <th>Images</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="product-tbody"></tbody>
+        </table>
+      </div>
+      <p id="prod-count" style="font-size:0.8rem;color:#94a3b8;margin-top:0.75rem;text-align:right;"></p>
+    </div>
+
+    <!-- ══ ADD / EDIT PRODUCT ══ -->
+    <div id="panel-add-product" class="panel">
+      <div style="max-width:700px;">
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
+          <button onclick="showPanel('products')" class="btn btn-ghost" style="padding:0.4rem 0.75rem;"><i class="ri-arrow-left-line"></i></button>
+          <h2 id="form-title" style="font-size:1.1rem;font-weight:700;color:#1e293b;">Add New Product</h2>
+        </div>
+        <div style="background:#fff;border-radius:1rem;padding:1.75rem;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+          <input type="hidden" id="edit-id"/>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+            <div style="grid-column:1/-1;">
+              <label class="form-label">Product Name *</label>
+              <input type="text" id="f-name" class="form-input" placeholder="e.g. Luxury Rotating Tray"/>
+            </div>
+            <div>
+              <label class="form-label">Category *</label>
+              <select id="f-category" class="form-input">
+                <option value="">Select category</option>
+                <option>Beauty & Skincare</option>
+                <option>Kitchen & Dining</option>
+                <option>Home & Storage</option>
+                <option>Health & Wellness</option>
+                <option>Personal Care</option>
+                <option>Travel & Bags</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Number of Images</label>
+              <input type="number" id="f-images" class="form-input" value="1" min="1" max="20"/>
+            </div>
+            <div>
+              <label class="form-label">Price (PKR) — 0 = WhatsApp enquiry</label>
+              <input type="number" id="f-price" class="form-input" placeholder="e.g. 1500" min="0"/>
+            </div>
+            <div>
+              <label class="form-label">Compare-At Price (0 = no strikethrough)</label>
+              <input type="number" id="f-compare" class="form-input" placeholder="e.g. 2500" min="0"/>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="form-label">URL Handle (slug) *</label>
+              <input type="text" id="f-handle" class="form-input" placeholder="e.g. luxury-rotating-tray"/>
+              <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Auto-generated from name. Lowercase letters, numbers & hyphens only.</p>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="form-label">Description *</label>
+              <textarea id="f-desc" class="form-input" rows="3" placeholder="Describe the product clearly…"></textarea>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="form-label">Key Features (one per line)</label>
+              <textarea id="f-features" class="form-input" rows="4" placeholder="Fast-acting cooling effect&#10;Non-greasy formula&#10;Safe for daily use"></textarea>
+              <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Each line becomes one bullet point on the product card.</p>
+            </div>
+          </div>
+          <!-- Image note -->
+          <div style="background:#f0f4f8;border-radius:0.75rem;padding:1rem 1.25rem;margin-bottom:1.5rem;border-left:3px solid var(--teal);">
+            <p style="font-size:0.85rem;font-weight:600;color:var(--teal);margin-bottom:0.3rem;"><i class="ri-image-line"></i> Adding Product Images</p>
+            <p style="font-size:0.82rem;color:#475569;line-height:1.6;">
+              Upload images to your GitHub repo inside a folder named after the handle.<br/>
+              Example: <code>images/luxury-rotating-tray/1.jpg</code>, <code>images/luxury-rotating-tray/2.jpg</code><br/>
+              Set the <em>Number of Images</em> field above to match how many you upload.
+            </p>
+          </div>
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+            <button onclick="saveProduct()" class="btn btn-primary"><i class="ri-save-line"></i> <span id="save-btn-text">Add Product</span></button>
+            <button onclick="resetForm();showPanel('products')" class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ GITHUB SETUP MODAL ══ -->
+<div id="setup-modal" class="modal-bg" onclick="if(event.target===this)closeSetupModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div style="padding:1.75rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+        <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;display:flex;align-items:center;gap:0.5rem;"><i class="ri-github-line"></i> GitHub Sync Setup</h3>
+        <button onclick="closeSetupModal()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:1.2rem;"><i class="ri-close-line"></i></button>
+      </div>
+
+      <!-- Steps -->
+      <div style="background:#f8fafc;border-radius:0.75rem;padding:1.1rem 1.25rem;margin-bottom:1.25rem;">
+        <p style="font-size:0.82rem;font-weight:700;color:#1e293b;margin-bottom:0.75rem;">How to get your GitHub Token (one-time setup):</p>
+        <div style="display:flex;flex-direction:column;gap:0.6rem;">
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <span class="step-num">1</span>
+            <p style="font-size:0.82rem;color:#475569;line-height:1.5;">Go to <a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--teal);font-weight:600;">github.com/settings/tokens/new</a></p>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <span class="step-num">2</span>
+            <p style="font-size:0.82rem;color:#475569;line-height:1.5;">Give it a name like <code>zarish-mall-admin</code>, set expiry to <code>No expiration</code></p>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <span class="step-num">3</span>
+            <p style="font-size:0.82rem;color:#475569;line-height:1.5;">Under <strong>Scopes</strong>, tick only <code>repo</code> (full control of private repositories)</p>
+          </div>
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+            <span class="step-num">4</span>
+            <p style="font-size:0.82rem;color:#475569;line-height:1.5;">Click <strong>Generate token</strong> and copy it. Paste it below.</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:0.85rem;margin-bottom:1.25rem;">
+        <div>
+          <label class="form-label">GitHub Username *</label>
+          <input type="text" id="gh-username" class="form-input" placeholder="e.g. zarishmall"/>
+        </div>
+        <div>
+          <label class="form-label">Repository Name *</label>
+          <input type="text" id="gh-repo" class="form-input" placeholder="e.g. zarish-mall (the repo where your site lives)"/>
+        </div>
+        <div>
+          <label class="form-label">Branch</label>
+          <input type="text" id="gh-branch" class="form-input" value="main" placeholder="main"/>
+        </div>
+        <div>
+          <label class="form-label">Personal Access Token *</label>
+          <div style="position:relative;">
+            <input type="password" id="gh-token" class="form-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"/>
+            <button onclick="toggleTokenVis()" style="position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;"><i id="token-eye" class="ri-eye-line"></i></button>
+          </div>
+          <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Stored only in your browser. Never sent anywhere except GitHub's API.</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+        <button onclick="saveGitHubConfig()" class="btn btn-primary"><i class="ri-save-line"></i> Save Configuration</button>
+        <button onclick="testGitHubConnection()" class="btn btn-ghost" id="test-btn"><i class="ri-wifi-line"></i> Test Connection</button>
+        <button onclick="closeSetupModal()" class="btn btn-ghost">Cancel</button>
+      </div>
+      <p id="setup-msg" style="font-size:0.82rem;margin-top:0.75rem;display:none;"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DELETE CONFIRM MODAL ══ -->
+<div id="delete-modal" class="modal-bg" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="modal-box" onclick="event.stopPropagation()" style="max-width:400px;">
+    <div style="padding:1.75rem;text-align:center;">
+      <div style="width:56px;height:56px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 0.75rem;font-size:1.5rem;color:#dc2626;">
+        <i class="ri-delete-bin-6-line"></i>
+      </div>
+      <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;">Delete Product?</h3>
+      <p id="delete-name" style="font-size:0.875rem;color:#64748b;margin-top:0.35rem;margin-bottom:0.5rem;"></p>
+      <p style="font-size:0.875rem;color:#64748b;margin-bottom:1.5rem;">This will remove it from the store. This cannot be undone.</p>
+      <div style="display:flex;gap:0.75rem;">
+        <button onclick="closeDeleteModal()" class="btn btn-ghost" style="flex:1;justify-content:center;">Cancel</button>
+        <button onclick="confirmDelete()" class="btn" style="flex:1;justify-content:center;background:#dc2626;color:#fff;">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast">
+  <div id="toast-inner" style="background:#1e293b;color:#fff;padding:0.75rem 1.25rem;border-radius:0.75rem;font-size:0.875rem;font-weight:500;display:flex;align-items:center;gap:0.5rem;box-shadow:0 8px 24px rgba(0,0,0,0.2);max-width:340px;">
+    <i id="toast-icon" class="ri-checkbox-circle-line" style="color:#22c55e;font-size:1.1rem;flex-shrink:0;"></i>
+    <span id="toast-msg"></span>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════
+//  CONFIG — change password here
+// ══════════════════════════
+const ADMIN_PASSWORD = 'zarish2025';
+
+// ══ STATE ══
+let PRODUCTS = [];
+let pendingSync = false;
+
+// ══════════════════════════
+//  LOCAL STORAGE HELPERS
+// ══════════════════════════
+function getProducts() { return PRODUCTS; }
+
+function setProducts(arr) {
+  PRODUCTS = arr;
+  localStorage.setItem('zm_products_v2', JSON.stringify(arr));
+}
+
+function loadLocalProducts() {
+  const stored = localStorage.getItem('zm_products_v2');
+  if (stored) { PRODUCTS = JSON.parse(stored); return true; }
+  return false;
+}
+
+// ══════════════════════════
+//  GITHUB CONFIG
+// ══════════════════════════
+function getGHConfig() {
+  return {
+    username: localStorage.getItem('gh_username') || '',
+    repo:     localStorage.getItem('gh_repo') || '',
+    branch:   localStorage.getItem('gh_branch') || 'main',
+    token:    localStorage.getItem('gh_token') || ''
+  };
+}
+
+function isGHConfigured() {
+  const c = getGHConfig();
+  return !!(c.username && c.repo && c.token);
+}
+
+function saveGitHubConfig() {
+  const username = document.getElementById('gh-username').value.trim();
+  const repo     = document.getElementById('gh-repo').value.trim();
+  const branch   = document.getElementById('gh-branch').value.trim() || 'main';
+  const token    = document.getElementById('gh-token').value.trim();
+
+  if (!username || !repo || !token) {
+    showSetupMsg('Please fill in Username, Repository, and Token.', 'error');
+    return;
+  }
+  localStorage.setItem('gh_username', username);
+  localStorage.setItem('gh_repo', repo);
+  localStorage.setItem('gh_branch', branch);
+  localStorage.setItem('gh_token', token);
+  showSetupMsg('Configuration saved! Click "Test Connection" to verify.', 'success');
+  updateGHStatusBar();
+}
+
+async function testGitHubConnection() {
+  const btn = document.getElementById('test-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ri-loader-4-line"></i> Testing…';
+  showSetupMsg('', '');
+
+  const c = getGHConfig();
+  if (!c.username || !c.repo || !c.token) {
+    showSetupMsg('Fill in all fields first.', 'error');
+    btn.disabled = false; btn.innerHTML = '<i class="ri-wifi-line"></i> Test Connection';
+    return;
+  }
+
+  try {
+    const res = await fetch(`https://api.github.com/repos/${c.username}/${c.repo}`, {
+      headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      showSetupMsg(`✅ Connected to "${data.full_name}" (${data.default_branch} branch). Ready to sync!`, 'success');
+      updateGHStatusBar();
+    } else if (res.status === 401) {
+      showSetupMsg('❌ Invalid token. Check your Personal Access Token.', 'error');
+    } else if (res.status === 404) {
+      showSetupMsg('❌ Repository not found. Check username and repo name.', 'error');
+    } else {
+      showSetupMsg(`❌ Error ${res.status}. Check your details.`, 'error');
+    }
+  } catch(e) {
+    showSetupMsg('❌ Network error. Check your internet connection.', 'error');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="ri-wifi-line"></i> Test Connection';
+}
+
+function showSetupMsg(msg, type) {
+  const el = document.getElementById('setup-msg');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+  el.style.color = type === 'error' ? '#dc2626' : '#16a34a';
+}
+
+// ══════════════════════════
+//  GITHUB PUBLISH
+// ══════════════════════════
+async function publishToGitHub() {
+  if (!isGHConfigured()) {
+    openSetupModal();
+    showToast('Set up GitHub first', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('publish-btn');
+  const publishBtns = document.querySelectorAll('#publish-btn');
+  publishBtns.forEach(b => { b.disabled = true; b.innerHTML = '<i class="ri-loader-4-line"></i> Publishing…'; });
+
+  setGHDot('syncing');
+  document.getElementById('gh-status-text').innerHTML = 'Pushing to GitHub…';
+
+  try {
+    const c = getGHConfig();
+    const content = JSON.stringify(PRODUCTS, null, 2);
+    const encoded = btoa(unescape(encodeURIComponent(content)));
+    const filePath = 'products.json';
+    const apiUrl = `https://api.github.com/repos/${c.username}/${c.repo}/contents/${filePath}`;
+
+    // Get current file SHA (needed to update existing file)
+    let sha = null;
+    const getRes = await fetch(apiUrl, {
+      headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (getRes.ok) {
+      const fileData = await getRes.json();
+      sha = fileData.sha;
+    }
+
+    // Push the file
+    const body = {
+      message: `Admin: update products.json (${new Date().toLocaleString('en-PK')})`,
+      content: encoded,
+      branch: c.branch
+    };
+    if (sha) body.sha = sha;
+
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${c.token}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (putRes.ok) {
+      pendingSync = false;
+      setGHDot('connected');
+      document.getElementById('gh-status-text').innerHTML =
+        `✅ Published at ${new Date().toLocaleTimeString('en-PK')} — live on your store in ~30 seconds`;
+      document.getElementById('pending-notice').classList.add('hidden');
+      document.querySelectorAll('#publish-btn').forEach(b => b.style.display = 'none');
+      showToast('Published to GitHub! Site updates in ~30 seconds.');
+    } else {
+      const err = await putRes.json();
+      throw new Error(err.message || putRes.status);
+    }
+  } catch(e) {
+    setGHDot('disconnected');
+    document.getElementById('gh-status-text').innerHTML =
+      `❌ Publish failed: ${e.message} — <a onclick="openSetupModal()" style="color:var(--teal);cursor:pointer;font-weight:600;">Check settings</a>`;
+    showToast('Publish failed: ' + e.message, 'error');
+  }
+
+  document.querySelectorAll('#publish-btn').forEach(b => {
+    b.disabled = false;
+    b.innerHTML = '<i class="ri-cloud-upload-line"></i> Publish to GitHub';
+  });
+}
+
+function setGHDot(state) {
+  const dot = document.getElementById('gh-dot');
+  dot.className = 'gh-dot ' + state;
+}
+
+function updateGHStatusBar() {
+  if (isGHConfigured()) {
+    const c = getGHConfig();
+    setGHDot('connected');
+    document.getElementById('gh-status-text').innerHTML =
+      `Connected to <strong>${c.username}/${c.repo}</strong> — changes will publish to your live store when you click "Publish to GitHub"`;
+    document.getElementById('topbar-gh-label').textContent = `${c.username}/${c.repo}`;
+  } else {
+    setGHDot('disconnected');
+    document.getElementById('gh-status-text').innerHTML =
+      `GitHub not configured — <a onclick="openSetupModal()" style="color:var(--teal);cursor:pointer;font-weight:600;">Set up sync</a> to publish changes live`;
+    document.getElementById('topbar-gh-label').textContent = 'GitHub Sync';
+  }
+}
+
+function markPending() {
+  pendingSync = true;
+  document.getElementById('pending-notice').classList.remove('hidden');
+  document.querySelectorAll('#publish-btn').forEach(b => b.style.display = 'flex');
+}
+
+// ══════════════════════════
+//  AUTH
+// ══════════════════════════
+function doLogin() {
+  if (document.getElementById('login-pass').value === ADMIN_PASSWORD) {
+    sessionStorage.setItem('zm_auth', '1');
+    document.getElementById('login-screen').classList.add('hidden');
+    init();
+  } else {
+    document.getElementById('login-error').classList.remove('hidden');
+    document.getElementById('login-pass').style.borderColor = '#dc2626';
+    setTimeout(() => { document.getElementById('login-pass').style.borderColor = ''; }, 1500);
+  }
+}
+function togglePassVis() {
+  const inp = document.getElementById('login-pass');
+  const icon = document.getElementById('eye-icon');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  icon.className = inp.type === 'password' ? 'ri-eye-line' : 'ri-eye-off-line';
+}
+function toggleTokenVis() {
+  const inp = document.getElementById('gh-token');
+  const icon = document.getElementById('token-eye');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  icon.className = inp.type === 'password' ? 'ri-eye-line' : 'ri-eye-off-line';
+}
+function logout() { sessionStorage.removeItem('zm_auth'); location.reload(); }
+
+// ══════════════════════════
+//  INIT
+// ══════════════════════════
+async function init() {
+  // Try to load from products.json (GitHub) first, fall back to localStorage
+  let loaded = false;
+  if (isGHConfigured()) {
+    try {
+      const c = getGHConfig();
+      const res = await fetch(
+        `https://api.github.com/repos/${c.username}/${c.repo}/contents/products.json`,
+        { headers: { 'Authorization': `token ${c.token}`, 'Accept': 'application/vnd.github.v3+json' } }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+        PRODUCTS = JSON.parse(decoded);
+        localStorage.setItem('zm_products_v2', JSON.stringify(PRODUCTS));
+        loaded = true;
+      }
+    } catch(e) { console.warn('Could not fetch from GitHub:', e); }
+  }
+  if (!loaded) loadLocalProducts();
+  updateGHStatusBar();
+  refreshDashboard();
+}
+
+// ══════════════════════════
+//  DASHBOARD
+// ══════════════════════════
+function refreshDashboard() {
+  const p = PRODUCTS;
+  document.getElementById('stat-total').textContent = p.length;
+  const cats = [...new Set(p.map(x=>x.category))];
+  document.getElementById('stat-cats').textContent = cats.length;
+  document.getElementById('stat-priced').textContent = p.filter(x=>x.price>0).length;
+  document.getElementById('stat-free').textContent = p.filter(x=>x.price===0).length;
+
+  const counts = {};
+  p.forEach(x => { counts[x.category] = (counts[x.category]||0)+1; });
+  document.getElementById('cat-breakdown').innerHTML = Object.entries(counts)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([cat,n])=>`<span class="badge badge-teal" style="font-size:0.82rem;padding:4px 12px;">${cat} <strong>(${n})</strong></span>`)
+    .join('');
+
+  // Populate category filter
+  const sel = document.getElementById('cat-filter');
+  sel.innerHTML = '<option value="">All Categories</option>' + cats.sort().map(c=>`<option>${c}</option>`).join('');
+
+  renderProductTable();
+}
+
+// ══════════════════════════
+//  PRODUCT TABLE
+// ══════════════════════════
+function renderProductTable() {
+  const search = document.getElementById('prod-search').value.toLowerCase();
+  const cat = document.getElementById('cat-filter').value;
+  const filtered = PRODUCTS.filter(p =>
+    (!search || p.name.toLowerCase().includes(search) || p.handle.includes(search)) &&
+    (!cat || p.category === cat)
+  );
+
+  document.getElementById('prod-count').textContent = `Showing ${filtered.length} of ${PRODUCTS.length} products`;
+  const tbody = document.getElementById('product-tbody');
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2.5rem;color:#94a3b8;"><i class="ri-search-line" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;"></i>No products found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(p => {
+    const discount = p.compare > 0 ? Math.round((p.compare - p.price) / p.compare * 100) : 0;
+    return `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <img src="images/${p.handle}/1.jpg" alt="" onerror="this.style.background='#dbeafe';this.removeAttribute('src');" style="min-width:48px;"/>
+          <div>
+            <p style="font-weight:600;font-size:0.85rem;line-height:1.3;color:#1e293b;">${p.name}</p>
+            <p style="font-size:0.72rem;color:#94a3b8;">${p.handle}</p>
+          </div>
+        </div>
+      </td>
+      <td><span class="badge badge-teal">${p.category}</span></td>
+      <td style="font-weight:700;color:var(--teal);">${p.price>0?'PKR '+p.price.toLocaleString():'<span class="badge badge-gold">WhatsApp</span>'}</td>
+      <td style="color:#94a3b8;font-size:0.85rem;">${p.compare>0?'<span style="text-decoration:line-through">PKR '+p.compare.toLocaleString()+'</span>':''} ${discount>0?`<span class="badge badge-green">${discount}% off</span>`:''}</td>
+      <td style="text-align:center;"><span class="badge badge-teal">${p.images}</span></td>
+      <td>
+        <div style="display:flex;gap:0.4rem;">
+          <button onclick="editProduct(${p.id})" class="btn btn-ghost" style="padding:0.35rem 0.65rem;font-size:0.8rem;" title="Edit"><i class="ri-edit-line"></i></button>
+          <button onclick="openDeleteModal(${p.id})" class="btn btn-danger" style="padding:0.35rem 0.65rem;font-size:0.8rem;" title="Delete"><i class="ri-delete-bin-6-line"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════
+//  SAVE PRODUCT
+// ══════════════════════════
+function saveProduct() {
+  const name     = document.getElementById('f-name').value.trim();
+  const category = document.getElementById('f-category').value;
+  const handle   = document.getElementById('f-handle').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
+  const price    = parseInt(document.getElementById('f-price').value) || 0;
+  const compare  = parseInt(document.getElementById('f-compare').value) || 0;
+  const images   = parseInt(document.getElementById('f-images').value) || 1;
+  const desc     = document.getElementById('f-desc').value.trim();
+  const features = document.getElementById('f-features').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
+  const editId   = document.getElementById('edit-id').value;
+
+  if (!name || !category || !handle || !desc) {
+    showToast('Please fill in all required fields.', 'error'); return;
+  }
+
+  let prods = [...PRODUCTS];
+
+  if (editId) {
+    const idx = prods.findIndex(p=>p.id===parseInt(editId));
+    if (idx > -1) {
+      prods[idx] = { ...prods[idx], name, category, handle, price, compare, images, desc, features };
+      showToast('Product updated! Click "Publish to GitHub" to go live.');
+    }
+  } else {
+    if (prods.find(p=>p.handle===handle)) { showToast('Handle already exists.', 'error'); return; }
+    const newId = prods.length ? Math.max(...prods.map(p=>p.id)) + 1 : 1;
+    prods.push({ id:newId, name, category, handle, price, compare, images, desc, features });
+    showToast('Product added! Click "Publish to GitHub" to go live.');
+  }
+
+  setProducts(prods);
+  markPending();
+  resetForm();
+  showPanel('products');
+  refreshDashboard();
+}
+
+function editProduct(id) {
+  const p = PRODUCTS.find(x=>x.id===id);
+  if (!p) return;
+  document.getElementById('edit-id').value = p.id;
+  document.getElementById('f-name').value = p.name;
+  document.getElementById('f-category').value = p.category;
+  document.getElementById('f-handle').value = p.handle;
+  document.getElementById('f-price').value = p.price;
+  document.getElementById('f-compare').value = p.compare || '';
+  document.getElementById('f-images').value = p.images;
+  document.getElementById('f-desc').value = p.desc;
+  document.getElementById('f-features').value = (p.features||[]).join('\n');
+  document.getElementById('form-title').textContent = 'Edit Product';
+  document.getElementById('save-btn-text').textContent = 'Update Product';
+  showPanel('add-product');
+}
+
+function resetForm() {
+  ['edit-id','f-name','f-handle','f-price','f-compare','f-desc','f-features'].forEach(id=>{ document.getElementById(id).value=''; });
+  document.getElementById('f-category').value = '';
+  document.getElementById('f-images').value = '1';
+  document.getElementById('form-title').textContent = 'Add New Product';
+  document.getElementById('save-btn-text').textContent = 'Add Product';
+}
+
+// Auto-generate handle from name (new products only)
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('f-name').addEventListener('input', function() {
+    if (!document.getElementById('edit-id').value) {
+      document.getElementById('f-handle').value = this.value.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').trim();
+    }
+  });
+  if (sessionStorage.getItem('zm_auth')) {
+    document.getElementById('login-screen').classList.add('hidden');
+    init();
+  }
+  // Pre-fill GitHub setup form if already configured
+  const c = getGHConfig();
+  if (c.username) document.getElementById('gh-username').value = c.username;
+  if (c.repo) document.getElementById('gh-repo').value = c.repo;
+  if (c.branch) document.getElementById('gh-branch').value = c.branch;
+  if (c.token) document.getElementById('gh-token').value = c.token;
+});
+
+// ══════════════════════════
+//  DELETE
+// ══════════════════════════
+let deletePendingId = null;
+function openDeleteModal(id) {
+  deletePendingId = id;
+  const p = PRODUCTS.find(x=>x.id===id);
+  document.getElementById('delete-name').textContent = p ? p.name : '';
+  document.getElementById('delete-modal').classList.add('open');
+}
+function closeDeleteModal() { document.getElementById('delete-modal').classList.remove('open'); deletePendingId=null; }
+function confirmDelete() {
+  if (!deletePendingId) return;
+  setProducts(PRODUCTS.filter(p=>p.id!==deletePendingId));
+  closeDeleteModal();
+  markPending();
+  showToast('Product deleted. Click "Publish to GitHub" to go live.');
+  refreshDashboard();
+}
+
+// ══════════════════════════
+//  PANELS & UI
+// ══════════════════════════
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  const navEl = document.getElementById('nav-'+name);
+  if (navEl) navEl.classList.add('active');
+  const titles = {dashboard:'Dashboard',products:'Products','add-product':document.getElementById('edit-id')?.value?'Edit Product':'Add Product'};
+  document.getElementById('page-title').textContent = titles[name]||'';
+  if (name !== 'add-product') resetForm();
+}
+
+function openSetupModal() { document.getElementById('setup-modal').classList.add('open'); }
+function closeSetupModal() { document.getElementById('setup-modal').classList.remove('open'); }
+
+let toastTimer;
+function showToast(msg, type='success') {
+  document.getElementById('toast-msg').textContent = msg;
+  const icon = document.getElementById('toast-icon');
+  icon.className = type==='error'?'ri-error-warning-line':'ri-checkbox-circle-line';
+  icon.style.color = type==='error'?'#ef4444':'#22c55e';
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 3500);
+}
+
+let sidebarOpen = true;
+function toggleSidebar() {
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.toggle('mobile-open');
+  } else {
+    sidebarOpen = !sidebarOpen;
+    document.getElementById('sidebar').classList.toggle('collapsed');
+    document.getElementById('main').classList.toggle('expanded');
+  }
+}
+</script>
+</body>
+</html>

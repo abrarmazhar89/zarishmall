@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Zarish Mall – Quality Products, Delivered to Your Door</title>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '2489193084877209');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=2489193084877209&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        teal: { DEFAULT: '#1A5276', light: '#2471A3', dark: '#154360' },
+        gold: { DEFAULT: '#D4AC0D', light: '#F1C40F', dark: '#B7950B' },
+        cream: '#F8F8F6',
+        charcoal: '#2C2C2C'
+      },
+      fontFamily: {
+        heading: ['"Cormorant Garamond"', 'serif'],
+        body: ['"DM Sans"', 'sans-serif'],
+        brand: ['Pacifico', 'cursive']
+      }
+    }
+  }
+}
+</script>
+<style>
+  :root {
+    --teal: #1A5276;
+    --teal-light: #2471A3;
+    --gold: #D4AC0D;
+    --gold-light: #F1C40F;
+    --cream: #F8F8F6;
+    --charcoal: #2C2C2C;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--charcoal); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #f1f1f1; }
+  ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 3px; }
+
+  /* ── FADE IN ── */
+  .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── NAV ── */
+  #navbar { backdrop-filter: blur(12px); background: rgba(26,82,118,0.95); }
+  .nav-link { position: relative; color: rgba(255,255,255,0.85); transition: color 0.3s; }
+  .nav-link::after { content:''; position:absolute; bottom:-3px; left:0; width:0; height:2px; background:var(--gold); transition:width 0.3s; }
+  .nav-link:hover { color:#fff; }
+  .nav-link:hover::after { width:100%; }
+
+  /* ── HERO ── */
+  #home { position: relative; min-height: 100vh; background: linear-gradient(135deg, #1A5276 0%, #154360 60%, #0f3244 100%); overflow: hidden; }
+  #hero-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:0; }
+  #hero-overlay { position:absolute; inset:0; background:linear-gradient(135deg, rgba(26,82,118,0.75) 0%, rgba(0,0,0,0.55) 100%); z-index:1; }
+
+  /* ── BUTTONS ── */
+  .btn-gold { background: var(--gold); color: #fff; font-weight: 600; letter-spacing: 0.04em; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; }
+  .btn-gold:hover { background: var(--gold-light); transform: scale(1.04); box-shadow: 0 8px 24px rgba(212,172,13,0.4); }
+  .btn-teal { background: var(--teal); color: #fff; font-weight: 600; letter-spacing: 0.04em; transition: transform 0.2s, box-shadow 0.2s; }
+  .btn-teal:hover { background: var(--teal-light); transform: scale(1.04); }
+
+  /* ── PRODUCT CARD ── */
+  .product-card { background:#fff; border-radius:1rem; overflow:hidden; transition: transform 0.3s, box-shadow 0.3s; cursor:pointer; }
+  .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 48px rgba(26,82,118,0.15); }
+  .product-card img { width:100%; aspect-ratio:1/1; object-fit:cover; transition: transform 0.4s; }
+  .product-card:hover img { transform: scale(1.06); }
+  .card-img-wrap { overflow:hidden; }
+
+  /* ── CATEGORY CARD ── */
+  .cat-card { position:relative; overflow:hidden; border-radius:1.2rem; cursor:pointer; transition: transform 0.3s, box-shadow 0.3s; }
+  .cat-card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0,0,0,0.18); }
+  .cat-card svg { width:100%; height:180px; display:block; transition: transform 0.4s; }
+  .cat-card:hover svg { transform: scale(1.08); }
+  .cat-card img { width:100%; height:180px; object-fit:cover; transition: transform 0.4s; }
+  .cat-card:hover img { transform: scale(1.08); }
+  .cat-card .overlay { position:absolute; inset:0; background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.05) 100%); display:flex; align-items:flex-end; padding:1rem; }
+
+  /* ── SEARCH BAR ── */
+  #search-input { font-family: 'DM Sans', sans-serif; color: var(--charcoal); }
+  #search-input::placeholder { color: #aaa; }
+
+  /* ── FILTER BTNS ── */
+  .filter-btn { border: 2px solid var(--teal); color: var(--teal); border-radius: 999px; padding: 0.45rem 1.2rem; font-weight: 500; cursor:pointer; transition: all 0.25s; font-size:0.875rem; }
+  .filter-btn:hover, .filter-btn.active { background: var(--teal); color: #fff; }
+
+  /* ── STAR ── */
+  .stars { color: var(--gold); letter-spacing:1px; }
+
+  /* ── WHATSAPP PULSE ── */
+  @keyframes pulse-wa { 0%,100%{ box-shadow:0 0 0 0 rgba(37,211,102,0.5);} 50%{ box-shadow:0 0 0 12px rgba(37,211,102,0);} }
+  .wa-btn { animation: pulse-wa 2.5s infinite; }
+
+  /* ── MODAL ── */
+  .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:1000; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.3s; }
+  .modal-backdrop.open { opacity:1; pointer-events:all; }
+  .modal-box { background:#fff; border-radius:1.25rem; width:100%; max-width:860px; max-height:90vh; overflow-y:auto; transform:translateY(30px); transition:transform 0.3s; }
+  .modal-backdrop.open .modal-box { transform:translateY(0); }
+
+  /* ── GALLERY SLIDER ── */
+  .gallery-slider { position:relative; overflow:hidden; border-radius:0.75rem; aspect-ratio:1/1; background:#f0f0f0; }
+  .gallery-slider img, .gallery-slider video { width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; opacity:0; transition:opacity 0.4s; }
+  .gallery-slider img.active, .gallery-slider video.active { opacity:1; }
+  .gallery-thumbs { display:flex; gap:0.4rem; margin-top:0.5rem; overflow-x:auto; padding-bottom:4px; }
+  .gallery-thumbs img { width:54px; height:54px; object-fit:cover; border-radius:0.4rem; cursor:pointer; border:2px solid transparent; flex-shrink:0; }
+  .gallery-thumbs img.active { border-color: var(--gold); }
+  .gallery-thumbs button.active { border: 2px solid var(--gold) !important; background: var(--gold) !important; }
+  .gallery-nav { position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,0.85); border:none; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:5; font-size:1.1rem; color:var(--teal); }
+  .gallery-nav.prev { left:8px; }
+  .gallery-nav.next { right:8px; }
+
+  /* ── SECTION DECO ── */
+  .section-title { font-family:'Cormorant Garamond',serif; font-weight:700; line-height:1.15; }
+  .gold-line { display:inline-block; width:60px; height:3px; background:var(--gold); border-radius:2px; }
+
+  /* ── PROMISE ── */
+  .promise-section { background: linear-gradient(135deg, #1A5276 0%, #154360 100%); }
+
+  /* ── FOOTER ── */
+  footer { background: #0f3244; }
+
+  /* ── ABOUT BG ── */
+  .about-section { background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="30" cy="30" r="1.5" fill="%231A5276" opacity="0.08"/></svg>') repeat; }
+
+  /* ── PRIVACY ── */
+  #privacy-policy { background:#fff; border-top: 4px solid var(--gold); }
+
+  /* Mobile nav */
+  #mobile-menu { max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+  #mobile-menu.open { max-height:400px; }
+
+  /* qty input */
+  .qty-btn { width:36px; height:36px; border:2px solid var(--teal); border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:1.1rem; color:var(--teal); background:#fff; transition:all 0.2s; }
+  .qty-btn:hover { background:var(--teal); color:#fff; }
+  #qty-value { width:48px; text-align:center; font-size:1.1rem; font-weight:600; border:2px solid #e5e7eb; border-radius:6px; padding:4px; }
+
+  /* Checkout */
+  .form-input { width:100%; border:2px solid #e5e7eb; border-radius:0.6rem; padding:0.65rem 0.9rem; font-family:'DM Sans',sans-serif; font-size:0.95rem; outline:none; transition:border 0.2s; }
+  .form-input:focus { border-color:var(--teal); }
+
+  /* best seller badge */
+  .bs-badge { background:var(--gold); color:#fff; font-size:0.7rem; font-weight:700; letter-spacing:0.08em; padding:2px 10px; border-radius:999px; display:inline-block; }
+
+  /* why cards */
+  .why-card { background:#fff; border-radius:1rem; padding:2rem 1.5rem; text-align:center; transition:transform 0.3s, box-shadow 0.3s; border-bottom:3px solid transparent; }
+  .why-card:hover { transform:translateY(-6px); box-shadow:0 16px 40px rgba(26,82,118,0.12); border-bottom-color:var(--gold); }
+  .why-icon { width:60px; height:60px; background:rgba(26,82,118,0.08); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; font-size:1.6rem; color:var(--teal); }
+
+  @media(max-width:768px) {
+    .section-title { font-size:clamp(1.8rem,6vw,2.5rem)!important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════ NAVBAR ══════════ -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-3 px-4 shadow-lg">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#home" class="flex items-center gap-2">
+      <img data-logo src="" alt="Zarish Mall" class="h-10 w-auto"/>
+    </a>
+    <!-- Desktop Nav -->
+    <div class="hidden md:flex items-center gap-7">
+      <a href="#home" class="nav-link text-sm font-medium">Home</a>
+      <a href="#about" class="nav-link text-sm font-medium">About</a>
+      <a href="#products" class="nav-link text-sm font-medium">Products</a>
+      <a href="#privacy-policy" class="nav-link text-sm font-medium">Privacy Policy</a>
+      <a href="#contact" class="nav-link text-sm font-medium">Contact</a>
+    </div>
+    <!-- WA Button -->
+    <a href="https://wa.me/923224061289" target="_blank"
+       class="hidden md:flex items-center gap-2 btn-gold wa-btn px-4 py-2 rounded-full text-sm">
+      <i class="ri-whatsapp-line text-lg"></i> WhatsApp
+    </a>
+    <!-- Hamburger -->
+    <button id="hamburger" class="md:hidden text-white text-2xl"><i class="ri-menu-line"></i></button>
+  </div>
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="md:hidden px-4 pb-3">
+    <div class="flex flex-col gap-3 pt-3 border-t border-white/20 mt-3">
+      <a href="#home" class="nav-link text-sm font-medium py-1" onclick="closeMobileMenu()">Home</a>
+      <a href="#about" class="nav-link text-sm font-medium py-1" onclick="closeMobileMenu()">About</a>
+      <a href="#products" class="nav-link text-sm font-medium py-1" onclick="closeMobileMenu()">Products</a>
+      <a href="#privacy-policy" class="nav-link text-sm font-medium py-1" onclick="closeMobileMenu()">Privacy Policy</a>
+      <a href="#contact" class="nav-link text-sm font-medium py-1" onclick="closeMobileMenu()">Contact</a>
+      <a href="https://wa.me/923224061289" target="_blank"
+         class="flex items-center gap-2 btn-gold px-4 py-2 rounded-full text-sm w-fit mt-1">
+        <i class="ri-whatsapp-line text-lg"></i> WhatsApp
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="home" class="flex items-center justify-center text-center" style="min-height:100vh;">
+  <img id="hero-img" src="" alt=""/>
+  <div id="hero-overlay"></div>
+  <div class="relative px-4 max-w-3xl mx-auto pt-24" style="z-index:2;">
+    <p class="font-brand text-gold text-3xl mb-3 fade-in" style="animation-delay:0.1s">Zarish Mall</p>
+    <h1 class="section-title text-white text-5xl md:text-7xl mb-5 fade-in" style="animation-delay:0.2s">
+      Quality Products,<br/><span class="text-gold">Delivered to Your Door</span>
+    </h1>
+    <p class="text-white/80 text-lg md:text-xl mb-8 leading-relaxed fade-in" style="animation-delay:0.35s">
+      Discover hundreds of premium home, kitchen, beauty, and health products —<br class="hidden md:block"/>
+      all with Cash on Delivery across Pakistan.
+    </p>
+    <a href="#products" class="btn-gold inline-block px-8 py-4 rounded-full text-base font-semibold fade-in" style="animation-delay:0.5s">
+      Shop Now <i class="ri-arrow-right-line ml-1"></i>
+    </a>
+    <div class="mt-10 flex flex-wrap justify-center gap-6 fade-in" style="animation-delay:0.65s">
+      <div class="flex items-center gap-2 text-white/80 text-sm"><i class="ri-truck-line text-gold text-lg"></i> Nationwide COD</div>
+      <div class="flex items-center gap-2 text-white/80 text-sm"><i class="ri-lock-line text-gold text-lg"></i> Open Parcel Policy</div>
+      <div class="flex items-center gap-2 text-white/80 text-sm"><i class="ri-shield-check-line text-gold text-lg"></i> 100% Quality Checked</div>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/50 animate-bounce" style="z-index:2;">
+    <i class="ri-arrow-down-line text-2xl"></i>
+  </div>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section id="about" class="py-24 about-section">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+      <div class="fade-in">
+        <span class="gold-line mb-4 block"></span>
+        <h2 class="section-title text-4xl md:text-5xl text-teal mb-6">Pakistan's Trusted<br/>Online Store</h2>
+        <p class="text-charcoal/80 text-base leading-relaxed mb-5">
+          Zarish Mall was founded with a simple belief: every Pakistani home deserves access to quality products at honest prices. We carefully select each item in our catalog — from kitchen essentials to beauty must-haves — ensuring they meet our high standards before they reach your door.
+        </p>
+        <p class="text-charcoal/80 text-base leading-relaxed mb-8">
+          We operate on a Cash on Delivery model across all of Pakistan, with a unique open-parcel policy so you can inspect your order before paying. Thousands of happy customers trust Zarish Mall for fast, reliable delivery and products that genuinely work.
+        </p>
+        <div class="flex items-center gap-3 bg-teal/8 border border-teal/20 rounded-xl p-4 w-fit">
+          <div class="w-10 h-10 bg-teal/10 rounded-full flex items-center justify-center">
+            <i class="ri-verified-badge-line text-teal text-xl"></i>
+          </div>
+          <span class="text-teal font-semibold">Verified Quality Promise</span>
+        </div>
+      </div>
+      <div class="fade-in">
+        <div class="relative">
+          <img data-base="Our Story" src="" alt="Our Story" class="w-full rounded-2xl shadow-2xl object-cover"
+               style="aspect-ratio:4/3; transition:transform 0.4s; background:#e8f0f7; min-height:200px;"
+               onmouseover="this.style.transform='scale(1.03)'"
+               onmouseout="this.style.transform='scale(1)'"/>
+          <div class="absolute -bottom-5 -left-5 bg-gold rounded-xl px-5 py-3 shadow-lg">
+            <p class="text-white font-bold text-2xl font-heading">5000+</p>
+            <p class="text-white/90 text-xs">Happy Customers</p>
+          </div>
+          <div class="absolute -top-5 -right-5 bg-teal rounded-xl px-5 py-3 shadow-lg">
+            <p class="text-white font-bold text-2xl font-heading">40+</p>
+            <p class="text-white/90 text-xs">Products</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ WHY CHOOSE ══════════ -->
+<section class="py-20 bg-cream">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14 fade-in">
+      <span class="gold-line mb-4 mx-auto block"></span>
+      <h2 class="section-title text-4xl md:text-5xl text-teal">Why Choose Zarish Mall?</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="why-card fade-in">
+        <div class="why-icon"><i class="ri-truck-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Nationwide Delivery</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Fast COD delivery across all of Pakistan in 3–4 working days.</p>
+      </div>
+      <div class="why-card fade-in">
+        <div class="why-icon"><i class="ri-box-3-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Open Parcel Policy</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Check your order before you pay. No risk, just trust.</p>
+      </div>
+      <div class="why-card fade-in">
+        <div class="why-icon"><i class="ri-medal-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Premium Quality</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Carefully selected products tested for quality before listing.</p>
+      </div>
+      <div class="why-card fade-in">
+        <div class="why-icon"><i class="ri-shield-check-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Secure & Trusted</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Thousands of happy customers across Pakistan trust us daily.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CATEGORIES REMOVED ══════════ --><div style="display:none">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+
+      <!-- Beauty & Skincare -->
+      <div class="cat-card fade-in" onclick="filterProducts('Beauty & Skincare')">
+        <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:180px;display:block;">
+          <defs>
+            <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#f8b4c8"/>
+              <stop offset="100%" style="stop-color:#e91e8c"/>
+            </linearGradient>
+            <linearGradient id="bot1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#fff0f5"/>
+              <stop offset="100%" style="stop-color:#ffd6e8"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="180" fill="url(#bg1)"/>
+          <!-- Soft circles deco -->
+          <circle cx="260" cy="30" r="50" fill="rgba(255,255,255,0.1)"/>
+          <circle cx="40" cy="150" r="40" fill="rgba(255,255,255,0.08)"/>
+          <!-- Perfume bottle -->
+          <rect x="118" y="70" width="30" height="52" rx="6" fill="url(#bot1)" opacity="0.95"/>
+          <rect x="124" y="62" width="18" height="12" rx="3" fill="#fff" opacity="0.9"/>
+          <rect x="129" y="55" width="8" height="10" rx="2" fill="#e91e8c" opacity="0.9"/>
+          <rect x="118" y="85" width="30" height="2" fill="rgba(233,30,140,0.3)"/>
+          <ellipse cx="133" cy="96" rx="6" ry="2" fill="rgba(233,30,140,0.2)"/>
+          <!-- Lipstick -->
+          <rect x="162" y="80" width="14" height="38" rx="3" fill="#fff" opacity="0.85"/>
+          <rect x="162" y="72" width="14" height="14" rx="3" fill="#e91e8c" opacity="0.9"/>
+          <rect x="163" y="69" width="12" height="6" rx="2" fill="#c2185b"/>
+          <!-- Mirror -->
+          <ellipse cx="100" cy="100" rx="18" ry="22" fill="rgba(255,255,255,0.25)" stroke="#fff" stroke-width="2"/>
+          <ellipse cx="100" cy="100" rx="13" ry="17" fill="rgba(255,255,255,0.15)"/>
+          <rect x="97" y="120" width="6" height="10" rx="2" fill="rgba(255,255,255,0.5)"/>
+          <!-- Stars -->
+          <text x="55" y="55" font-size="14" fill="rgba(255,255,255,0.7)">✦</text>
+          <text x="220" y="80" font-size="10" fill="rgba(255,255,255,0.5)">✦</text>
+          <text x="200" y="140" font-size="8" fill="rgba(255,255,255,0.4)">✦</text>
+        </svg>
+        <div class="overlay"><span class="text-white font-semibold text-sm">Beauty & Skincare</span></div>
+      </div>
+
+      <!-- Kitchen & Dining -->
+      <div class="cat-card fade-in" onclick="filterProducts('Kitchen & Dining')">
+        <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:180px;display:block;">
+          <defs>
+            <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#ff8f00"/>
+              <stop offset="100%" style="stop-color:#e65100"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="180" fill="url(#bg2)"/>
+          <circle cx="270" cy="25" r="55" fill="rgba(255,255,255,0.08)"/>
+          <circle cx="30" cy="160" r="45" fill="rgba(255,255,255,0.06)"/>
+          <!-- Pan -->
+          <ellipse cx="130" cy="115" rx="45" ry="12" fill="rgba(0,0,0,0.25)"/>
+          <ellipse cx="130" cy="108" rx="45" ry="14" fill="#37474f"/>
+          <ellipse cx="130" cy="104" rx="42" ry="11" fill="#455a64"/>
+          <ellipse cx="130" cy="102" rx="38" ry="8" fill="#ff8f00" opacity="0.6"/>
+          <!-- Pan handle -->
+          <rect x="173" y="100" width="35" height="8" rx="4" fill="#263238"/>
+          <!-- Steam lines -->
+          <path d="M105 88 Q108 78 105 68" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M120 85 Q123 72 120 59" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M135 84 Q138 71 135 58" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M150 86 Q153 76 150 66" stroke="rgba(255,255,255,0.5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Fork & Knife -->
+          <rect x="210" y="60" width="4" height="50" rx="2" fill="rgba(255,255,255,0.7)"/>
+          <rect x="210" y="60" width="4" height="18" rx="1" fill="rgba(255,255,255,0.4)"/>
+          <rect x="220" y="60" width="4" height="50" rx="2" fill="rgba(255,255,255,0.7)"/>
+          <path d="M220 60 Q222 68 224 60" fill="rgba(255,255,255,0.5)"/>
+          <path d="M220 60 L220 68 L222 64 L224 68 L224 60" fill="rgba(255,255,255,0.5)"/>
+          <!-- Veggies in pan -->
+          <circle cx="115" cy="100" r="6" fill="#4caf50" opacity="0.9"/>
+          <circle cx="130" cy="97" r="7" fill="#ff5722" opacity="0.9"/>
+          <circle cx="145" cy="101" r="5" fill="#ffeb3b" opacity="0.9"/>
+        </svg>
+        <div class="overlay"><span class="text-white font-semibold text-sm">Kitchen & Dining</span></div>
+      </div>
+
+      <!-- Home & Storage -->
+      <div class="cat-card fade-in" onclick="filterProducts('Home & Storage')">
+        <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:180px;display:block;">
+          <defs>
+            <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#26c6da"/>
+              <stop offset="100%" style="stop-color:#00838f"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="180" fill="url(#bg3)"/>
+          <circle cx="265" cy="30" r="55" fill="rgba(255,255,255,0.07)"/>
+          <!-- House -->
+          <polygon points="150,45 90,90 210,90" fill="rgba(255,255,255,0.9)"/>
+          <polygon points="150,42 88,92 212,92" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+          <rect x="100" y="90" width="100" height="55" rx="2" fill="rgba(255,255,255,0.85)"/>
+          <!-- Door -->
+          <rect x="135" y="110" width="30" height="35" rx="3" fill="#00838f" opacity="0.8"/>
+          <circle cx="160" cy="128" r="2.5" fill="#fff"/>
+          <!-- Windows -->
+          <rect x="108" y="100" width="20" height="18" rx="2" fill="#00838f" opacity="0.6"/>
+          <rect x="172" y="100" width="20" height="18" rx="2" fill="#00838f" opacity="0.6"/>
+          <line x1="118" y1="100" x2="118" y2="118" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+          <line x1="108" y1="109" x2="128" y2="109" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+          <line x1="182" y1="100" x2="182" y2="118" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+          <line x1="172" y1="109" x2="192" y2="109" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+          <!-- Chimney -->
+          <rect x="170" y="52" width="14" height="22" rx="2" fill="rgba(255,255,255,0.7)"/>
+        </svg>
+        <div class="overlay"><span class="text-white font-semibold text-sm">Home & Storage</span></div>
+      </div>
+
+      <!-- Health & Wellness -->
+      <div class="cat-card fade-in" onclick="filterProducts('Health & Wellness')">
+        <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:180px;display:block;">
+          <defs>
+            <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#66bb6a"/>
+              <stop offset="100%" style="stop-color:#2e7d32"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="180" fill="url(#bg4)"/>
+          <circle cx="265" cy="25" r="50" fill="rgba(255,255,255,0.08)"/>
+          <circle cx="35" cy="155" r="40" fill="rgba(255,255,255,0.06)"/>
+          <!-- Heart -->
+          <path d="M150,125 C150,125 95,92 95,68 C95,52 108,44 121,50 C132,55 150,72 150,72 C150,72 168,55 179,50 C192,44 205,52 205,68 C205,92 150,125 150,125Z" fill="rgba(255,255,255,0.95)"/>
+          <!-- Cross / pulse inside heart -->
+          <rect x="143" y="72" width="14" height="36" rx="3" fill="#2e7d32" opacity="0.7"/>
+          <rect x="130" y="83" width="40" height="14" rx="3" fill="#2e7d32" opacity="0.7"/>
+          <!-- Pulse line -->
+          <polyline points="60,95 80,95 90,75 100,115 110,85 120,95 240,95" stroke="rgba(255,255,255,0.5)" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Small dots -->
+          <circle cx="60" cy="48" r="4" fill="rgba(255,255,255,0.3)"/>
+          <circle cx="240" cy="140" r="5" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="220" cy="50" r="3" fill="rgba(255,255,255,0.25)"/>
+        </svg>
+        <div class="overlay"><span class="text-white font-semibold text-sm">Health & Wellness</span></div>
+      </div>
+
+      <!-- Personal Care -->
+      <div class="cat-card fade-in" onclick="filterProducts('Personal Care')">
+        <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:180px;display:block;">
+          <defs>
+            <linearGradient id="bg5" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#ab47bc"/>
+              <stop offset="100%" style="stop-color:#6a1b9a"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="180" fill="url(#bg5)"/>
+          <circle cx="260" cy="28" r="52" fill="rgba(255,255,255,0.08)"/>
+          <circle cx="40" cy="155" r="42" fill="rgba(255,255,255,0.06)"/>
+          <!-- Person silhouette -->
+          <circle cx="150" cy="68" r="22" fill="rgba(255,255,255,0.9)"/>
+          <path d="M108,145 C108,118 126,108 150,108 C174,108 192,118 192,145Z" fill="rgba(255,255,255,0.9)"/>
+          <!-- Hair -->
+          <path d="M128,62 Q130,42 150,40 Q170,42 172,62" fill="rgba(171,71,188,0.7)" stroke="none"/>
+          <!-- Sparkles around person -->
+          <text x="85" y="72" font-size="16" fill="rgba(255,255,255,0.7)">✦</text>
+          <text x="200" y="68" font-size="12" fill="rgba(255,255,255,0.6)">✦</text>
+          <text x="195" y="115" font-size="9" fill="rgba(255,255,255,0.45)">✦</text>
+          <text x="88" y="118" font-size="10" fill="rgba(255,255,255,0.45)">✦</text>
+          <!-- Comb -->
+          <rect x="60" y="108" width="28" height="7" rx="2" fill="rgba(255,255,255,0.6)"/>
+          <rect x="63" y="115" width="3" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+          <rect x="69" y="115" width="3" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+          <rect x="75" y="115" width="3" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+          <rect x="81" y="115" width="3" height="8" rx="1" fill="rgba(255,255,255,0.5)"/>
+        </svg>
+        <div class="overlay"><span class="text-white font-semibold text-sm">Personal Care</span></div>
+      </div>
+
+      <!-- Travel & Bags -->
+      <div class="cat-card fade-in" onclick="filterProducts('Travel & Bags')">
+        <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:180px;display:block;">
+          <defs>
+            <linearGradient id="bg6" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#42a5f5"/>
+              <stop offset="100%" style="stop-color:#1565c0"/>
+            </linearGradient>
+          </defs>
+          <rect width="300" height="180" fill="url(#bg6)"/>
+          <circle cx="260" cy="30" r="55" fill="rgba(255,255,255,0.08)"/>
+          <!-- Cloud -->
+          <ellipse cx="80" cy="55" rx="28" ry="16" fill="rgba(255,255,255,0.25)"/>
+          <ellipse cx="100" cy="50" rx="22" ry="14" fill="rgba(255,255,255,0.25)"/>
+          <ellipse cx="60" cy="58" rx="18" ry="12" fill="rgba(255,255,255,0.2)"/>
+          <!-- Suitcase -->
+          <rect x="95" y="88" width="110" height="72" rx="8" fill="rgba(255,255,255,0.92)"/>
+          <rect x="95" y="88" width="110" height="72" rx="8" fill="none" stroke="rgba(21,101,192,0.3)" stroke-width="1.5"/>
+          <!-- Handle -->
+          <path d="M130,88 L130,76 Q150,68 170,76 L170,88" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="6" stroke-linecap="round"/>
+          <!-- Straps -->
+          <rect x="95" y="120" width="110" height="5" rx="2" fill="rgba(21,101,192,0.2)"/>
+          <rect x="147" y="88" width="6" height="72" rx="2" fill="rgba(21,101,192,0.15)"/>
+          <!-- Locks -->
+          <rect x="127" y="116" width="16" height="12" rx="3" fill="#1565c0" opacity="0.7"/>
+          <rect x="157" y="116" width="16" height="12" rx="3" fill="#1565c0" opacity="0.7"/>
+          <circle cx="135" cy="122" r="2.5" fill="#fff" opacity="0.8"/>
+          <circle cx="165" cy="122" r="2.5" fill="#fff" opacity="0.8"/>
+          <!-- Wheels -->
+          <circle cx="108" cy="162" r="6" fill="rgba(21,101,192,0.5)"/>
+          <circle cx="192" cy="162" r="6" fill="rgba(21,101,192,0.5)"/>
+          <!-- Stars/dots -->
+          <circle cx="240" cy="55" r="3" fill="rgba(255,255,255,0.4)"/>
+          <circle cx="255" cy="75" r="2" fill="rgba(255,255,255,0.3)"/>
+          <circle cx="225" cy="70" r="2" fill="rgba(255,255,255,0.3)"/>
+        </svg>
+        <div class="overlay"><span class="text-white font-semibold text-sm">Travel & Bags</span></div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- end hidden categories -->
+
+<!-- ══════════ PRODUCTS GRID ══════════ -->
+<section id="products" class="py-20 bg-cream">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-8 fade-in">
+      <span class="gold-line mb-4 mx-auto block"></span>
+      <h2 class="section-title text-4xl md:text-5xl text-teal mb-2">Premium Collection</h2>
+      <p class="text-charcoal/60 text-sm">Cash on Delivery available across Pakistan. Open your parcel before paying!</p>
+    </div>
+
+    <!-- ── SEARCH BAR ── -->
+    <div class="max-w-2xl mx-auto mb-8 fade-in">
+      <div class="relative">
+        <i class="ri-search-line absolute left-4 top-1/2 -translate-y-1/2 text-teal text-xl pointer-events-none"></i>
+        <input id="search-input" type="text" placeholder="Search products… e.g. mirror, organizer, slicer"
+               class="w-full pl-12 pr-12 py-3.5 rounded-full border-2 border-teal/20 bg-white text-charcoal text-sm outline-none transition-all focus:border-teal shadow-sm focus:shadow-md"
+               oninput="handleSearch(this.value)"/>
+        <button id="search-clear" onclick="clearSearch()" class="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal/30 hover:text-charcoal text-xl hidden">
+          <i class="ri-close-line"></i>
+        </button>
+      </div>
+      <p id="search-results-count" class="text-center text-xs text-charcoal/50 mt-2 hidden"></p>
+    </div>
+
+    <!-- ── CATEGORY PILLS ── -->
+    <div class="flex flex-wrap gap-2 justify-center mb-8 fade-in" id="filter-btns">
+      <button class="filter-btn active" onclick="filterProducts('all', this)">All Products</button>
+      <button class="filter-btn" onclick="filterProducts('Beauty & Skincare', this)">Beauty & Skincare</button>
+      <button class="filter-btn" onclick="filterProducts('Kitchen & Dining', this)">Kitchen & Dining</button>
+      <button class="filter-btn" onclick="filterProducts('Home & Storage', this)">Home & Storage</button>
+      <button class="filter-btn" onclick="filterProducts('Health & Wellness', this)">Health & Wellness</button>
+      <button class="filter-btn" onclick="filterProducts('Personal Care', this)">Personal Care</button>
+      <button class="filter-btn" onclick="filterProducts('Travel & Bags', this)">Travel & Bags</button>
+    </div>
+
+    <!-- Grid -->
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <!-- No results -->
+    <div id="no-results" class="hidden text-center py-20">
+      <i class="ri-search-line text-5xl text-charcoal/20 mb-4 block"></i>
+      <p class="text-charcoal/50 text-lg font-medium">No products found</p>
+      <p class="text-charcoal/40 text-sm mt-1">Try a different search term or browse all products</p>
+      <button onclick="clearSearch()" class="mt-5 btn-teal px-6 py-2.5 rounded-full text-sm">Show All Products</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ BEST SELLERS ══════════ -->
+<section class="py-20" style="background:#fff;">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-12 fade-in">
+      <span class="gold-line mb-4 mx-auto block"></span>
+      <h2 class="section-title text-4xl md:text-5xl text-teal">Best Sellers</h2>
+      <p class="text-charcoal/60 mt-2 text-sm">Our most loved products by customers across Pakistan</p>
+    </div>
+    <div id="best-sellers-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+  </div>
+</section>
+
+<!-- ══════════ OUR PROMISE ══════════ -->
+<section class="promise-section py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+      <div class="fade-in">
+        <span class="gold-line mb-4 block"></span>
+        <h2 class="section-title text-4xl md:text-5xl text-white mb-8">Our Promise to You</h2>
+        <div class="flex items-start gap-4 mb-6">
+          <div class="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="ri-shield-check-line text-gold text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-white font-semibold text-lg mb-1">100% Quality Checked</h3>
+            <p class="text-white/70 text-sm leading-relaxed">Every product in our catalog is manually verified and tested before it reaches your hands. We don't list anything we wouldn't use ourselves.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="ri-heart-line text-gold text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-white font-semibold text-lg mb-1">Customer Satisfaction Guaranteed</h3>
+            <p class="text-white/70 text-sm leading-relaxed">Not happy with your order? Contact us on WhatsApp and we'll make it right — every single time. Your satisfaction is our priority.</p>
+          </div>
+        </div>
+      </div>
+      <div class="fade-in">
+        <img data-base="Our Promise" src="" alt="Our Promise" class="w-full rounded-2xl shadow-2xl object-cover"
+             style="aspect-ratio:4/3; background:rgba(255,255,255,0.1); min-height:200px;"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ PRIVACY POLICY ══════════ -->
+<section id="privacy-policy" class="py-20">
+  <div class="max-w-4xl mx-auto px-6 fade-in">
+    <span class="gold-line mb-4 block"></span>
+    <h2 class="section-title text-4xl text-teal mb-8">Privacy Policy</h2>
+    <div class="prose text-charcoal/80 space-y-5 text-sm leading-relaxed">
+      <p><strong>Last Updated: 2025</strong></p>
+      <div class="bg-teal/5 border-l-4 border-teal rounded-r-lg p-4">
+        <p>At Zarish Mall, your privacy matters to us. This policy explains what information we collect, how we use it, and how we protect it.</p>
+      </div>
+      <h3 class="font-heading text-xl text-teal font-bold">1. Information We Collect</h3>
+      <p>When you place an order through our WhatsApp checkout, we collect your <strong>Full Name</strong>, <strong>Phone Number</strong>, and <strong>Delivery Address</strong>. This information is provided voluntarily by you and is required solely to process and deliver your order.</p>
+      <h3 class="font-heading text-xl text-teal font-bold">2. How We Use Your Information</h3>
+      <p>Your personal information is used exclusively for <strong>order processing and delivery coordination</strong>. We may contact you via WhatsApp or phone to confirm your order or provide delivery updates.</p>
+      <h3 class="font-heading text-xl text-teal font-bold">3. Data Sharing</h3>
+      <p>We do <strong>not sell, share, or disclose</strong> your personal information to any third parties, advertisers, or external organizations. Your data is used only for fulfilling your Zarish Mall orders.</p>
+      <h3 class="font-heading text-xl text-teal font-bold">4. Payment & Financial Data</h3>
+      <p>All orders are processed via <strong>Cash on Delivery (COD)</strong> through WhatsApp. We do <strong>not collect, store, or process</strong> any payment card information, bank account details, or digital wallet data.</p>
+      <h3 class="font-heading text-xl text-teal font-bold">5. Data Security</h3>
+      <p>Order information exchanged via WhatsApp is protected by WhatsApp's end-to-end encryption. We take reasonable precautions to ensure your information remains secure.</p>
+      <h3 class="font-heading text-xl text-teal font-bold">6. Contact Us</h3>
+      <p>For any privacy concerns or requests, please contact us directly on WhatsApp:
+        <a href="https://wa.me/923224061289" target="_blank" class="text-teal font-semibold hover:underline"> +92 322 4061289</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CONTACT ══════════ -->
+<section id="contact" class="py-16 bg-cream">
+  <div class="max-w-3xl mx-auto px-6 text-center fade-in">
+    <span class="gold-line mb-4 mx-auto block"></span>
+    <h2 class="section-title text-4xl text-teal mb-4">Get in Touch</h2>
+    <p class="text-charcoal/70 mb-8">Have a question about a product or your order? We're one message away on WhatsApp.</p>
+    <a href="https://wa.me/923224061289" target="_blank"
+       class="inline-flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-semibold text-base transition-all wa-btn">
+      <i class="ri-whatsapp-line text-2xl"></i> Chat with Us on WhatsApp
+    </a>
+    <p class="mt-6 text-charcoal/50 text-sm">+92 322 4061289 &nbsp;·&nbsp; Available 9 AM – 10 PM</p>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="py-12 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <!-- Brand -->
+      <div>
+        <img data-logo src="" alt="Zarish Mall" class="h-10 mb-4"/>
+        <p class="text-white/60 text-sm leading-relaxed mb-5">Pakistan's trusted online store for quality home, kitchen, beauty, and health products. Cash on Delivery nationwide.</p>
+        <a href="https://wa.me/923224061289" target="_blank"
+           class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all wa-btn">
+          <i class="ri-whatsapp-line text-lg"></i> WhatsApp Us
+        </a>
+      </div>
+      <!-- Quick Links -->
+      <div>
+        <h4 class="text-white font-semibold text-base mb-5">Quick Links</h4>
+        <ul class="space-y-3">
+          <li><a href="#home" class="text-white/60 hover:text-gold text-sm transition-colors">Home</a></li>
+          <li><a href="#about" class="text-white/60 hover:text-gold text-sm transition-colors">About Us</a></li>
+          <li><a href="#products" class="text-white/60 hover:text-gold text-sm transition-colors">Products</a></li>
+          <li><a href="#privacy-policy" class="text-white/60 hover:text-gold text-sm transition-colors">Privacy Policy</a></li>
+          <li><a href="#contact" class="text-white/60 hover:text-gold text-sm transition-colors">Contact</a></li>
+        </ul>
+      </div>
+      <!-- Social -->
+      <div>
+        <h4 class="text-white font-semibold text-base mb-5">Follow Us</h4>
+        <div class="flex gap-4">
+          <a href="#" class="w-10 h-10 bg-white/10 hover:bg-gold rounded-full flex items-center justify-center text-white transition-all">
+            <i class="ri-facebook-line"></i></a>
+          <a href="#" class="w-10 h-10 bg-white/10 hover:bg-gold rounded-full flex items-center justify-center text-white transition-all">
+            <i class="ri-instagram-line"></i></a>
+          <a href="https://wa.me/923224061289" target="_blank" class="w-10 h-10 bg-white/10 hover:bg-green-500 rounded-full flex items-center justify-center text-white transition-all">
+            <i class="ri-whatsapp-line"></i></a>
+        </div>
+        <p class="text-white/50 text-xs mt-6">Cash on Delivery · Open Parcel Policy<br/>Delivery: 3–4 Working Days</p>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-6 text-center">
+      <p class="text-white/40 text-xs">© 2025 Zarish Mall. All Rights Reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════ PRODUCT DETAIL MODAL ══════════ -->
+<div id="product-modal" class="modal-backdrop" onclick="handleModalClose(event,'product-modal')">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="grid md:grid-cols-2 gap-0">
+      <!-- Gallery side -->
+      <div class="p-6 bg-gray-50 rounded-l-2xl">
+        <div class="gallery-slider" id="modal-gallery">
+          <!-- injected by JS -->
+        </div>
+        <div class="gallery-thumbs" id="modal-thumbs"></div>
+      </div>
+      <!-- Info side -->
+      <div class="p-7 flex flex-col">
+        <div class="flex justify-between items-start mb-3">
+          <span id="modal-category" class="text-xs font-semibold text-teal/70 uppercase tracking-wider bg-teal/8 px-3 py-1 rounded-full"></span>
+          <button onclick="closeModal('product-modal')" class="text-gray-400 hover:text-charcoal text-xl"><i class="ri-close-line"></i></button>
+        </div>
+        <h2 id="modal-name" class="section-title text-2xl md:text-3xl text-charcoal mb-3"></h2>
+        <div class="flex items-center gap-3 mb-4">
+          <span class="stars text-base">★★★★★</span>
+          <span class="text-charcoal/50 text-sm">4.8 · Verified Reviews</span>
+        </div>
+        <div class="flex items-baseline gap-3 mb-4">
+          <span id="modal-price" class="text-2xl font-bold text-teal"></span>
+          <span id="modal-compare" class="text-base text-gray-400 line-through"></span>
+        </div>
+        <p id="modal-desc" class="text-charcoal/70 text-sm leading-relaxed mb-4"></p>
+        <ul id="modal-features" class="space-y-1.5 mb-5 text-sm text-charcoal/70"></ul>
+        <!-- Qty -->
+        <div class="flex items-center gap-3 mb-6">
+          <span class="text-sm font-medium text-charcoal">Qty:</span>
+          <button class="qty-btn" onclick="changeQty(-1)"><i class="ri-subtract-line"></i></button>
+          <input id="qty-value" type="text" value="1" readonly/>
+          <button class="qty-btn" onclick="changeQty(1)"><i class="ri-add-line"></i></button>
+        </div>
+        <button onclick="proceedToCheckout()" class="btn-gold w-full py-3.5 rounded-xl text-base mt-auto">
+          Proceed to Checkout <i class="ri-arrow-right-line ml-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ CHECKOUT MODAL ══════════ -->
+<div id="checkout-modal" class="modal-backdrop" onclick="handleModalClose(event,'checkout-modal')">
+  <div class="modal-box max-w-md" onclick="event.stopPropagation()">
+    <div class="p-7">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="section-title text-2xl text-teal">Complete Your Order</h2>
+        <button onclick="closeModal('checkout-modal')" class="text-gray-400 hover:text-charcoal text-xl"><i class="ri-close-line"></i></button>
+      </div>
+      <!-- Order Summary -->
+      <div class="bg-cream rounded-xl p-4 mb-6 border border-teal/10">
+        <h3 class="text-sm font-semibold text-teal uppercase tracking-wide mb-3">Order Summary</h3>
+        <div class="flex justify-between text-sm text-charcoal/80 mb-1">
+          <span id="co-product-name" class="font-medium pr-2"></span>
+          <span id="co-subtotal" class="font-semibold flex-shrink-0"></span>
+        </div>
+        <div class="flex justify-between text-sm text-charcoal/60 mb-1">
+          <span>Shipping (Flat Rate)</span><span>PKR 200</span>
+        </div>
+        <div class="border-t border-charcoal/10 mt-3 pt-3 flex justify-between font-bold text-teal">
+          <span>Grand Total</span><span id="co-grand-total"></span>
+        </div>
+      </div>
+      <!-- Form -->
+      <div class="space-y-4 mb-6">
+        <div>
+          <label class="text-xs font-semibold text-charcoal/60 uppercase tracking-wide block mb-1">Full Name *</label>
+          <input id="co-name" type="text" placeholder="Enter your full name" class="form-input"/>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-charcoal/60 uppercase tracking-wide block mb-1">Phone Number *</label>
+          <input id="co-phone" type="tel" placeholder="e.g. 03001234567" class="form-input"/>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-charcoal/60 uppercase tracking-wide block mb-1">Delivery Address *</label>
+          <textarea id="co-address" rows="3" placeholder="House/Street, City, Province" class="form-input resize-none"></textarea>
+        </div>
+      </div>
+      <p id="co-error" class="text-red-500 text-xs mb-3 hidden">Please fill in all required fields.</p>
+      <button onclick="sendWhatsAppOrder()" class="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-3.5 rounded-xl font-semibold text-base transition-all wa-btn">
+        <i class="ri-whatsapp-line text-xl"></i> Send Order via WhatsApp
+      </button>
+      <p class="text-center text-xs text-charcoal/50 mt-3">Cash on Delivery · Open parcel before paying</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ JS ══════════ -->
+<script>
+// ── PRODUCT DATA ──
+// ── PRODUCT DATA — loaded from products.json (managed by admin panel) ──
+let PRODUCTS = [];
+let bestSellers = [];
+
+async function loadProducts() {
+  try {
+    const res = await fetch('products.json?v=' + Date.now());
+    if (!res.ok) throw new Error('fetch failed');
+    PRODUCTS = await res.json();
+  } catch(e) {
+    console.warn('products.json not found, using fallback data');
+    PRODUCTS = window.FALLBACK_PRODUCTS || [];
+  }
+  bestSellers = [...PRODUCTS]
+    .filter(p => p.price > 0 && p.compare > 0)
+    .sort((a, b) => (b.compare - b.price) / b.compare - (a.compare - a.price) / a.compare)
+    .slice(0, 3);
+}
+
+
+// ── STATE ──
+let currentProduct = null;
+let currentQty = 1;
+let currentGalleryIdx = 0;
+let totalGalleryImages = 0;
+
+// ── FORMAT PRICE ──
+function fmtPrice(n) { return 'PKR ' + n.toLocaleString('en-PK'); }
+
+// ── STARS ──
+function stars(n) { return '★'.repeat(Math.round(n)) + '☆'.repeat(5 - Math.round(n)); }
+
+// ── SHORT DESC ──
+function shortDesc(desc) {
+  return desc.length > 90 ? desc.slice(0, 87) + '…' : desc;
+}
+
+// ── MULTI-FORMAT IMAGE LOADER ──
+// Tries jpg → webp → png in order. Calls onFound(url) on first success, onFail() if all fail.
+const IMG_EXTS = ['jpg', 'jpeg', 'webp', 'png'];
+
+function findImage(handle, idx, onFound, onFail) {
+  let attempt = 0;
+  function tryNext() {
+    if (attempt >= IMG_EXTS.length) { if (onFail) onFail(); return; }
+    const url = `images/${handle}/${idx}.${IMG_EXTS[attempt]}`;
+    const probe = new Image();
+    probe.onload = () => onFound(url);
+    probe.onerror = () => { attempt++; tryNext(); };
+    probe.src = url;
+  }
+  tryNext();
+}
+
+// Fallback SVG placeholder
+function placeholderSvg(label) {
+  return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><rect fill='%23e8f0f7' width='400' height='400'/><text x='50%25' y='50%25' fill='%231A5276' text-anchor='middle' dy='.3em' font-size='16' font-family='sans-serif'>${encodeURIComponent(label.slice(0,22))}</text></svg>`;
+}
+
+// Set image src with format fallback (for use on <img> elements already in DOM)
+function setImgSmart(imgEl, handle, idx, fallbackLabel) {
+  findImage(handle, idx,
+    (url) => { imgEl.src = url; },
+    ()    => { imgEl.src = placeholderSvg(fallbackLabel || ''); }
+  );
+}
+
+// ── RENDER PRODUCT CARD ──
+function renderCard(p) {
+  const priceHTML = p.price === 0
+    ? `<span class="text-teal font-bold text-sm">Contact for Price</span>`
+    : `<span class="font-bold text-teal text-lg">${fmtPrice(p.price)}</span>${p.compare > 0 ? ` <span class="text-xs text-gray-400 line-through">${fmtPrice(p.compare)}</span>` : ''}`;
+
+  const cardId = `card-img-${p.id}`;
+  setTimeout(() => {
+    const el = document.getElementById(cardId);
+    if (el) setImgSmart(el, p.handle, 1, p.name);
+  }, 0);
+
+  return `
+  <div class="product-card fade-in" data-category="${p.category}" data-search="${(p.name+" "+p.category+" "+p.desc).toLowerCase()}" onclick="window.location.href='product.html?product=${p.handle}'">
+    <div class="card-img-wrap">
+      <img id="${cardId}" src="${placeholderSvg(p.name)}" alt="${p.name}" style="background:#e8f0f7;"/>
+    </div>
+    <div class="p-4">
+      <div class="flex items-center justify-between mb-1">
+        <span class="stars text-xs">★★★★★</span>
+        <span class="text-xs text-charcoal/40">(${Math.floor(Math.random()*30)+10})</span>
+      </div>
+      <h3 class="font-heading font-bold text-base text-charcoal leading-snug mb-1 line-clamp-2">${p.name}</h3>
+      <p class="text-xs text-charcoal/60 mb-3 leading-relaxed line-clamp-2">${shortDesc(p.desc)}</p>
+      <div class="flex items-center gap-2 mb-3">${priceHTML}</div>
+      <a href="product.html?product=${p.handle}" onclick="event.stopPropagation()" class="btn-gold w-full py-2 rounded-lg text-sm text-center block">
+        ${p.price === 0 ? 'Ask on WhatsApp' : 'Buy Now'}
+      </a>
+    </div>
+  </div>`;
+}
+
+// ── RENDER BEST SELLER CARD ──
+function renderBSCard(p) {
+  const discount = Math.round((p.compare - p.price) / p.compare * 100);
+  const bsId = `bs-img-${p.id}`;
+  setTimeout(() => {
+    const el = document.getElementById(bsId);
+    if (el) setImgSmart(el, p.handle, 1, p.name);
+  }, 0);
+  return `
+  <div class="product-card fade-in cursor-pointer" onclick="window.location.href='product.html?product=${p.handle}'">
+    <div class="card-img-wrap relative">
+      <img id="${bsId}" src="${placeholderSvg(p.name)}" alt="${p.name}" style="background:#e8f0f7;"/>
+      <span class="bs-badge absolute top-3 left-3">Best Seller</span>
+      <span class="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">-${discount}%</span>
+    </div>
+    <div class="p-5">
+      <div class="stars text-sm mb-1">★★★★★</div>
+      <h3 class="font-heading font-bold text-lg text-charcoal mb-2">${p.name}</h3>
+      <p class="text-xs text-charcoal/60 mb-3 leading-relaxed">${shortDesc(p.desc)}</p>
+      <div class="flex items-center gap-3 mb-4">
+        <span class="font-bold text-teal text-xl">${fmtPrice(p.price)}</span>
+        <span class="text-sm text-gray-400 line-through">${fmtPrice(p.compare)}</span>
+      </div>
+      <a href="product.html?product=${p.handle}" onclick="event.stopPropagation()" class="btn-teal w-full py-2.5 rounded-xl text-sm text-center block">View Details</a>
+    </div>
+  </div>`;
+}
+
+// ── INIT GRIDS ──
+function initGrids() {
+  document.getElementById('products-grid').innerHTML = PRODUCTS.map(renderCard).join('');
+  document.getElementById('best-sellers-grid').innerHTML = bestSellers.map(renderBSCard).join('');
+  observeFadeIns();
+}
+
+// ── ACTIVE FILTER & SEARCH STATE ──
+let activeCategory = 'all';
+let activeSearch = '';
+
+// ── FILTER BY CATEGORY ──
+function filterProducts(cat, btn) {
+  activeCategory = cat;
+  activeSearch = '';
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').classList.add('hidden');
+  document.getElementById('search-results-count').classList.add('hidden');
+  if (btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  applyFilters();
+  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── SEARCH ──
+function handleSearch(val) {
+  activeSearch = val.trim().toLowerCase();
+  document.getElementById('search-clear').classList.toggle('hidden', !val);
+  // Reset category filter to all when searching
+  if (activeSearch) {
+    activeCategory = 'all';
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.filter-btn').classList.add('active');
+  }
+  applyFilters();
+}
+
+function clearSearch() {
+  activeSearch = '';
+  activeCategory = 'all';
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').classList.add('hidden');
+  document.getElementById('search-results-count').classList.add('hidden');
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn').classList.add('active');
+  applyFilters();
+}
+
+// ── APPLY BOTH FILTERS ──
+function applyFilters() {
+  const cards = document.querySelectorAll('#products-grid .product-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const matchCat = activeCategory === 'all' || card.dataset.category === activeCategory;
+    const matchSearch = !activeSearch || card.dataset.search.includes(activeSearch);
+    const show = matchCat && matchSearch;
+    card.style.display = show ? 'block' : 'none';
+    if (show) visible++;
+  });
+  // Show/hide no-results
+  document.getElementById('no-results').classList.toggle('hidden', visible > 0);
+  document.getElementById('products-grid').classList.toggle('hidden', visible === 0);
+  // Show count when searching
+  const countEl = document.getElementById('search-results-count');
+  if (activeSearch) {
+    countEl.textContent = `${visible} product${visible !== 1 ? 's' : ''} found for "${activeSearch}"`;
+    countEl.classList.remove('hidden');
+  } else {
+    countEl.classList.add('hidden');
+  }
+}
+
+// ── OPEN PRODUCT MODAL ──
+function openProductModal(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  currentProduct = p;
+  currentQty = 1;
+  document.getElementById('qty-value').value = 1;
+
+  document.getElementById('modal-name').textContent = p.name;
+  document.getElementById('modal-category').textContent = p.category;
+  document.getElementById('modal-desc').textContent = p.desc;
+  document.getElementById('modal-price').textContent = p.price === 0 ? 'Contact for Price' : fmtPrice(p.price);
+  document.getElementById('modal-compare').textContent = p.compare > 0 ? fmtPrice(p.compare) : '';
+
+  const featUL = document.getElementById('modal-features');
+  featUL.innerHTML = p.features.map(f => `<li class="flex items-center gap-2"><i class="ri-checkbox-circle-line text-teal flex-shrink-0"></i>${f}</li>`).join('');
+
+  buildGallery(p);
+  openModal('product-modal');
+}
+
+// ── BUILD GALLERY ──
+function buildGallery(p) {
+  const slider = document.getElementById('modal-gallery');
+  const thumbs = document.getElementById('modal-thumbs');
+  slider.innerHTML = '';
+  thumbs.innerHTML = '';
+  currentGalleryIdx = 0;
+
+  // --- Images ---
+  let loadedCount = 0;
+  for (let i = 1; i <= p.images; i++) {
+    const img = document.createElement('img');
+    img.className = i === 1 ? 'active' : '';
+    img.alt = p.name;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
+    slider.appendChild(img);
+
+    const thumb = document.createElement('img');
+    thumb.className = i === 1 ? 'active' : '';
+    thumb.style.cssText = 'width:54px;height:54px;object-fit:cover;border-radius:0.4rem;cursor:pointer;border:2px solid transparent;flex-shrink:0;';
+    const idx = i - 1;
+    thumb.addEventListener('click', () => setGalleryIdx(idx));
+    thumbs.appendChild(thumb);
+
+    // Smart format detection for both main image and thumb
+    findImage(p.handle, i,
+      (url) => { img.src = url; thumb.src = url; },
+      ()    => { img.style.display = 'none'; thumb.style.display = 'none'; }
+    );
+
+    loadedCount++;
+  }
+
+  totalGalleryImages = loadedCount;
+
+  // --- Video: auto-detect video.mp4 or video.mov ---
+  const videoFormats = ['mp4', 'mov', 'webm'];
+  function tryVideoFormat(i) {
+    if (i >= videoFormats.length) return;
+    const videoSrc = `images/${p.handle}/video.${videoFormats[i]}`;
+    const vid = document.createElement('video');
+    vid.src = videoSrc;
+    vid.controls = true;
+    vid.preload = 'metadata';
+    vid.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
+    vid.className = '';
+
+    vid.addEventListener('loadedmetadata', () => {
+      slider.insertBefore(vid, slider.querySelector('.gallery-nav.prev'));
+      totalGalleryImages = loadedCount + 1;
+      const videoIdx = loadedCount;
+
+      const vidThumb = document.createElement('button');
+      vidThumb.style.cssText = 'width:54px;height:54px;border-radius:0.4rem;border:2px solid transparent;background:#1A5276;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#fff;font-size:1.4rem;';
+      vidThumb.innerHTML = '<i class="ri-play-circle-line"></i>';
+      vidThumb.title = 'Play Video';
+      vidThumb.addEventListener('click', () => setGalleryIdx(videoIdx));
+      thumbs.appendChild(vidThumb);
+    });
+
+    vid.addEventListener('error', () => tryVideoFormat(i + 1));
+  }
+  tryVideoFormat(0);
+
+  // Add nav buttons last
+  const prev = document.createElement('button');
+  prev.className = 'gallery-nav prev';
+  prev.innerHTML = '<i class="ri-arrow-left-s-line"></i>';
+  prev.onclick = () => shiftGallery(-1);
+
+  const next = document.createElement('button');
+  next.className = 'gallery-nav next';
+  next.innerHTML = '<i class="ri-arrow-right-s-line"></i>';
+  next.onclick = () => shiftGallery(1);
+
+  slider.appendChild(prev);
+  slider.appendChild(next);
+}
+
+function setGalleryIdx(idx) {
+  const slider = document.getElementById('modal-gallery');
+  const thumbs = document.getElementById('modal-thumbs');
+  const mediaEls = slider.querySelectorAll('img, video');
+  const thumbEls = thumbs.querySelectorAll('img, button');
+
+  // Pause any playing video when navigating away
+  mediaEls.forEach((el, i) => {
+    if (el.tagName === 'VIDEO' && i !== idx) {
+      el.pause();
+      el.currentTime = 0;
+    }
+    el.classList.toggle('active', i === idx);
+  });
+
+  thumbEls.forEach((el, i) => el.classList.toggle('active', i === idx));
+  currentGalleryIdx = idx;
+}
+
+function shiftGallery(dir) {
+  setGalleryIdx((currentGalleryIdx + dir + totalGalleryImages) % totalGalleryImages);
+}
+
+// ── QTY ──
+function changeQty(d) {
+  currentQty = Math.max(1, currentQty + d);
+  document.getElementById('qty-value').value = currentQty;
+}
+
+// ── PROCEED TO CHECKOUT ──
+function proceedToCheckout() {
+  if (!currentProduct) return;
+  if (currentProduct.price === 0) {
+    window.open(`https://wa.me/923224061289?text=Hi%2C%20I%20am%20interested%20in%20${encodeURIComponent(currentProduct.name)}`, '_blank');
+    return;
+  }
+  closeModal('product-modal');
+
+  const subtotal = currentProduct.price * currentQty;
+  const grand = subtotal + 200;
+  document.getElementById('co-product-name').textContent = `${currentProduct.name} × ${currentQty}`;
+  document.getElementById('co-subtotal').textContent = fmtPrice(subtotal);
+  document.getElementById('co-grand-total').textContent = fmtPrice(grand);
+  document.getElementById('co-name').value = '';
+  document.getElementById('co-phone').value = '';
+  document.getElementById('co-address').value = '';
+  document.getElementById('co-error').classList.add('hidden');
+
+  openModal('checkout-modal');
+}
+
+// ── SEND WHATSAPP ORDER ──
+function sendWhatsAppOrder() {
+  const name = document.getElementById('co-name').value.trim();
+  const phone = document.getElementById('co-phone').value.trim();
+  const address = document.getElementById('co-address').value.trim();
+  if (!name || !phone || !address) {
+    document.getElementById('co-error').classList.remove('hidden');
+    return;
+  }
+  const subtotal = currentProduct.price * currentQty;
+  const grand = subtotal + 200;
+  const msg = `🛍️ *New Order – Zarish Mall*\n\n📦 Product: ${currentProduct.name}\n🔢 Quantity: ${currentQty}\n💰 Product Total: ${fmtPrice(subtotal)}\n🚚 Shipping: PKR 200\n✅ Grand Total: ${fmtPrice(grand)}\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📍 Address: ${address}\n\nKindly confirm my order. Thank you!`;
+  window.open(`https://wa.me/923224061289?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ── MODALS ──
+function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+  // Pause any playing video when modal closes
+  document.querySelectorAll('#modal-gallery video').forEach(v => { v.pause(); v.currentTime = 0; });
+}
+function handleModalClose(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+
+// ── SCROLL FADE ──
+function observeFadeIns() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+}
+
+// ── MOBILE MENU ──
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('mobile-menu').classList.toggle('open');
+});
+function closeMobileMenu() { document.getElementById('mobile-menu').classList.remove('open'); }
+
+// ── NAVBAR SHADOW ON SCROLL ──
+window.addEventListener('scroll', () => {
+  const nb = document.getElementById('navbar');
+  nb.style.boxShadow = window.scrollY > 10 ? '0 4px 30px rgba(0,0,0,0.25)' : '';
+});
+
+// ── STATIC IMAGE AUTO-DETECT ──
+function loadStaticImage(imgEl, baseName, fallback) {
+  const exts = ['jpg', 'jpeg', 'webp', 'png'];
+  let i = 0;
+  function tryNext() {
+    if (i >= exts.length) { if (fallback) fallback(imgEl); return; }
+    const url = `${baseName}.${exts[i]}`;
+    const probe = new Image();
+    probe.onload = () => { imgEl.src = url; };
+    probe.onerror = () => { i++; tryNext(); };
+    probe.src = url;
+  }
+  tryNext();
+}
+
+function loadLogoImage(imgEl) {
+  const exts = ['png', 'jpg', 'jpeg', 'webp', 'svg'];
+  let i = 0;
+  function tryNext() {
+    if (i >= exts.length) { imgEl.outerHTML = '<span class="font-brand text-2xl text-white">Zarish Mall</span>'; return; }
+    const url = `logo.${exts[i]}`;
+    const probe = new Image();
+    probe.onload = () => { imgEl.src = url; };
+    probe.onerror = () => { i++; tryNext(); };
+    probe.src = url;
+  }
+  tryNext();
+}
+
+// ── HERO IMAGE AUTO-DETECT ──
+function loadHeroImage() {
+  const heroImg = document.getElementById('hero-img');
+  const exts = ['jpg', 'jpeg', 'webp', 'png'];
+  let i = 0;
+  function tryNext() {
+    if (i >= exts.length) return;
+    const url = `hero.${exts[i]}`;
+    const probe = new Image();
+    probe.onload  = () => { heroImg.src = url; };
+    probe.onerror = () => { i++; tryNext(); };
+    probe.src = url;
+  }
+  tryNext();
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', async () => {
+  loadHeroImage();
+
+  // Logo images (all logos on page)
+  document.querySelectorAll('img[data-logo]').forEach(el => loadLogoImage(el));
+
+  // Static section images
+  document.querySelectorAll('img[data-base]').forEach(el => {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = el.dataset.base;
+    const baseName = txt.value;
+    loadStaticImage(el, baseName, (img) => {
+      if (img.dataset.fallbackHide) img.closest(img.dataset.fallbackHide).style.display = 'none';
+    });
+  });
+
+  // ── Load products from products.json (synced by admin panel via GitHub) ──
+  await loadProducts();
+
+  initGrids();
+  observeFadeIns();
+
+  // Hero fade-in immediate
+  document.querySelectorAll('.fade-in').forEach((el, i) => {
+    if (i < 5) setTimeout(() => el.classList.add('visible'), i * 150);
+  });
+});
+</script>
+</body>
