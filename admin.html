@@ -233,17 +233,25 @@
 
     <!-- ══ ADD / EDIT PRODUCT ══ -->
     <div id="panel-add-product" class="panel">
-      <div style="max-width:700px;">
+      <div style="max-width:740px;">
         <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;">
           <button onclick="showPanel('products')" class="btn btn-ghost" style="padding:0.4rem 0.75rem;"><i class="ri-arrow-left-line"></i></button>
           <h2 id="form-title" style="font-size:1.1rem;font-weight:700;color:#1e293b;">Add New Product</h2>
         </div>
         <div style="background:#fff;border-radius:1rem;padding:1.75rem;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
           <input type="hidden" id="edit-id"/>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+
+          <!-- Basic Info -->
+          <p style="font-size:0.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.85rem;">Basic Info</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
             <div style="grid-column:1/-1;">
               <label class="form-label">Product Name *</label>
               <input type="text" id="f-name" class="form-input" placeholder="e.g. Luxury Rotating Tray"/>
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="form-label">URL Handle (slug) *</label>
+              <input type="text" id="f-handle" class="form-input" placeholder="e.g. luxury-rotating-tray"/>
+              <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Auto-generated from name. Lowercase, numbers & hyphens only.</p>
             </div>
             <div>
               <label class="form-label">Category *</label>
@@ -258,10 +266,6 @@
               </select>
             </div>
             <div>
-              <label class="form-label">Number of Images</label>
-              <input type="number" id="f-images" class="form-input" value="1" min="1" max="20"/>
-            </div>
-            <div>
               <label class="form-label">Price (PKR) — 0 = WhatsApp enquiry</label>
               <input type="number" id="f-price" class="form-input" placeholder="e.g. 1500" min="0"/>
             </div>
@@ -270,29 +274,92 @@
               <input type="number" id="f-compare" class="form-input" placeholder="e.g. 2500" min="0"/>
             </div>
             <div style="grid-column:1/-1;">
-              <label class="form-label">URL Handle (slug) *</label>
-              <input type="text" id="f-handle" class="form-input" placeholder="e.g. luxury-rotating-tray"/>
-              <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Auto-generated from name. Lowercase letters, numbers & hyphens only.</p>
-            </div>
-            <div style="grid-column:1/-1;">
               <label class="form-label">Description *</label>
               <textarea id="f-desc" class="form-input" rows="3" placeholder="Describe the product clearly…"></textarea>
             </div>
             <div style="grid-column:1/-1;">
               <label class="form-label">Key Features (one per line)</label>
               <textarea id="f-features" class="form-input" rows="4" placeholder="Fast-acting cooling effect&#10;Non-greasy formula&#10;Safe for daily use"></textarea>
-              <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Each line becomes one bullet point on the product card.</p>
+              <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">Each line = one bullet point on the product card.</p>
             </div>
           </div>
-          <!-- Image note -->
-          <div style="background:#f0f4f8;border-radius:0.75rem;padding:1rem 1.25rem;margin-bottom:1.5rem;border-left:3px solid var(--teal);">
-            <p style="font-size:0.85rem;font-weight:600;color:var(--teal);margin-bottom:0.3rem;"><i class="ri-image-line"></i> Adding Product Images</p>
-            <p style="font-size:0.82rem;color:#475569;line-height:1.6;">
-              Upload images to your GitHub repo inside a folder named after the handle.<br/>
-              Example: <code>images/luxury-rotating-tray/1.jpg</code>, <code>images/luxury-rotating-tray/2.jpg</code><br/>
-              Set the <em>Number of Images</em> field above to match how many you upload.
-            </p>
+
+          <!-- ── IMAGE SECTION ── -->
+          <div style="border-top:1px solid #f1f5f9;padding-top:1.25rem;margin-bottom:1.5rem;">
+            <p style="font-size:0.7rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;">Product Images</p>
+
+            <!-- Tab switcher -->
+            <div style="display:flex;gap:0;border:2px solid #e5e7eb;border-radius:0.6rem;overflow:hidden;margin-bottom:1.25rem;width:fit-content;">
+              <button type="button" id="tab-url" onclick="switchImgTab('url')"
+                style="padding:0.5rem 1.1rem;font-size:0.82rem;font-weight:600;border:none;cursor:pointer;background:var(--teal);color:#fff;transition:all 0.2s;">
+                <i class="ri-links-line"></i> Image URLs
+              </button>
+              <button type="button" id="tab-github" onclick="switchImgTab('github')"
+                style="padding:0.5rem 1.1rem;font-size:0.82rem;font-weight:600;border:none;cursor:pointer;background:#fff;color:#64748b;transition:all 0.2s;">
+                <i class="ri-github-line"></i> GitHub Folder
+              </button>
+            </div>
+
+            <!-- ── OPTION A: Image URLs ── -->
+            <div id="img-tab-url">
+              <p style="font-size:0.8rem;color:#64748b;margin-bottom:0.85rem;line-height:1.6;">
+                Paste direct image links — from <strong>Google Drive</strong>, <strong>Imgur</strong>, <strong>Cloudinary</strong>, <strong>Dropbox</strong>, or any public image URL.
+                All fields are <em>optional</em> — add as many as you have images.
+              </p>
+
+              <div id="img-url-list" style="display:flex;flex-direction:column;gap:0.55rem;margin-bottom:0.75rem;"></div>
+
+              <button type="button" onclick="addImageUrlField()" class="btn btn-ghost" style="font-size:0.8rem;padding:0.4rem 0.9rem;">
+                <i class="ri-add-line"></i> Add Another URL
+              </button>
+
+              <!-- Live preview -->
+              <div id="img-preview-strip" style="display:none;margin-top:1rem;">
+                <p style="font-size:0.72rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">Live Preview</p>
+                <div id="img-previews" style="display:flex;gap:0.5rem;flex-wrap:wrap;"></div>
+              </div>
+
+              <!-- Tips -->
+              <div style="background:#fffbeb;border-radius:0.6rem;padding:0.75rem 1rem;margin-top:1rem;border-left:3px solid #f59e0b;">
+                <p style="font-size:0.78rem;color:#92400e;font-weight:600;margin-bottom:0.3rem;"><i class="ri-lightbulb-line"></i> Tips for image URLs</p>
+                <p style="font-size:0.77rem;color:#78350f;line-height:1.6;">
+                  • <strong>Google Drive:</strong> Share the file → Copy link → Change <code>open?id=</code> to <code>uc?id=</code><br/>
+                  • <strong>Imgur:</strong> Right-click image → Copy image address (ends in .jpg/.png)<br/>
+                  • <strong>Cloudinary/any host:</strong> Any direct .jpg/.png/.webp link works<br/>
+                  • URLs that show a red border failed to load — check the link
+                </p>
+              </div>
+            </div>
+
+            <!-- ── OPTION B: GitHub Folder ── -->
+            <div id="img-tab-github" style="display:none;">
+              <p style="font-size:0.8rem;color:#64748b;margin-bottom:0.85rem;line-height:1.6;">
+                If you upload images directly to your GitHub repo, just set how many images are in the folder.
+                Images must be named <code>1.jpg</code>, <code>2.jpg</code>, etc. inside a folder named after the handle.
+              </p>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+                <div>
+                  <label class="form-label">Number of Images</label>
+                  <input type="number" id="f-images" class="form-input" value="1" min="1" max="30" placeholder="e.g. 5"/>
+                  <p style="font-size:0.75rem;color:#94a3b8;margin-top:0.3rem;">How many images are in the folder</p>
+                </div>
+                <div style="background:#f8fafc;border-radius:0.6rem;padding:0.85rem 1rem;font-size:0.79rem;color:#475569;line-height:1.7;">
+                  <p style="font-weight:600;color:#1e293b;margin-bottom:0.25rem;">Expected file paths:</p>
+                  <code id="gh-path-preview" style="font-size:0.75rem;color:var(--teal);">{handle}/1.jpg<br/>images/{handle}/2.jpg</code>
+                </div>
+              </div>
+
+              <div style="background:#f0f4f8;border-radius:0.6rem;padding:0.75rem 1rem;margin-top:1rem;border-left:3px solid var(--teal);">
+                <p style="font-size:0.78rem;color:#475569;line-height:1.55;">
+                  <i class="ri-information-line" style="color:var(--teal);"></i>
+                  Upload your images to GitHub at <code><em>handle</em>/1.jpg</code>, <code>images/<em>handle</em>/2.jpg</code> etc.,
+                  then set the number above to match. The site auto-detects jpg, jpeg, webp, and png formats.
+                </p>
+              </div>
+            </div>
           </div>
+
           <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
             <button onclick="saveProduct()" class="btn btn-primary"><i class="ri-save-line"></i> <span id="save-btn-text">Add Product</span></button>
             <button onclick="resetForm();showPanel('products')" class="btn btn-ghost">Cancel</button>
@@ -804,7 +871,7 @@ function renderProductTable() {
     <tr>
       <td>
         <div style="display:flex;align-items:center;gap:0.75rem;">
-          <img src="${p.handle}/1.jpg" alt="" onerror="this.style.background='#dbeafe';this.removeAttribute('src');" style="min-width:48px;"/>
+          <img src="${p.imageUrls && p.imageUrls[0] ? p.imageUrls[0] : 'images/'+p.handle+'/1.jpg'}" alt="" onerror="this.style.background='#dbeafe';this.removeAttribute('src');" style="min-width:48px;"/>
           <div>
             <p style="font-weight:600;font-size:0.85rem;line-height:1.3;color:#1e293b;">${p.name}</p>
             <p style="font-size:0.72rem;color:#94a3b8;">${p.handle}</p>
@@ -826,6 +893,137 @@ function renderProductTable() {
 }
 
 // ══════════════════════════
+//  IMAGE TAB SWITCHER
+// ══════════════════════════
+let activeImgTab = 'url';
+
+function switchImgTab(tab) {
+  activeImgTab = tab;
+  document.getElementById('img-tab-url').style.display    = tab === 'url'    ? 'block' : 'none';
+  document.getElementById('img-tab-github').style.display = tab === 'github' ? 'block' : 'none';
+  const urlBtn = document.getElementById('tab-url');
+  const ghBtn  = document.getElementById('tab-github');
+  if (tab === 'url') {
+    urlBtn.style.background = 'var(--teal)'; urlBtn.style.color = '#fff';
+    ghBtn.style.background  = '#fff';        ghBtn.style.color  = '#64748b';
+  } else {
+    ghBtn.style.background  = 'var(--teal)'; ghBtn.style.color  = '#fff';
+    urlBtn.style.background = '#fff';        urlBtn.style.color = '#64748b';
+  }
+  updateGhPathPreview();
+}
+
+function updateGhPathPreview() {
+  const handle = document.getElementById('f-handle').value.trim() || '{handle}';
+  const count  = parseInt(document.getElementById('f-images') && document.getElementById('f-images').value) || 1;
+  const lines  = Array.from({length: Math.min(count, 5)}, (_, i) => 'images/' + handle + '/' + (i+1) + '.jpg');
+  if (count > 5) lines.push('…');
+  const el = document.getElementById('gh-path-preview');
+  if (el) el.innerHTML = lines.join('<br/>');
+}
+
+// ══════════════════════════
+//  IMAGE URL FIELDS
+// ══════════════════════════
+function addImageUrlField(url) {
+  url = url || '';
+  const list = document.getElementById('img-url-list');
+  const idx  = list.children.length + 1;
+  const row  = document.createElement('div');
+  row.className = 'img-url-row';
+  row.style.cssText = 'display:flex;align-items:center;gap:0.5rem;';
+
+  const numEl = document.createElement('div');
+  numEl.className = 'url-num';
+  numEl.style.cssText = 'min-width:22px;height:22px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff;flex-shrink:0;';
+  numEl.textContent = idx;
+
+  const inp = document.createElement('input');
+  inp.type = 'url';
+  inp.className = 'form-input img-url-input';
+  inp.placeholder = 'https://… (optional)';
+  inp.value = url;
+  inp.style.cssText = 'flex:1;font-size:0.85rem;';
+  inp.addEventListener('input', updatePreview);
+
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.style.cssText = 'background:none;border:none;cursor:pointer;color:#cbd5e1;font-size:1.2rem;padding:0.2rem;flex-shrink:0;transition:color 0.15s;';
+  removeBtn.title = 'Remove';
+  removeBtn.innerHTML = '<i class="ri-close-circle-line"></i>';
+  removeBtn.addEventListener('mouseover', () => { removeBtn.style.color = '#ef4444'; });
+  removeBtn.addEventListener('mouseout',  () => { removeBtn.style.color = '#cbd5e1'; });
+  removeBtn.addEventListener('click', () => removeImageUrlField(removeBtn));
+
+  row.appendChild(numEl);
+  row.appendChild(inp);
+  row.appendChild(removeBtn);
+  list.appendChild(row);
+
+  renumberUrlFields();
+  updatePreview();
+  inp.focus();
+}
+
+function removeImageUrlField(btn) {
+  const row = btn.closest('.img-url-row');
+  if (row) { row.remove(); renumberUrlFields(); updatePreview(); }
+}
+
+function renumberUrlFields() {
+  document.querySelectorAll('.img-url-row').forEach((row, i) => {
+    const num = row.querySelector('.url-num');
+    if (num) num.textContent = i + 1;
+  });
+}
+
+function getImageUrls() {
+  return Array.from(document.querySelectorAll('.img-url-input'))
+    .map(inp => inp.value.trim())
+    .filter(Boolean);
+}
+
+function updatePreview() {
+  const urls   = getImageUrls();
+  const strip  = document.getElementById('img-preview-strip');
+  const prevEl = document.getElementById('img-previews');
+  if (!strip || !prevEl) return;
+  if (!urls.length) { strip.style.display = 'none'; return; }
+  strip.style.display = 'block';
+  prevEl.innerHTML = '';
+  urls.forEach((url, i) => {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:relative;display:inline-block;';
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Image ' + (i+1);
+    img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:0.6rem;border:2px solid #e5e7eb;background:#f1f5f9;display:block;';
+    img.addEventListener('load',  () => { img.style.border = '2px solid #22c55e'; });
+    img.addEventListener('error', () => { img.style.border = '2px solid #fca5a5'; img.style.background = '#fee2e2'; img.title = 'Cannot load — check URL'; });
+    const badge = document.createElement('span');
+    badge.textContent = i + 1;
+    badge.style.cssText = 'position:absolute;top:-6px;left:-6px;background:var(--teal);color:#fff;font-size:0.6rem;font-weight:700;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:1;';
+    wrap.appendChild(img);
+    wrap.appendChild(badge);
+    prevEl.appendChild(wrap);
+  });
+}
+
+function initUrlFields(urls) {
+  urls = urls || [];
+  const list = document.getElementById('img-url-list');
+  if (!list) return;
+  list.innerHTML = '';
+  const strip = document.getElementById('img-preview-strip');
+  if (strip) strip.style.display = 'none';
+  const prevEl = document.getElementById('img-previews');
+  if (prevEl) prevEl.innerHTML = '';
+  // Show existing URLs + one empty slot, or 2 empty slots
+  const toShow = urls.length > 0 ? [...urls, ''] : ['', ''];
+  toShow.forEach(url => addImageUrlField(url));
+}
+
+// ══════════════════════════
 //  SAVE PRODUCT
 // ══════════════════════════
 function saveProduct() {
@@ -834,27 +1032,42 @@ function saveProduct() {
   const handle   = document.getElementById('f-handle').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'');
   const price    = parseInt(document.getElementById('f-price').value) || 0;
   const compare  = parseInt(document.getElementById('f-compare').value) || 0;
-  const images   = parseInt(document.getElementById('f-images').value) || 1;
   const desc     = document.getElementById('f-desc').value.trim();
   const features = document.getElementById('f-features').value.trim().split('\n').map(s=>s.trim()).filter(Boolean);
   const editId   = document.getElementById('edit-id').value;
 
   if (!name || !category || !handle || !desc) {
-    showToast('Please fill in all required fields.', 'error'); return;
+    showToast('Please fill in Name, Category, Handle and Description.', 'error'); return;
   }
+
+  // Determine image source based on active tab
+  const imageUrls   = activeImgTab === 'url' ? getImageUrls() : [];
+  const githubCount = activeImgTab === 'github'
+    ? (parseInt(document.getElementById('f-images').value) || 1)
+    : (imageUrls.length || 1);
 
   let prods = [...PRODUCTS];
 
   if (editId) {
-    const idx = prods.findIndex(p=>p.id===parseInt(editId));
+    const idx = prods.findIndex(p => p.id === parseInt(editId));
     if (idx > -1) {
-      prods[idx] = { ...prods[idx], name, category, handle, price, compare, images, desc, features };
+      const updated = { ...prods[idx], name, category, handle, price, compare, desc, features };
+      if (activeImgTab === 'url' && imageUrls.length > 0) {
+        updated.imageUrls = imageUrls;
+        updated.images    = imageUrls.length;
+      } else {
+        delete updated.imageUrls;
+        updated.images = githubCount;
+      }
+      prods[idx] = updated;
       showToast('Product updated! Click "Publish to GitHub" to go live.');
     }
   } else {
-    if (prods.find(p=>p.handle===handle)) { showToast('Handle already exists.', 'error'); return; }
-    const newId = prods.length ? Math.max(...prods.map(p=>p.id)) + 1 : 1;
-    prods.push({ id:newId, name, category, handle, price, compare, images, desc, features });
+    if (prods.find(p => p.handle === handle)) { showToast('Handle already exists.', 'error'); return; }
+    const newId   = prods.length ? Math.max(...prods.map(p => p.id)) + 1 : 1;
+    const newProd = { id: newId, name, category, handle, price, compare, images: githubCount, desc, features };
+    if (activeImgTab === 'url' && imageUrls.length > 0) newProd.imageUrls = imageUrls;
+    prods.push(newProd);
     showToast('Product added! Click "Publish to GitHub" to go live.');
   }
 
@@ -866,28 +1079,44 @@ function saveProduct() {
 }
 
 function editProduct(id) {
-  const p = PRODUCTS.find(x=>x.id===id);
+  const p = PRODUCTS.find(x => x.id === id);
   if (!p) return;
-  document.getElementById('edit-id').value = p.id;
-  document.getElementById('f-name').value = p.name;
+  document.getElementById('edit-id').value    = p.id;
+  document.getElementById('f-name').value     = p.name;
   document.getElementById('f-category').value = p.category;
-  document.getElementById('f-handle').value = p.handle;
-  document.getElementById('f-price').value = p.price;
-  document.getElementById('f-compare').value = p.compare || '';
-  document.getElementById('f-images').value = p.images;
-  document.getElementById('f-desc').value = p.desc;
-  document.getElementById('f-features').value = (p.features||[]).join('\n');
-  document.getElementById('form-title').textContent = 'Edit Product';
-  document.getElementById('save-btn-text').textContent = 'Update Product';
+  document.getElementById('f-handle').value   = p.handle;
+  document.getElementById('f-price').value    = p.price;
+  document.getElementById('f-compare').value  = p.compare || '';
+  document.getElementById('f-desc').value     = p.desc;
+  document.getElementById('f-features').value = (p.features || []).join('\n');
+  document.getElementById('form-title').textContent      = 'Edit Product';
+  document.getElementById('save-btn-text').textContent   = 'Update Product';
+
+  if (p.imageUrls && p.imageUrls.length > 0) {
+    // Has URL-based images → switch to URL tab and populate
+    switchImgTab('url');
+    initUrlFields(p.imageUrls);
+  } else {
+    // GitHub folder images
+    switchImgTab('github');
+    const fImg = document.getElementById('f-images');
+    if (fImg) fImg.value = p.images || 1;
+    updateGhPathPreview();
+  }
   showPanel('add-product');
 }
 
 function resetForm() {
-  ['edit-id','f-name','f-handle','f-price','f-compare','f-desc','f-features'].forEach(id=>{ document.getElementById(id).value=''; });
+  ['edit-id','f-name','f-handle','f-price','f-compare','f-desc','f-features'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
   document.getElementById('f-category').value = '';
-  document.getElementById('f-images').value = '1';
-  document.getElementById('form-title').textContent = 'Add New Product';
+  const fImg = document.getElementById('f-images');
+  if (fImg) fImg.value = '1';
+  document.getElementById('form-title').textContent    = 'Add New Product';
   document.getElementById('save-btn-text').textContent = 'Add Product';
+  switchImgTab('url');
+  initUrlFields([]);
 }
 
 // Auto-generate handle from name (new products only)
@@ -896,8 +1125,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById('edit-id').value) {
       document.getElementById('f-handle').value = this.value.toLowerCase()
         .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').trim();
+      updateGhPathPreview();
     }
   });
+  document.getElementById('f-handle').addEventListener('input', updateGhPathPreview);
+  const fImgEl = document.getElementById('f-images');
+  if (fImgEl) fImgEl.addEventListener('input', updateGhPathPreview);
+  // Init URL fields with 2 empty slots on load
+  switchImgTab('url');
+  initUrlFields([]);
   if (sessionStorage.getItem('zm_auth')) {
     document.getElementById('login-screen').classList.add('hidden');
     init();
