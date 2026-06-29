@@ -926,8 +926,14 @@ function placeholderSvg(label) {
   return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><rect fill='%23e8f0f7' width='400' height='400'/><text x='50%25' y='50%25' fill='%231A5276' text-anchor='middle' dy='.3em' font-size='16' font-family='sans-serif'>${encodeURIComponent(label.slice(0,22))}</text></svg>`;
 }
 
-// Set image src with format fallback (for use on <img> elements already in DOM)
-function setImgSmart(imgEl, handle, idx, fallbackLabel) {
+// Set image src — uses imageUrls array if available, otherwise finds by path
+function setImgSmart(imgEl, handle, idx, fallbackLabel, product) {
+  // If product has imageUrls and the requested index exists, use it directly
+  if (product && product.imageUrls && product.imageUrls[idx - 1]) {
+    imgEl.src = product.imageUrls[idx - 1];
+    imgEl.onerror = () => { imgEl.src = placeholderSvg(fallbackLabel || ''); };
+    return;
+  }
   findImage(handle, idx,
     (url) => { imgEl.src = url; },
     ()    => { imgEl.src = placeholderSvg(fallbackLabel || ''); }
@@ -943,7 +949,7 @@ function renderCard(p) {
   const cardId = `card-img-${p.id}`;
   setTimeout(() => {
     const el = document.getElementById(cardId);
-    if (el) setImgSmart(el, p.handle, 1, p.name);
+    if (el) setImgSmart(el, p.handle, 1, p.name, p);
   }, 0);
 
   return `
@@ -972,7 +978,7 @@ function renderBSCard(p) {
   const bsId = `bs-img-${p.id}`;
   setTimeout(() => {
     const el = document.getElementById(bsId);
-    if (el) setImgSmart(el, p.handle, 1, p.name);
+    if (el) setImgSmart(el, p.handle, 1, p.name, p);
   }, 0);
   return `
   <div class="product-card fade-in cursor-pointer" onclick="window.location.href='product.html?product=${p.handle}'">
@@ -1098,28 +1104,56 @@ function buildGallery(p) {
   currentGalleryIdx = 0;
 
   // --- Images ---
+  // Use imageUrls (from admin URL tab) if available, otherwise find from GitHub folder
+  const imageSources = (p.imageUrls && p.imageUrls.length > 0)
+    ? p.imageUrls.filter(Boolean)
+    : null; // null = use findImage path-based approach
+
   let loadedCount = 0;
-  for (let i = 1; i <= p.images; i++) {
-    const img = document.createElement('img');
-    img.className = i === 1 ? 'active' : '';
-    img.alt = p.name;
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
-    slider.appendChild(img);
 
-    const thumb = document.createElement('img');
-    thumb.className = i === 1 ? 'active' : '';
-    thumb.style.cssText = 'width:54px;height:54px;object-fit:cover;border-radius:0.4rem;cursor:pointer;border:2px solid transparent;flex-shrink:0;';
-    const idx = i - 1;
-    thumb.addEventListener('click', () => setGalleryIdx(idx));
-    thumbs.appendChild(thumb);
+  if (imageSources) {
+    // ── URL-based images ──
+    imageSources.forEach((url, i) => {
+      const img = document.createElement('img');
+      img.className = i === 0 ? 'active' : '';
+      img.alt = p.name;
+      img.src = url;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
+      img.onerror = () => { img.style.display = 'none'; thumb.style.display = 'none'; };
+      slider.appendChild(img);
 
-    // Smart format detection for both main image and thumb
-    findImage(p.handle, i,
-      (url) => { img.src = url; thumb.src = url; },
-      ()    => { img.style.display = 'none'; thumb.style.display = 'none'; }
-    );
+      const thumb = document.createElement('img');
+      thumb.className = i === 0 ? 'active' : '';
+      thumb.src = url;
+      thumb.style.cssText = 'width:54px;height:54px;object-fit:cover;border-radius:0.4rem;cursor:pointer;border:2px solid transparent;flex-shrink:0;';
+      thumb.onerror = () => { thumb.style.display = 'none'; };
+      const capturedIdx = i;
+      thumb.addEventListener('click', () => setGalleryIdx(capturedIdx));
+      thumbs.appendChild(thumb);
+      loadedCount++;
+    });
+  } else {
+    // ── GitHub folder images ──
+    for (let i = 1; i <= p.images; i++) {
+      const img = document.createElement('img');
+      img.className = i === 1 ? 'active' : '';
+      img.alt = p.name;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;';
+      slider.appendChild(img);
 
-    loadedCount++;
+      const thumb = document.createElement('img');
+      thumb.className = i === 1 ? 'active' : '';
+      thumb.style.cssText = 'width:54px;height:54px;object-fit:cover;border-radius:0.4rem;cursor:pointer;border:2px solid transparent;flex-shrink:0;';
+      const capturedIdx = i - 1;
+      thumb.addEventListener('click', () => setGalleryIdx(capturedIdx));
+      thumbs.appendChild(thumb);
+
+      findImage(p.handle, i,
+        (url) => { img.src = url; thumb.src = url; },
+        ()    => { img.style.display = 'none'; thumb.style.display = 'none'; }
+      );
+      loadedCount++;
+    }
   }
 
   totalGalleryImages = loadedCount;
