@@ -606,5 +606,22 @@
       "Touch control brightness",
       "Foldable compact design"
     ]
+  },
+  {
+    "id": 40,
+    "name": "Testing 123",
+    "category": "Travel & Bags",
+    "handle": "testing-123",
+    "price": 2000,
+    "compare": 2500,
+    "images": 2,
+    "desc": "Hello I am testing Product and what do u want to add up or i am testing the product is getting uploading or not what you can",
+    "features": [
+      "Safe for Daily Use"
+    ],
+    "imageUrls": [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWzRG2sDh8yUSuaUkirXJ3ShblOSHQ3UeXAcgAkHOqbw&s=10",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRyjf2UZVregJHnLMsWLtXD4c1J6IQEl1Hf7W2gjWK4uQ&s=10"
+    ]
   }
 ]
