@@ -606,5 +606,32 @@
       "Touch control brightness",
       "Foldable compact design"
     ]
+  },
+  {
+    "id": 40,
+    "name": "Foldable Car Sun Shade Umbrella – Heat & UV Blocking Windshield Protector",
+    "category": "Home & Storage",
+    "handle": "foldable-car-sun-shade-umbrella-heat-uv-blocking-windshield-protector",
+    "price": 1599,
+    "compare": 2000,
+    "images": 4,
+    "desc": "Keep your car cooler and protect your interior from harmful UV rays with this Premium Foldable Car Windshield Sun Shade Umbrella. Its durable, umbrella-style design opens and folds in seconds, providing full windshield coverage while reducing heat buildup. Compact, reusable, and easy to store, it's the perfect sun protection accessory for everyday driving.",
+    "features": [
+      "### Key Features",
+      "* ☀️ Blocks harmful UV rays and reduces interior heat",
+      "* 🌡️ Keeps your car cooler on hot days",
+      "* ☂️ Foldable umbrella design for quick setup and storage",
+      "* 🚗 Universal fit for most cars, SUVs, and sedans",
+      "* 🛡️ Protects dashboard, steering wheel, and seats from sun damage",
+      "* 💪 Durable, high-quality reflective material",
+      "* 📦 Compact and lightweight for easy carrying",
+      "* 🔄 Reusable and built for everyday use"
+    ],
+    "imageUrls": [
+      "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/07/08ee2aff78f0c79ef245fb1503eac8b9.webp",
+      "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/07/f9e07c5410c663fa5690fe39e9dbd173.jpg",
+      "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/07/abe406304ba14efa7e938b2f37ba122a.webp",
+      "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/07/abe406304ba14efa7e938b2f37ba122a.webp"
+    ]
   }
 ]
