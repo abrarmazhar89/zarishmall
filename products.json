@@ -562,8 +562,8 @@
   {
     "id": 37,
     "name": "Anti-Loss Strip",
-    "price": 0,
-    "compare": 0,
+    "price": 999,
+    "compare": 1500,
     "category": "Home & Storage",
     "handle": "anti-los-strip",
     "images": 12,
