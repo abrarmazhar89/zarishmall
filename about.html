@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>About Us – Zarish Mall</title>
+<meta name="description" content="Learn about Zarish Mall — Pakistan's trusted online store for quality home, kitchen, beauty, and health products. Founded by Mazhar Altaf with Cash on Delivery nationwide."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        teal:    { DEFAULT:'#1A5276', light:'#2471A3', dark:'#154360' },
+        gold:    { DEFAULT:'#D4AC0D', light:'#F1C40F', dark:'#B7950B' },
+        cream:   '#F8F8F6',
+        charcoal:'#2C2C2C'
+      },
+      fontFamily: {
+        heading: ['"Cormorant Garamond"','serif'],
+        body:    ['"DM Sans"','sans-serif'],
+        brand:   ['Pacifico','cursive']
+      }
+    }
+  }
+}
+</script>
+<style>
+  :root { --teal:#1A5276; --teal-light:#2471A3; --gold:#D4AC0D; --gold-light:#F1C40F; --cream:#F8F8F6; --charcoal:#2C2C2C; }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ font-family:'DM Sans',sans-serif; background:var(--cream); color:var(--charcoal); }
+
+  ::-webkit-scrollbar{ width:6px; }
+  ::-webkit-scrollbar-track{ background:#f1f1f1; }
+  ::-webkit-scrollbar-thumb{ background:var(--teal); border-radius:3px; }
+
+  .fade-in{ opacity:0; transform:translateY(30px); transition:opacity 0.7s ease,transform 0.7s ease; }
+  .fade-in.visible{ opacity:1; transform:translateY(0); }
+
+  /* NAV */
+  #navbar{ backdrop-filter:blur(12px); background:rgba(26,82,118,0.97); }
+  .nav-link{ position:relative; color:rgba(255,255,255,0.85); transition:color 0.3s; }
+  .nav-link::after{ content:''; position:absolute; bottom:-3px; left:0; width:0; height:2px; background:var(--gold); transition:width 0.3s; }
+  .nav-link:hover{ color:#fff; }
+  .nav-link:hover::after{ width:100%; }
+  .nav-link.active-link{ color:#fff; }
+  .nav-link.active-link::after{ width:100%; }
+  #mobile-menu{ max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+  #mobile-menu.open{ max-height:400px; }
+
+  /* HERO */
+  .hero-about{
+    background: linear-gradient(135deg, #0f3244 0%, #1A5276 50%, #1d6899 100%);
+    min-height: 480px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-about::before{
+    content:'';
+    position:absolute; inset:0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80"><circle cx="40" cy="40" r="1.5" fill="%23ffffff" opacity="0.04"/></svg>') repeat;
+  }
+  .hero-about::after{
+    content:'';
+    position:absolute;
+    bottom:-2px; left:0; right:0; height:80px;
+    background: var(--cream);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+
+  /* GOLD LINE */
+  .gold-line{ display:block; width:56px; height:3px; background:linear-gradient(90deg,var(--gold),var(--gold-light)); border-radius:2px; }
+
+  /* SECTION TITLE */
+  .section-title{ font-family:'Cormorant Garamond',serif; font-weight:700; line-height:1.15; }
+
+  /* STAT CARDS */
+  .stat-bubble{
+    background:#fff;
+    border-radius:1.25rem;
+    padding:1.75rem 1.5rem;
+    text-align:center;
+    box-shadow:0 4px 24px rgba(26,82,118,0.08);
+    border-bottom:3px solid var(--gold);
+    transition:transform 0.3s,box-shadow 0.3s;
+  }
+  .stat-bubble:hover{ transform:translateY(-6px); box-shadow:0 12px 40px rgba(26,82,118,0.14); }
+
+  /* VALUE CARDS */
+  .value-card{
+    background:#fff;
+    border-radius:1rem;
+    padding:1.5rem;
+    box-shadow:0 2px 12px rgba(0,0,0,0.06);
+    transition:transform 0.3s,box-shadow 0.3s;
+    border-top:3px solid transparent;
+  }
+  .value-card:hover{ transform:translateY(-4px); box-shadow:0 8px 32px rgba(26,82,118,0.12); border-top-color:var(--gold); }
+  .value-icon{
+    width:48px; height:48px;
+    background:linear-gradient(135deg,rgba(26,82,118,0.1),rgba(26,82,118,0.05));
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.3rem; color:var(--teal);
+    margin-bottom:1rem;
+  }
+
+  /* TIMELINE */
+  .timeline-line{ position:absolute; left:50%; top:0; bottom:0; width:2px; background:linear-gradient(to bottom,var(--gold),var(--teal)); transform:translateX(-50%); }
+  .timeline-dot{ width:14px; height:14px; border-radius:50%; background:var(--gold); border:3px solid #fff; box-shadow:0 0 0 3px var(--gold); flex-shrink:0; }
+
+  /* CONTACT CARD */
+  .contact-chip{
+    display:flex; align-items:center; gap:0.85rem;
+    background:#fff;
+    border-radius:0.875rem;
+    padding:1rem 1.25rem;
+    box-shadow:0 2px 12px rgba(0,0,0,0.07);
+    transition:transform 0.2s,box-shadow 0.2s;
+    text-decoration:none;
+  }
+  .contact-chip:hover{ transform:translateY(-3px); box-shadow:0 8px 24px rgba(26,82,118,0.12); }
+  .contact-chip-icon{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.15rem; flex-shrink:0; }
+
+  /* CEO CARD */
+  .ceo-card{ background:linear-gradient(135deg,#0f3244,#1A5276); border-radius:1.5rem; overflow:hidden; }
+  .ceo-avatar{ width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-light)); display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:#fff; font-family:'Cormorant Garamond',serif; font-weight:700; border:4px solid rgba(255,255,255,0.3); }
+
+  /* FOOTER */
+  footer{ background:#0f3244; }
+  .btn-wa{ display:inline-flex; align-items:center; gap:0.5rem; background:#25D366; color:#fff; padding:0.75rem 1.75rem; border-radius:9999px; font-weight:600; font-size:0.9rem; text-decoration:none; transition:all 0.2s; }
+  .btn-wa:hover{ background:#1ebe5a; transform:translateY(-2px); box-shadow:0 6px 20px rgba(37,211,102,0.35); }
+  .btn-teal{ display:inline-flex; align-items:center; gap:0.5rem; background:var(--teal); color:#fff; padding:0.75rem 1.75rem; border-radius:9999px; font-weight:600; font-size:0.9rem; text-decoration:none; transition:all 0.2s; }
+  .btn-teal:hover{ background:var(--teal-light); transform:translateY(-2px); }
+
+  @media(max-width:768px){
+    .timeline-line{ left:24px; }
+    .hero-about{ min-height:360px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 py-3 px-4 shadow-lg">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <a href="index.html" class="font-brand text-white text-xl tracking-wide">Zarish Mall</a>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="index.html#home"          class="nav-link text-sm font-medium">Home</a>
+      <a href="about.html"               class="nav-link active-link text-sm font-medium">About</a>
+      <a href="index.html#products"      class="nav-link text-sm font-medium">Products</a>
+      <a href="index.html#privacy-policy" class="nav-link text-sm font-medium">Privacy Policy</a>
+      <a href="index.html#contact"       class="nav-link text-sm font-medium">Contact</a>
+    </div>
+    <button id="hamburger" class="md:hidden text-white text-2xl" onclick="document.getElementById('mobile-menu').classList.toggle('open')">
+      <i class="ri-menu-line"></i>
+    </button>
+  </div>
+  <div id="mobile-menu" class="md:hidden px-4 pb-3">
+    <div class="flex flex-col gap-3 pt-3 border-t border-white/20 mt-2">
+      <a href="index.html#home"           class="nav-link text-sm font-medium py-1">Home</a>
+      <a href="about.html"                class="nav-link active-link text-sm font-medium py-1">About</a>
+      <a href="index.html#products"       class="nav-link text-sm font-medium py-1">Products</a>
+      <a href="index.html#privacy-policy" class="nav-link text-sm font-medium py-1">Privacy Policy</a>
+      <a href="index.html#contact"        class="nav-link text-sm font-medium py-1">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero-about flex items-center justify-center pt-20">
+  <div class="relative z-10 text-center px-6 py-20 max-w-3xl mx-auto">
+    <span class="gold-line mx-auto mb-6 block"></span>
+    <p class="text-gold font-semibold text-sm uppercase tracking-widest mb-3">Est. in Pakistan</p>
+    <h1 class="section-title text-5xl md:text-6xl text-white mb-6">About Zarish Mall</h1>
+    <p class="text-white/75 text-lg leading-relaxed max-w-xl mx-auto">
+      We started with a simple promise — quality products, honest prices, and genuine care for every customer across Pakistan.
+    </p>
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<section class="py-16 bg-cream">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+      <div class="stat-bubble fade-in">
+        <p class="section-title text-4xl text-teal mb-1">5000+</p>
+        <p class="text-sm text-charcoal/60 font-medium">Happy Customers</p>
+      </div>
+      <div class="stat-bubble fade-in">
+        <p class="section-title text-4xl text-teal mb-1">40+</p>
+        <p class="text-sm text-charcoal/60 font-medium">Products</p>
+      </div>
+      <div class="stat-bubble fade-in">
+        <p class="section-title text-4xl text-teal mb-1">6</p>
+        <p class="text-sm text-charcoal/60 font-medium">Categories</p>
+      </div>
+      <div class="stat-bubble fade-in">
+        <p class="section-title text-4xl text-teal mb-1">COD</p>
+        <p class="text-sm text-charcoal/60 font-medium">Nationwide Delivery</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ OUR STORY ══ -->
+<section class="py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+      <div class="fade-in">
+        <span class="gold-line mb-5 block"></span>
+        <h2 class="section-title text-4xl md:text-5xl text-teal mb-6">Our Story</h2>
+        <p class="text-charcoal/80 text-base leading-relaxed mb-5">
+          Zarish Mall was built on a belief that every Pakistani home deserves access to quality products at honest prices — without compromise. What started as a vision to bridge the gap between premium products and everyday Pakistani consumers has grown into a store trusted by thousands.
+        </p>
+        <p class="text-charcoal/80 text-base leading-relaxed mb-5">
+          We carefully handpick every single item in our catalog — from kitchen essentials to beauty must-haves, home storage solutions to health products — testing each one against strict quality standards before it ever reaches your door.
+        </p>
+        <p class="text-charcoal/80 text-base leading-relaxed mb-8">
+          Our Cash on Delivery model and unique open-parcel policy mean you never have to take a leap of faith. Inspect your order before you pay. That's the Zarish Mall promise.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <div class="flex items-center gap-2 bg-teal/8 border border-teal/15 rounded-xl px-4 py-2.5">
+            <i class="ri-verified-badge-line text-teal"></i>
+            <span class="text-teal text-sm font-semibold">Quality Verified</span>
+          </div>
+          <div class="flex items-center gap-2 bg-gold/10 border border-gold/20 rounded-xl px-4 py-2.5">
+            <i class="ri-heart-line text-gold"></i>
+            <span class="text-charcoal text-sm font-semibold">Customer First</span>
+          </div>
+          <div class="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-4 py-2.5">
+            <i class="ri-truck-line text-green-600"></i>
+            <span class="text-green-700 text-sm font-semibold">COD Nationwide</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CEO Card -->
+      <div class="fade-in">
+        <div class="ceo-card p-8 md:p-10">
+          <div class="flex flex-col items-center text-center">
+            <div class="ceo-avatar mb-5">M</div>
+            <p class="text-gold text-xs font-bold uppercase tracking-widest mb-1">Founder & CEO</p>
+            <h3 class="section-title text-3xl text-white mb-2">Mazhar Altaf</h3>
+            <p class="text-white/60 text-sm leading-relaxed max-w-xs mb-6">
+              Mazhar founded Zarish Mall with a mission to bring trusted, quality products to every corner of Pakistan — making online shopping simpler, safer, and more reliable for every family.
+            </p>
+            <div class="w-full border-t border-white/10 pt-5 flex flex-col gap-3">
+              <a href="mailto:zarishgadgets@gmail.com" class="flex items-center gap-3 text-white/70 hover:text-gold transition-colors text-sm">
+                <i class="ri-mail-line text-gold text-base flex-shrink-0"></i>
+                zarishgadgets@gmail.com
+              </a>
+              <a href="tel:+923224061289" class="flex items-center gap-3 text-white/70 hover:text-gold transition-colors text-sm">
+                <i class="ri-phone-line text-gold text-base flex-shrink-0"></i>
+                +92 322 4061289
+              </a>
+              <a href="https://wa.me/923224061289" target="_blank" class="flex items-center gap-3 text-white/70 hover:text-green-400 transition-colors text-sm">
+                <i class="ri-whatsapp-line text-green-400 text-base flex-shrink-0"></i>
+                WhatsApp: +92 322 4061289
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ OUR VALUES ══ -->
+<section class="py-20 bg-cream">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14 fade-in">
+      <span class="gold-line mb-5 mx-auto block"></span>
+      <h2 class="section-title text-4xl md:text-5xl text-teal mb-4">What We Stand For</h2>
+      <p class="text-charcoal/60 text-base max-w-lg mx-auto">Every decision we make at Zarish Mall comes back to these core values.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="value-card fade-in">
+        <div class="value-icon"><i class="ri-shield-check-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Quality First</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Every product in our catalog is handpicked and quality-checked before it goes live. We don't sell what we wouldn't use ourselves.</p>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon"><i class="ri-heart-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Customer Trust</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Our open-parcel policy means you inspect your order before paying. No hidden risks, no unpleasant surprises — just honest service.</p>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon"><i class="ri-truck-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Nationwide Reach</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">We deliver Cash on Delivery to every city and town across Pakistan in 3–4 working days. No location is too far.</p>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon"><i class="ri-price-tag-3-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Honest Pricing</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">We believe great products shouldn't cost a fortune. Our prices are competitive, transparent, and fairly set — always.</p>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon"><i class="ri-customer-service-2-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Responsive Support</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Questions before or after your order? Our WhatsApp support is fast, friendly, and always ready to help you find the right product.</p>
+      </div>
+      <div class="value-card fade-in">
+        <div class="value-icon"><i class="ri-recycle-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Continuous Improvement</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">We listen to customer feedback and constantly improve our catalog, service, and experience to serve you better every day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW WE WORK ══ -->
+<section class="py-20 bg-white">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="text-center mb-14 fade-in">
+      <span class="gold-line mb-5 mx-auto block"></span>
+      <h2 class="section-title text-4xl md:text-5xl text-teal mb-4">How It Works</h2>
+      <p class="text-charcoal/60 text-base">From browsing to delivery — simple, safe, and fast.</p>
+    </div>
+
+    <!-- Timeline (desktop) -->
+    <div class="hidden md:block relative py-4">
+      <div class="timeline-line"></div>
+      <div class="space-y-12">
+
+        <!-- Step 1 -->
+        <div class="grid grid-cols-2 gap-12 items-center fade-in">
+          <div class="text-right pr-10">
+            <div class="inline-block bg-teal/8 border border-teal/15 rounded-xl px-4 py-2 mb-3">
+              <span class="text-teal text-xs font-bold uppercase tracking-wider">Step 01</span>
+            </div>
+            <h3 class="font-heading text-2xl font-bold text-teal mb-2">Browse & Choose</h3>
+            <p class="text-charcoal/70 text-sm leading-relaxed">Explore our carefully curated catalog of 40+ products across 6 categories. Each listing has full descriptions, images, and honest pricing.</p>
+          </div>
+          <div class="flex items-center pl-4">
+            <div class="timeline-dot absolute left-1/2 -translate-x-1/2"></div>
+            <div class="pl-10">
+              <div class="w-14 h-14 bg-gold/10 border-2 border-gold/30 rounded-2xl flex items-center justify-center text-gold text-2xl ml-2">
+                <i class="ri-store-2-line"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="grid grid-cols-2 gap-12 items-center fade-in">
+          <div class="flex items-center justify-end pr-4">
+            <div class="pr-10">
+              <div class="w-14 h-14 bg-green-50 border-2 border-green-200 rounded-2xl flex items-center justify-center text-green-600 text-2xl mr-2">
+                <i class="ri-whatsapp-line"></i>
+              </div>
+            </div>
+            <div class="timeline-dot absolute left-1/2 -translate-x-1/2"></div>
+          </div>
+          <div class="pl-10">
+            <div class="inline-block bg-teal/8 border border-teal/15 rounded-xl px-4 py-2 mb-3">
+              <span class="text-teal text-xs font-bold uppercase tracking-wider">Step 02</span>
+            </div>
+            <h3 class="font-heading text-2xl font-bold text-teal mb-2">Order on WhatsApp</h3>
+            <p class="text-charcoal/70 text-sm leading-relaxed">Simply tap "Buy Now" or message us on WhatsApp. Share your name, address, and the product — and we confirm your order within minutes.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="grid grid-cols-2 gap-12 items-center fade-in">
+          <div class="text-right pr-10">
+            <div class="inline-block bg-teal/8 border border-teal/15 rounded-xl px-4 py-2 mb-3">
+              <span class="text-teal text-xs font-bold uppercase tracking-wider">Step 03</span>
+            </div>
+            <h3 class="font-heading text-2xl font-bold text-teal mb-2">We Pack & Dispatch</h3>
+            <p class="text-charcoal/70 text-sm leading-relaxed">Your order is carefully packed and dispatched within 24 hours via trusted courier partners for safe delivery across Pakistan.</p>
+          </div>
+          <div class="flex items-center pl-4">
+            <div class="timeline-dot absolute left-1/2 -translate-x-1/2"></div>
+            <div class="pl-10">
+              <div class="w-14 h-14 bg-teal/8 border-2 border-teal/20 rounded-2xl flex items-center justify-center text-teal text-2xl ml-2">
+                <i class="ri-box-3-line"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="grid grid-cols-2 gap-12 items-center fade-in">
+          <div class="flex items-center justify-end pr-4">
+            <div class="pr-10">
+              <div class="w-14 h-14 bg-gold/10 border-2 border-gold/30 rounded-2xl flex items-center justify-center text-gold text-2xl mr-2">
+                <i class="ri-truck-line"></i>
+              </div>
+            </div>
+            <div class="timeline-dot absolute left-1/2 -translate-x-1/2"></div>
+          </div>
+          <div class="pl-10">
+            <div class="inline-block bg-teal/8 border border-teal/15 rounded-xl px-4 py-2 mb-3">
+              <span class="text-teal text-xs font-bold uppercase tracking-wider">Step 04</span>
+            </div>
+            <h3 class="font-heading text-2xl font-bold text-teal mb-2">Delivered to Your Door</h3>
+            <p class="text-charcoal/70 text-sm leading-relaxed">Your parcel arrives in 3–4 working days. Open it, inspect it, and only pay the delivery person when you're fully satisfied.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Timeline (mobile) -->
+    <div class="md:hidden space-y-6">
+      <div class="flex gap-4 fade-in">
+        <div class="flex flex-col items-center">
+          <div class="w-9 h-9 bg-teal rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">1</div>
+          <div class="w-0.5 bg-gradient-to-b from-teal to-gold flex-1 my-1"></div>
+        </div>
+        <div class="pb-6">
+          <h3 class="font-heading text-xl font-bold text-teal mb-1">Browse & Choose</h3>
+          <p class="text-sm text-charcoal/70 leading-relaxed">Explore 40+ products across 6 categories with full descriptions and honest pricing.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 fade-in">
+        <div class="flex flex-col items-center">
+          <div class="w-9 h-9 bg-teal rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">2</div>
+          <div class="w-0.5 bg-gradient-to-b from-teal to-gold flex-1 my-1"></div>
+        </div>
+        <div class="pb-6">
+          <h3 class="font-heading text-xl font-bold text-teal mb-1">Order on WhatsApp</h3>
+          <p class="text-sm text-charcoal/70 leading-relaxed">Tap "Buy Now" and send us your name, address, and product choice on WhatsApp.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 fade-in">
+        <div class="flex flex-col items-center">
+          <div class="w-9 h-9 bg-teal rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">3</div>
+          <div class="w-0.5 bg-gradient-to-b from-teal to-gold flex-1 my-1"></div>
+        </div>
+        <div class="pb-6">
+          <h3 class="font-heading text-xl font-bold text-teal mb-1">We Pack & Dispatch</h3>
+          <p class="text-sm text-charcoal/70 leading-relaxed">Order packed within 24 hours and dispatched via reliable courier partners.</p>
+        </div>
+      </div>
+      <div class="flex gap-4 fade-in">
+        <div class="flex flex-col items-center">
+          <div class="w-9 h-9 bg-gold rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">4</div>
+        </div>
+        <div>
+          <h3 class="font-heading text-xl font-bold text-teal mb-1">Delivered to Your Door</h3>
+          <p class="text-sm text-charcoal/70 leading-relaxed">Open, inspect, pay — only when you're satisfied. COD across all of Pakistan.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTACT INFO ══ -->
+<section class="py-20 bg-cream">
+  <div class="max-w-4xl mx-auto px-6">
+    <div class="text-center mb-12 fade-in">
+      <span class="gold-line mb-5 mx-auto block"></span>
+      <h2 class="section-title text-4xl md:text-5xl text-teal mb-4">Get in Touch</h2>
+      <p class="text-charcoal/60 text-base max-w-md mx-auto">We're just a message away. Reach out on WhatsApp, call us, or send an email — we respond fast.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 fade-in">
+
+      <!-- WhatsApp -->
+      <a href="https://wa.me/923224061289" target="_blank" class="contact-chip">
+        <div class="contact-chip-icon bg-green-50">
+          <i class="ri-whatsapp-line text-green-500 text-xl"></i>
+        </div>
+        <div>
+          <p class="text-xs text-charcoal/50 font-medium uppercase tracking-wide mb-0.5">WhatsApp</p>
+          <p class="text-charcoal font-semibold text-sm">+92 322 4061289</p>
+          <p class="text-xs text-green-600 font-medium">Tap to chat →</p>
+        </div>
+      </a>
+
+      <!-- Phone -->
+      <a href="tel:+923224061289" class="contact-chip">
+        <div class="contact-chip-icon bg-teal/8">
+          <i class="ri-phone-line text-teal text-xl"></i>
+        </div>
+        <div>
+          <p class="text-xs text-charcoal/50 font-medium uppercase tracking-wide mb-0.5">Phone</p>
+          <p class="text-charcoal font-semibold text-sm">+92 322 4061289</p>
+          <p class="text-xs text-teal font-medium">Tap to call →</p>
+        </div>
+      </a>
+
+      <!-- Email -->
+      <a href="mailto:zarishgadgets@gmail.com" class="contact-chip">
+        <div class="contact-chip-icon bg-gold/10">
+          <i class="ri-mail-line text-gold text-xl"></i>
+        </div>
+        <div>
+          <p class="text-xs text-charcoal/50 font-medium uppercase tracking-wide mb-0.5">Email</p>
+          <p class="text-charcoal font-semibold text-sm">zarishgadgets@gmail.com</p>
+          <p class="text-xs text-gold font-medium">Tap to email →</p>
+        </div>
+      </a>
+
+      <!-- Business Name -->
+      <div class="contact-chip" style="cursor:default;">
+        <div class="contact-chip-icon bg-teal/8">
+          <i class="ri-store-2-line text-teal text-xl"></i>
+        </div>
+        <div>
+          <p class="text-xs text-charcoal/50 font-medium uppercase tracking-wide mb-0.5">Business</p>
+          <p class="text-charcoal font-semibold text-sm">Zarish Mall</p>
+          <p class="text-xs text-charcoal/50">CEO: Mazhar Altaf</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center fade-in">
+      <p class="text-charcoal/60 text-sm mb-5">Ready to shop? Browse our full catalog and order in seconds.</p>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <a href="https://wa.me/923224061289" target="_blank" class="btn-wa">
+          <i class="ri-whatsapp-line text-lg"></i> Message Us on WhatsApp
+        </a>
+        <a href="index.html#products" class="btn-teal">
+          <i class="ri-shopping-bag-3-line"></i> Shop Now
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="py-12 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <div>
+        <p class="font-brand text-white text-xl mb-3">Zarish Mall</p>
+        <p class="text-white/60 text-sm leading-relaxed mb-5">Pakistan's trusted online store for quality home, kitchen, beauty, and health products. Cash on Delivery nationwide.</p>
+        <a href="https://wa.me/923224061289" target="_blank"
+           class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-all">
+          <i class="ri-whatsapp-line text-lg"></i> WhatsApp Us
+        </a>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold text-base mb-5">Quick Links</h4>
+        <ul class="space-y-3">
+          <li><a href="index.html#home"           class="text-white/60 hover:text-gold text-sm transition-colors">Home</a></li>
+          <li><a href="about.html"                class="text-gold text-sm font-medium">About Us</a></li>
+          <li><a href="index.html#products"       class="text-white/60 hover:text-gold text-sm transition-colors">Products</a></li>
+          <li><a href="index.html#privacy-policy" class="text-white/60 hover:text-gold text-sm transition-colors">Privacy Policy</a></li>
+          <li><a href="index.html#contact"        class="text-white/60 hover:text-gold text-sm transition-colors">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold text-base mb-5">Contact</h4>
+        <div class="space-y-3">
+          <a href="https://wa.me/923224061289" target="_blank" class="flex items-center gap-2 text-white/60 hover:text-green-400 text-sm transition-colors">
+            <i class="ri-whatsapp-line text-green-400"></i> +92 322 4061289
+          </a>
+          <a href="mailto:zarishgadgets@gmail.com" class="flex items-center gap-2 text-white/60 hover:text-gold text-sm transition-colors">
+            <i class="ri-mail-line text-gold"></i> zarishgadgets@gmail.com
+          </a>
+          <p class="text-white/50 text-xs mt-4">Cash on Delivery · Open Parcel Policy<br/>Delivery: 3–4 Working Days</p>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-white/10 pt-6 text-center">
+      <p class="text-white/40 text-xs">© 2025 Zarish Mall · Founded by Mazhar Altaf · All Rights Reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Fade-in on scroll
+function observeFadeIns() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+}
+document.addEventListener('DOMContentLoaded', () => {
+  observeFadeIns();
+  // Trigger first few immediately
+  document.querySelectorAll('.fade-in').forEach((el, i) => {
+    if (i < 4) setTimeout(() => el.classList.add('visible'), i * 120);
+  });
+});
+</script>
+</body>
+</html>
