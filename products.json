@@ -1,21 +1,5 @@
 [
   {
-    "id": 1,
-    "name": "Aura Plus Clear Radiance Serum (30ml)",
-    "price": 2999,
-    "compare": 3999,
-    "category": "Beauty & Skincare",
-    "handle": "aura-plus-clear-radiance-serum-anti-acne-glow",
-    "images": 5,
-    "desc": "A powerful anti-acne, dark spot removal serum formulated for Pakistani skin. Lightweight and fast-absorbing for a clear, glass-like glow.",
-    "features": [
-      "Targets acne & dark spots",
-      "Oil control without stripping moisture",
-      "Brightening formula for radiant skin",
-      "Safe for all skin types"
-    ]
-  },
-  {
     "id": 2,
     "name": "Body Shaper For Women & Men",
     "price": 1589,
