@@ -317,8 +317,58 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- ══════════ CATEGORIES REMOVED ══════════ --><div style="display:none">
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+<!-- ══════════ CATEGORY CARDS (dynamic) ══════════ -->
+<div class="py-16 bg-cream">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-10 fade-in">
+      <span class="gold-line mb-4 mx-auto block"></span>
+      <h2 class="section-title text-3xl md:text-4xl text-teal">Shop by Category</h2>
+    </div>
+    <div id="cat-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ WHY CHOOSE ══════════ -->
+<section class="py-20 bg-cream">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-14 fade-in">
+      <span class="gold-line mb-4 mx-auto block"></span>
+      <h2 class="section-title text-4xl md:text-5xl text-teal">Why Choose Zarish Mall?</h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="why-card fade-in">
+        <div class="why-icon"><i class="ri-truck-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Nationwide Delivery</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Fast COD delivery across all of Pakistan in 3–4 working days.</p>
+      </div>
+      <div class="why-card fade-in">
+        <div class="why-icon"><i class="ri-box-3-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Open Parcel Policy</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Check your order before you pay. No risk, just trust.</p>
+      </div>
+      <div class="why-card fade-in">
+        <div class="why-icon"><i class="ri-medal-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Premium Quality</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Carefully selected products tested for quality before listing.</p>
+      </div>
+      <div class="why-card fade-in">
+        <div class="why-icon"><i class="ri-shield-check-line"></i></div>
+        <h3 class="font-heading text-xl font-bold text-teal mb-2">Secure & Trusted</h3>
+        <p class="text-sm text-charcoal/70 leading-relaxed">Thousands of happy customers across Pakistan trust us daily.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ CATEGORY CARDS (dynamic) ══════════ -->
+<div class="py-16 bg-cream">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="text-center mb-10 fade-in">
+      <span class="gold-line mb-4 mx-auto block"></span>
+      <h2 class="section-title text-3xl md:text-4xl text-teal">Shop by Category</h2>
+    </div>
+    <div id="cat-cards-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
 
       <!-- Beauty & Skincare -->
       <div class="cat-card fade-in" onclick="filterProducts('Beauty & Skincare')">
@@ -802,6 +852,7 @@ tailwind.config = {
 // ── PRODUCT DATA ──
 // ── PRODUCT DATA — loaded from products.json (managed by admin panel) ──
 let PRODUCTS = [];
+let CATEGORIES = [];
 let bestSellers = [];
 
 // Hardcoded fallback — used if products.json cannot be fetched
@@ -847,11 +898,9 @@ const FALLBACK_PRODUCTS = [
 ];
 
 async function loadProducts() {
-  // Build correct base URL for GitHub Pages (works with subdirectory repos too)
   const base = location.pathname.endsWith('/')
     ? location.pathname
     : location.pathname.substring(0, location.pathname.lastIndexOf('/') + 1);
-
   const urls = [
     location.origin + base + 'products.json',
     base + 'products.json',
@@ -865,13 +914,25 @@ async function loadProducts() {
       if (res.ok) {
         const text = await res.text();
         const data = JSON.parse(text);
-        if (Array.isArray(data) && data.length > 0) {
+        // Support new {categories, products} format AND old plain array
+        if (data && data.products && Array.isArray(data.products) && data.products.length) {
+          PRODUCTS = data.products;
+          if (Array.isArray(data.categories) && data.categories.length) CATEGORIES = data.categories;
+          console.log('\u2705 Loaded', PRODUCTS.length, 'products +', CATEGORIES.length, 'categories from', url);
+          break;
+        } else if (Array.isArray(data) && data.length > 0) {
           PRODUCTS = data;
-          console.log('\u2705 Loaded', PRODUCTS.length, 'products from', url);
+          console.log('\u2705 Loaded', PRODUCTS.length, 'products (legacy) from', url);
           break;
         }
       }
     } catch(e) { console.warn('fetch failed:', url, e.message); }
+  }
+
+  // Derive categories from products if not loaded from JSON
+  if (!CATEGORIES.length && PRODUCTS.length) {
+    const seen = new Set();
+    PRODUCTS.forEach(p => { if (p.category && !seen.has(p.category)) { seen.add(p.category); CATEGORIES.push({ id: p.category.toLowerCase().replace(/[^a-z0-9]/g,'-'), name: p.category, icon: 'ri-price-tag-3-line', color: '#1A5276', bg: '#e8f0f7' }); } });
   }
 
   // If all fetches failed, use hardcoded fallback
@@ -1002,6 +1063,32 @@ function renderBSCard(p) {
 
 // ── INIT GRIDS ──
 function initGrids() {
+  // ── Build filter buttons dynamically from CATEGORIES ──
+  const filterWrap = document.getElementById('filter-btns');
+  if (filterWrap) {
+    const catNames = CATEGORIES.map(c => c.name);
+    filterWrap.innerHTML = `<button class="filter-btn active" onclick="filterProducts('all', this)">All Products</button>` +
+      catNames.map(cat =>
+        `<button class="filter-btn" onclick="filterProducts(${JSON.stringify(cat)}, this)">${cat}</button>`
+      ).join('');
+  }
+
+  // ── Build category cards dynamically ──
+  const catGrid = document.getElementById('cat-cards-grid');
+  if (catGrid) {
+    catGrid.innerHTML = CATEGORIES.map(cat => `
+      <div class="cat-card fade-in" onclick="filterProducts(${JSON.stringify(cat.name)})">
+        <div style="width:100%;aspect-ratio:300/180;background:linear-gradient(135deg,${cat.color}cc,${cat.color});display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0.5rem;">
+          <div style="width:56px;height:56px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+            <i class="${cat.icon}" style="font-size:1.75rem;color:#fff;"></i>
+          </div>
+        </div>
+        <div class="overlay"><span class="text-white font-semibold text-sm">${cat.name}</span></div>
+      </div>
+    `).join('');
+    observeFadeIns();
+  }
+
   document.getElementById('products-grid').innerHTML = PRODUCTS.map(renderCard).join('');
   document.getElementById('best-sellers-grid').innerHTML = bestSellers.map(renderBSCard).join('');
   observeFadeIns();
