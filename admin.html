@@ -119,6 +119,7 @@
     <a onclick="showPanel('dashboard')" class="active" id="nav-dashboard"><i class="ri-dashboard-line"></i> Dashboard</a>
     <a onclick="showPanel('products')" id="nav-products"><i class="ri-shopping-bag-3-line"></i> Products</a>
     <a onclick="showPanel('add-product')" id="nav-add-product"><i class="ri-add-box-line"></i> Add Product</a>
+    <a onclick="showPanel('categories')" id="nav-categories"><i class="ri-price-tag-3-line"></i> Categories</a>
     <div style="height:1px;background:rgba(255,255,255,0.07);margin:0.75rem 0;"></div>
     <a onclick="openSetupModal()" id="nav-github"><i class="ri-github-line"></i> GitHub Sync</a>
     <a href="index.html"><i class="ri-store-2-line"></i> View Store</a>
@@ -257,12 +258,6 @@
               <label class="form-label">Category *</label>
               <select id="f-category" class="form-input">
                 <option value="">Select category</option>
-                <option>Beauty & Skincare</option>
-                <option>Kitchen & Dining</option>
-                <option>Home & Storage</option>
-                <option>Health & Wellness</option>
-                <option>Personal Care</option>
-                <option>Travel & Bags</option>
               </select>
             </div>
             <div>
@@ -346,14 +341,14 @@
                 </div>
                 <div style="background:#f8fafc;border-radius:0.6rem;padding:0.85rem 1rem;font-size:0.79rem;color:#475569;line-height:1.7;">
                   <p style="font-weight:600;color:#1e293b;margin-bottom:0.25rem;">Expected file paths:</p>
-                  <code id="gh-path-preview" style="font-size:0.75rem;color:var(--teal);">{handle}/1.jpg<br/>{handle}/2.jpg</code>
+                  <code id="gh-path-preview" style="font-size:0.75rem;color:var(--teal);">images/{handle}/1.jpg<br/>images/{handle}/2.jpg</code>
                 </div>
               </div>
 
               <div style="background:#f0f4f8;border-radius:0.6rem;padding:0.75rem 1rem;margin-top:1rem;border-left:3px solid var(--teal);">
                 <p style="font-size:0.78rem;color:#475569;line-height:1.55;">
                   <i class="ri-information-line" style="color:var(--teal);"></i>
-                  Upload your images to GitHub at <code><em>handle</em>/1.jpg</code>, <code><em>handle</em>/2.jpg</code> etc.,
+                  Upload your images to GitHub at <code>images/<em>handle</em>/1.jpg</code>, <code>images/<em>handle</em>/2.jpg</code> etc.,
                   then set the number above to match. The site auto-detects jpg, jpeg, webp, and png formats.
                 </p>
               </div>
@@ -368,6 +363,86 @@
       </div>
     </div>
 
+
+    <!-- ══ CATEGORIES PANEL ══ -->
+    <div id="panel-categories" class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem;">
+        <div>
+          <h2 style="font-size:1.05rem;font-weight:700;color:#1e293b;">Manage Categories</h2>
+          <p style="font-size:0.8rem;color:#94a3b8;margin-top:0.2rem;">Add, edit, reorder or delete categories. Changes publish with your next GitHub sync.</p>
+        </div>
+        <button class="btn btn-primary" onclick="openCatModal()"><i class="ri-add-line"></i> Add Category</button>
+      </div>
+
+      <!-- Category cards grid -->
+      <div id="cat-admin-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem;"></div>
+
+      <div style="background:#f0f4f8;border-radius:0.75rem;padding:0.85rem 1.1rem;border-left:3px solid var(--teal);font-size:0.8rem;color:#475569;">
+        <i class="ri-information-line" style="color:var(--teal);"></i>
+        <strong>Note:</strong> Deleting a category does not delete products in it. Products keep their category name — update them individually if needed.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ CATEGORY MODAL ══ -->
+<div id="cat-modal" class="modal-bg" onclick="if(event.target===this)closeCatModal()">
+  <div class="modal-box" onclick="event.stopPropagation()" style="max-width:480px;">
+    <div style="padding:1.75rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+        <h3 id="cat-modal-title" style="font-size:1rem;font-weight:700;color:#1e293b;">Add Category</h3>
+        <button onclick="closeCatModal()" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:1.2rem;"><i class="ri-close-line"></i></button>
+      </div>
+      <input type="hidden" id="cat-edit-id"/>
+      <div style="display:flex;flex-direction:column;gap:0.85rem;">
+        <div>
+          <label class="form-label">Category Name *</label>
+          <input type="text" id="cat-name" class="form-input" placeholder="e.g. Sports & Fitness"/>
+        </div>
+        <div>
+          <label class="form-label">Icon (Remix Icon class)</label>
+          <div style="display:flex;gap:0.5rem;align-items:center;">
+            <input type="text" id="cat-icon" class="form-input" placeholder="ri-heart-line" oninput="updateCatPreview()"/>
+            <div id="cat-icon-preview" style="width:40px;height:40px;border:2px solid #e5e7eb;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;color:var(--teal);">
+              <i class="ri-price-tag-3-line"></i>
+            </div>
+          </div>
+          <p style="font-size:0.72rem;color:#94a3b8;margin-top:0.3rem;">Browse icons at <a href="https://remixicon.com" target="_blank" style="color:var(--teal);">remixicon.com</a> — copy the class name</p>
+        </div>
+        <!-- Icon picker shortcuts -->
+        <div>
+          <p style="font-size:0.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem;">Quick Pick</p>
+          <div style="display:flex;flex-wrap:wrap;gap:0.4rem;" id="icon-picker">
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Accent Color</label>
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+            <input type="color" id="cat-color" value="#1A5276" style="width:44px;height:36px;border:2px solid #e5e7eb;border-radius:0.4rem;cursor:pointer;padding:2px;" oninput="updateCatPreview()"/>
+            <div style="display:flex;gap:0.35rem;flex-wrap:wrap;" id="color-presets"></div>
+          </div>
+        </div>
+        <!-- Live preview -->
+        <div>
+          <p style="font-size:0.72rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem;">Preview</p>
+          <div id="cat-preview-card" style="border-radius:0.75rem;overflow:hidden;width:140px;position:relative;">
+            <div id="cat-preview-bg" style="width:100%;aspect-ratio:300/180;background:linear-gradient(135deg,#1A5276cc,#1A5276);display:flex;align-items:center;justify-content:center;">
+              <div style="width:48px;height:48px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+                <i id="cat-preview-icon" class="ri-price-tag-3-line" style="font-size:1.5rem;color:#fff;"></i>
+              </div>
+            </div>
+            <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.6));padding:0.5rem;">
+              <span id="cat-preview-name" style="color:#fff;font-weight:600;font-size:0.78rem;">Category Name</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.75rem;margin-top:1.25rem;">
+        <button onclick="saveCategoryModal()" class="btn btn-primary"><i class="ri-save-line"></i> <span id="cat-save-text">Add Category</span></button>
+        <button onclick="closeCatModal()" class="btn btn-ghost">Cancel</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -470,6 +545,7 @@ const ADMIN_PASSWORD = 'zarish2025';
 
 // ══ STATE ══
 let PRODUCTS = [];
+let CATEGORIES = [];
 let pendingSync = false;
 
 // ══════════════════════════
@@ -479,12 +555,32 @@ function getProducts() { return PRODUCTS; }
 
 function setProducts(arr) {
   PRODUCTS = arr;
-  localStorage.setItem('zm_products_v2', JSON.stringify(arr));
+  saveToLocal();
+}
+
+function getCategories() { return CATEGORIES; }
+
+function setCategories(arr) {
+  CATEGORIES = arr;
+  saveToLocal();
+}
+
+function saveToLocal() {
+  localStorage.setItem('zm_data_v3', JSON.stringify({ categories: CATEGORIES, products: PRODUCTS }));
 }
 
 function loadLocalProducts() {
-  const stored = localStorage.getItem('zm_products_v2');
-  if (stored) { PRODUCTS = JSON.parse(stored); return true; }
+  // Try new combined format first
+  const stored = localStorage.getItem('zm_data_v3');
+  if (stored) {
+    try {
+      const data = JSON.parse(stored);
+      if (data.products) { PRODUCTS = data.products; CATEGORIES = data.categories || []; return true; }
+    } catch(e) {}
+  }
+  // Fallback: old products-only format
+  const old = localStorage.getItem('zm_products_v2');
+  if (old) { try { PRODUCTS = JSON.parse(old); return true; } catch(e) {} }
   return false;
 }
 
@@ -585,7 +681,7 @@ async function publishToGitHub() {
 
   try {
     const c = getGHConfig();
-    const content = JSON.stringify(PRODUCTS, null, 2);
+    const content = JSON.stringify({ categories: CATEGORIES, products: PRODUCTS }, null, 2);
     const encoded = btoa(unescape(encodeURIComponent(content)));
     const filePath = 'products.json';
     const apiUrl = `https://api.github.com/repos/${c.username}/${c.repo}/contents/${filePath}`;
@@ -763,11 +859,16 @@ async function init() {
         const res = await fetch(url + '?nocache=' + Date.now(), { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          if (data && data.products && data.products.length > 0) {
+            PRODUCTS = data.products;
+            CATEGORIES = data.categories || [];
+            saveToLocal(); loaded = true;
+            console.log('Loaded', PRODUCTS.length, 'products +', CATEGORIES.length, 'categories from', url);
+            break;
+          } else if (Array.isArray(data) && data.length > 0) {
             PRODUCTS = data;
-            localStorage.setItem('zm_products_v2', JSON.stringify(PRODUCTS));
-            loaded = true;
-            console.log('Loaded', PRODUCTS.length, 'products from', url);
+            saveToLocal(); loaded = true;
+            console.log('Loaded', PRODUCTS.length, 'products (legacy) from', url);
             break;
           }
         }
@@ -787,8 +888,10 @@ async function init() {
       if (res.ok) {
         const data = await res.json();
         const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
-        PRODUCTS = JSON.parse(decoded);
-        localStorage.setItem('zm_products_v2', JSON.stringify(PRODUCTS));
+        const parsed = JSON.parse(decoded);
+        if (parsed.products) { PRODUCTS = parsed.products; CATEGORIES = parsed.categories || []; }
+        else { PRODUCTS = parsed; }
+        saveToLocal();
         loaded = true;
         console.log('Loaded from GitHub API:', PRODUCTS.length, 'products');
       }
@@ -817,8 +920,19 @@ async function init() {
     console.log('Seeded with', PRODUCTS.length, 'default products');
   }
 
+  // If no categories loaded, derive from product data
+  if (!CATEGORIES.length && PRODUCTS.length) {
+    const seen = new Set();
+    PRODUCTS.forEach(p => {
+      if (p.category && !seen.has(p.category)) {
+        seen.add(p.category);
+        CATEGORIES.push({ id: p.category.toLowerCase().replace(/[^a-z0-9]/g,'-'), name: p.category, icon: 'ri-price-tag-3-line', color: '#1A5276', bg: '#e8f0f7' });
+      }
+    });
+  }
   updateGHStatusBar();
   refreshDashboard();
+  renderCategoryAdmin();
 }
 
 // ══════════════════════════
@@ -839,11 +953,23 @@ function refreshDashboard() {
     .map(([cat,n])=>`<span class="badge badge-teal" style="font-size:0.82rem;padding:4px 12px;">${cat} <strong>(${n})</strong></span>`)
     .join('');
 
-  // Populate category filter
+  // Populate category filter dropdown (from CATEGORIES or fallback to product data)
+  const catNames = CATEGORIES.length
+    ? CATEGORIES.map(x => x.name)
+    : [...new Set(p.map(x => x.category))].sort();
+
   const sel = document.getElementById('cat-filter');
-  sel.innerHTML = '<option value="">All Categories</option>' + cats.sort().map(c=>`<option>${c}</option>`).join('');
+  sel.innerHTML = '<option value="">All Categories</option>' + catNames.map(n => `<option>${n}</option>`).join('');
+
+  // Populate f-category in add/edit form
+  const fCat = document.getElementById('f-category');
+  if (fCat) {
+    const current = fCat.value;
+    fCat.innerHTML = '<option value="">Select category</option>' + catNames.map(n => `<option${n===current?' selected':''}>${n}</option>`).join('');
+  }
 
   renderProductTable();
+  renderCategoryAdmin();
 }
 
 // ══════════════════════════
@@ -871,7 +997,7 @@ function renderProductTable() {
     <tr>
       <td>
         <div style="display:flex;align-items:center;gap:0.75rem;">
-          <img src="${p.imageUrls && p.imageUrls[0] ? p.imageUrls[0] : p.handle+'/1.jpg'}" alt="" onerror="this.style.background='#dbeafe';this.removeAttribute('src');" style="min-width:48px;"/>
+          <img src="${p.imageUrls && p.imageUrls[0] ? p.imageUrls[0] : 'images/'+p.handle+'/1.jpg'}" alt="" onerror="this.style.background='#dbeafe';this.removeAttribute('src');" style="min-width:48px;"/>
           <div>
             <p style="font-weight:600;font-size:0.85rem;line-height:1.3;color:#1e293b;">${p.name}</p>
             <p style="font-size:0.72rem;color:#94a3b8;">${p.handle}</p>
@@ -916,7 +1042,7 @@ function switchImgTab(tab) {
 function updateGhPathPreview() {
   const handle = document.getElementById('f-handle').value.trim() || '{handle}';
   const count  = parseInt(document.getElementById('f-images') && document.getElementById('f-images').value) || 1;
-  const lines  = Array.from({length: Math.min(count, 5)}, (_, i) => + handle + '/' + (i+1) + '.jpg');
+  const lines  = Array.from({length: Math.min(count, 5)}, (_, i) => 'images/' + handle + '/' + (i+1) + '.jpg');
   if (count > 5) lines.push('…');
   const el = document.getElementById('gh-path-preview');
   if (el) el.innerHTML = lines.join('<br/>');
@@ -1175,7 +1301,7 @@ function showPanel(name) {
   document.getElementById('panel-'+name).classList.add('active');
   const navEl = document.getElementById('nav-'+name);
   if (navEl) navEl.classList.add('active');
-  const titles = {dashboard:'Dashboard',products:'Products','add-product':document.getElementById('edit-id')?.value?'Edit Product':'Add Product'};
+  const titles = {dashboard:'Dashboard',products:'Products','add-product':document.getElementById('edit-id')?.value?'Edit Product':'Add Product',categories:'Categories'};
   document.getElementById('page-title').textContent = titles[name]||'';
   if (name !== 'add-product') resetForm();
 }
@@ -1205,6 +1331,194 @@ function toggleSidebar() {
     document.getElementById('main').classList.toggle('expanded');
   }
 }
+
+// ══════════════════════════
+//  CATEGORY ICONS & COLORS
+// ══════════════════════════
+const ICON_PICKS = [
+  'ri-sparkling-2-line','ri-restaurant-line','ri-home-3-line','ri-heart-pulse-line',
+  'ri-user-star-line','ri-briefcase-2-line','ri-shopping-bag-3-line','ri-leaf-line',
+  'ri-tools-line','ri-computer-line','ri-football-line','ri-music-2-line',
+  'ri-book-2-line','ri-car-line','ri-baby-line','ri-camera-line',
+  'ri-gamepad-line','ri-plant-line','ri-scissors-line','ri-gift-line',
+  'ri-shirt-line','ri-sun-line','ri-bike-line','ri-medicine-bottle-line'
+];
+const COLOR_PRESETS = [
+  '#e91e8c','#e65100','#00838f','#2e7d32','#6a1b9a','#1565c0',
+  '#c62828','#1A5276','#D4AC0D','#00695c','#4527a0','#ad1457'
+];
+
+function buildIconPicker() {
+  const wrap = document.getElementById('icon-picker');
+  if (!wrap) return;
+  wrap.innerHTML = ICON_PICKS.map(ic => `
+    <button type="button" title="${ic}"
+      onclick="document.getElementById('cat-icon').value='${ic}';updateCatPreview();"
+      style="width:32px;height:32px;border:2px solid #e5e7eb;border-radius:0.4rem;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#1A5276;transition:all 0.15s;"
+      onmouseover="this.style.borderColor='var(--teal)';this.style.background='#f0f4f8';"
+      onmouseout="this.style.borderColor='#e5e7eb';this.style.background='#fff';">
+      <i class="${ic}"></i>
+    </button>`).join('');
+
+  const colorWrap = document.getElementById('color-presets');
+  if (colorWrap) {
+    colorWrap.innerHTML = COLOR_PRESETS.map(col => `
+      <button type="button" title="${col}"
+        onclick="document.getElementById('cat-color').value='${col}';updateCatPreview();"
+        style="width:24px;height:24px;border-radius:50%;background:${col};border:2px solid rgba(255,255,255,0.5);box-shadow:0 1px 4px rgba(0,0,0,0.2);cursor:pointer;transition:transform 0.15s;"
+        onmouseover="this.style.transform='scale(1.25)'"
+        onmouseout="this.style.transform='scale(1)'"></button>`).join('');
+  }
+}
+
+function updateCatPreview() {
+  const name  = document.getElementById('cat-name').value  || 'Category Name';
+  const icon  = document.getElementById('cat-icon').value  || 'ri-price-tag-3-line';
+  const color = document.getElementById('cat-color').value || '#1A5276';
+  document.getElementById('cat-preview-name').textContent = name;
+  const iconEl = document.getElementById('cat-preview-icon');
+  iconEl.className = icon;
+  document.getElementById('cat-preview-bg').style.background = `linear-gradient(135deg,${color}cc,${color})`;
+}
+
+// ══════════════════════════
+//  CATEGORY ADMIN RENDER
+// ══════════════════════════
+function renderCategoryAdmin() {
+  const grid = document.getElementById('cat-admin-grid');
+  if (!grid) return;
+  if (!CATEGORIES.length) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2.5rem;color:#94a3b8;">
+      <i class="ri-price-tag-3-line" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>
+      No categories yet — click "Add Category" to create one.
+    </div>`;
+    return;
+  }
+  grid.innerHTML = CATEGORIES.map((cat, idx) => {
+    const prodCount = PRODUCTS.filter(p => p.category === cat.name).length;
+    return `
+    <div style="background:#fff;border-radius:1rem;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.07);transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 6px 20px rgba(0,0,0,0.1)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <!-- Color banner -->
+      <div style="height:80px;background:linear-gradient(135deg,${cat.color}cc,${cat.color});display:flex;align-items:center;justify-content:center;position:relative;">
+        <div style="width:44px;height:44px;background:rgba(255,255,255,0.25);border-radius:50%;display:flex;align-items:center;justify-content:center;">
+          <i class="${cat.icon || 'ri-price-tag-3-line'}" style="font-size:1.4rem;color:#fff;"></i>
+        </div>
+        <!-- Reorder arrows -->
+        <div style="position:absolute;top:6px;right:6px;display:flex;gap:3px;">
+          ${idx > 0 ? `<button onclick="moveCat(${idx},-1)" style="width:22px;height:22px;background:rgba(255,255,255,0.3);border:none;border-radius:4px;cursor:pointer;color:#fff;font-size:0.75rem;display:flex;align-items:center;justify-content:center;" title="Move up"><i class="ri-arrow-up-s-line"></i></button>` : ''}
+          ${idx < CATEGORIES.length-1 ? `<button onclick="moveCat(${idx},1)" style="width:22px;height:22px;background:rgba(255,255,255,0.3);border:none;border-radius:4px;cursor:pointer;color:#fff;font-size:0.75rem;display:flex;align-items:center;justify-content:center;" title="Move down"><i class="ri-arrow-down-s-line"></i></button>` : ''}
+        </div>
+      </div>
+      <!-- Info -->
+      <div style="padding:0.85rem 1rem;">
+        <p style="font-weight:700;font-size:0.9rem;color:#1e293b;margin-bottom:0.2rem;">${cat.name}</p>
+        <p style="font-size:0.75rem;color:#94a3b8;">${prodCount} product${prodCount!==1?'s':''}</p>
+        <div style="display:flex;gap:0.4rem;margin-top:0.75rem;">
+          <button onclick="openCatModal('${cat.id}')" class="btn btn-ghost" style="flex:1;justify-content:center;font-size:0.78rem;padding:0.35rem;">
+            <i class="ri-edit-line"></i> Edit
+          </button>
+          <button onclick="deleteCat('${cat.id}')" class="btn btn-danger" style="padding:0.35rem 0.6rem;font-size:0.78rem;" title="Delete">
+            <i class="ri-delete-bin-6-line"></i>
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════
+//  CATEGORY MODAL
+// ══════════════════════════
+function openCatModal(catId) {
+  buildIconPicker();
+  if (catId) {
+    const cat = CATEGORIES.find(c => c.id === catId);
+    if (!cat) return;
+    document.getElementById('cat-edit-id').value  = cat.id;
+    document.getElementById('cat-name').value     = cat.name;
+    document.getElementById('cat-icon').value     = cat.icon  || 'ri-price-tag-3-line';
+    document.getElementById('cat-color').value    = cat.color || '#1A5276';
+    document.getElementById('cat-modal-title').textContent = 'Edit Category';
+    document.getElementById('cat-save-text').textContent   = 'Save Changes';
+  } else {
+    document.getElementById('cat-edit-id').value  = '';
+    document.getElementById('cat-name').value     = '';
+    document.getElementById('cat-icon').value     = 'ri-price-tag-3-line';
+    document.getElementById('cat-color').value    = '#1A5276';
+    document.getElementById('cat-modal-title').textContent = 'Add Category';
+    document.getElementById('cat-save-text').textContent   = 'Add Category';
+  }
+  updateCatPreview();
+  document.getElementById('cat-name').addEventListener('input', updateCatPreview);
+  document.getElementById('cat-modal').classList.add('open');
+}
+
+function closeCatModal() {
+  document.getElementById('cat-modal').classList.remove('open');
+}
+
+function saveCategoryModal() {
+  const name  = document.getElementById('cat-name').value.trim();
+  const icon  = document.getElementById('cat-icon').value.trim()  || 'ri-price-tag-3-line';
+  const color = document.getElementById('cat-color').value        || '#1A5276';
+  const editId = document.getElementById('cat-edit-id').value;
+
+  if (!name) { showToast('Category name is required.', 'error'); return; }
+
+  const id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g,'');
+  let cats = [...CATEGORIES];
+
+  if (editId) {
+    const idx = cats.findIndex(c => c.id === editId);
+    if (idx > -1) {
+      // If name changed, update all products with old category name
+      const oldName = cats[idx].name;
+      cats[idx] = { ...cats[idx], name, icon, color, id };
+      if (oldName !== name) {
+        PRODUCTS = PRODUCTS.map(p => p.category === oldName ? { ...p, category: name } : p);
+        showToast(`Category renamed to "${name}" — ${PRODUCTS.filter(p=>p.category===name).length} products updated. Publish to go live.`);
+      } else {
+        showToast('Category updated! Publish to go live.');
+      }
+    }
+  } else {
+    if (cats.find(c => c.name.toLowerCase() === name.toLowerCase())) {
+      showToast('A category with this name already exists.', 'error'); return;
+    }
+    cats.push({ id, name, icon, color, bg: '#f0f4f8' });
+    showToast(`Category "${name}" added! Publish to go live.`);
+  }
+
+  setCategories(cats);
+  markPending();
+  closeCatModal();
+  refreshDashboard();
+}
+
+function deleteCat(catId) {
+  const cat = CATEGORIES.find(c => c.id === catId);
+  if (!cat) return;
+  const prodCount = PRODUCTS.filter(p => p.category === cat.name).length;
+  const msg = prodCount > 0
+    ? `Delete "${cat.name}"? ${prodCount} product(s) will keep this category name until you update them.`
+    : `Delete "${cat.name}"?`;
+  if (!confirm(msg)) return;
+  setCategories(CATEGORIES.filter(c => c.id !== catId));
+  markPending();
+  showToast(`"${cat.name}" deleted. Publish to go live.`);
+  refreshDashboard();
+}
+
+function moveCat(idx, dir) {
+  const cats = [...CATEGORIES];
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= cats.length) return;
+  [cats[idx], cats[newIdx]] = [cats[newIdx], cats[idx]];
+  setCategories(cats);
+  markPending();
+  renderCategoryAdmin();
+}
+
 </script>
 </body>
 </html>
