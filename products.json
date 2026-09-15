@@ -651,6 +651,35 @@
         "Touch control brightness",
         "Foldable compact design"
       ]
+    },
+    {
+      "id": 40,
+      "name": "Foldable Mini Self-Squeezing Mop  Clean Smarter. Squeeze Faster!",
+      "category": "Kitchen & Dining",
+      "handle": "foldable-mini-self-squeezing-mop-clean-smarter-squeeze-faster",
+      "price": 799,
+      "compare": 1599,
+      "images": 5,
+      "desc": "Make everyday cleaning quick and hassle-free with this Foldable Mini Self-Squeezing Mop. Its compact design makes it perfect for kitchens, bathrooms, bedrooms, and small spaces.",
+      "features": [
+        "🧽 Self-squeezing design — less contact with dirty water",
+        "📦 Foldable & compact for easy storage",
+        "💧 Great for quick spills and everyday cleaning",
+        "🏠 Perfect for home, kitchen & bathroom",
+        "🪶 Lightweight and easy to use",
+        "🔄 Reusable and convenient",
+        "Clean more. Squeeze less. Enjoy a tidier home! 🏡✨",
+        "🛒 Don’t let messy floors slow you down!",
+        "Order your Foldable Mini Self-Squeezing Mop today and make cleaning faster, easier & more convenient.",
+        "👉 Shop Now & Upgrade Your Cleaning Routine! 🛍️✨"
+      ],
+      "imageUrls": [
+        "https://cdn.shopify.com/s/files/1/0686/9617/8854/files/gif_16_7a245f2c-f2ba-4147-92c4-250adbc708dd.gif?v=1771865530",
+        "https://cdn.shopify.com/s/files/1/0686/9617/8854/files/gif_17_853426a4-18c8-4cfc-9a88-62b9bbc55dcc.gif?v=1771865589",
+        "https://cdn.shopify.com/s/files/1/0686/9617/8854/files/13_31744242-3ae9-4856-85c5-4c75b633c428.png?v=1771865674",
+        "https://cdn.shopify.com/s/files/1/0686/9617/8854/files/gif_18_2733ef2d-e376-483a-a8bd-90448f60a279.gif?v=1771865732",
+        "https://cdn.shopify.com/s/files/1/0686/9617/8854/files/gif_19_73371397-149b-4cc0-9d22-343f36b6a628.gif?v=1771865953"
+      ]
     }
   ]
 }
