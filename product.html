@@ -705,8 +705,8 @@ function placeholderSvg(label){
 function setImgWithFallback(imgEl, handle, idx, onSuccess) {
   const exts = ['jpg','jpeg','webp','png']; let i=0;
   function tryNext() {
-    const url = `images/${handle}/${idx}.${exts[i]}`;
-    imgEl.onerror = () => { i++; if(i<exts.length){imgEl.src=`images/${handle}/${idx}.${exts[i]}`;}else{imgEl.onerror=null;imgEl.src=placeholderSvg('No Image');} };
+    const url = `${handle}/${idx}.${exts[i]}`;
+    imgEl.onerror = () => { i++; if(i<exts.length){imgEl.src=`${handle}/${idx}.${exts[i]}`;}else{imgEl.onerror=null;imgEl.src=placeholderSvg('No Image');} };
     imgEl.onload = () => { imgEl.onerror=null; if(onSuccess) onSuccess(url); };
     imgEl.src = url;
   }
@@ -898,7 +898,7 @@ function buildGallery(p){
   const videoExts = ['mp4','mov','webm'];
   function tryVideo(i){
     if(i>=videoExts.length) return;
-    const url = `images/${p.handle}/video.${videoExts[i]}`;
+    const url = `${p.handle}/video.${videoExts[i]}`;
     const v = document.createElement('video');
     v.src = url; v.preload='metadata';
     v.addEventListener('loadedmetadata',()=>{
