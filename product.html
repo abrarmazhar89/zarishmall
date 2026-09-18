@@ -675,11 +675,22 @@ async function loadProducts() {
       const res = await fetch(url + '?nocache=' + Date.now(), { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) { PRODUCTS = data; return; }
+        // Handle new {categories, products} format
+        if (data && data.products && Array.isArray(data.products) && data.products.length > 0) {
+          PRODUCTS = data.products;
+          return;
+        }
+        // Handle old plain array format
+        if (Array.isArray(data) && data.length > 0) {
+          PRODUCTS = data;
+          return;
+        }
       }
-    } catch(e) {}
+    } catch(e) { console.warn('product.html loadProducts failed for', url, e.message); }
   }
+  // Last resort: use built-in fallback
   PRODUCTS = FALLBACK_PRODUCTS;
+  console.warn('Using fallback products — new products added via admin will not appear');
 }
 
 // ── HELPER FUNCTIONS ──
@@ -694,8 +705,8 @@ function placeholderSvg(label){
 function setImgWithFallback(imgEl, handle, idx, onSuccess) {
   const exts = ['jpg','jpeg','webp','png']; let i=0;
   function tryNext() {
-    const url = `${handle}/${idx}.${exts[i]}`;
-    imgEl.onerror = () => { i++; if(i<exts.length){imgEl.src=`${handle}/${idx}.${exts[i]}`;}else{imgEl.onerror=null;imgEl.src=placeholderSvg('No Image');} };
+    const url = `images/${handle}/${idx}.${exts[i]}`;
+    imgEl.onerror = () => { i++; if(i<exts.length){imgEl.src=`images/${handle}/${idx}.${exts[i]}`;}else{imgEl.onerror=null;imgEl.src=placeholderSvg('No Image');} };
     imgEl.onload = () => { imgEl.onerror=null; if(onSuccess) onSuccess(url); };
     imgEl.src = url;
   }
@@ -887,7 +898,7 @@ function buildGallery(p){
   const videoExts = ['mp4','mov','webm'];
   function tryVideo(i){
     if(i>=videoExts.length) return;
-    const url = `${p.handle}/video.${videoExts[i]}`;
+    const url = `images/${p.handle}/video.${videoExts[i]}`;
     const v = document.createElement('video');
     v.src = url; v.preload='metadata';
     v.addEventListener('loadedmetadata',()=>{
