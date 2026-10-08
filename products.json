@@ -461,22 +461,6 @@
       ]
     },
     {
-      "id": 30,
-      "name": "LED Light Makeup Mirror",
-      "price": 1650,
-      "compare": 0,
-      "category": "Beauty & Skincare",
-      "handle": "led-light-makeup-mirror-1",
-      "images": 4,
-      "desc": "A lighted vanity mirror with bright LED illumination for flawless makeup application in any lighting condition.",
-      "features": [
-        "Bright LED ring light",
-        "Adjustable brightness settings",
-        "360° tilt adjustment",
-        "Compact desktop design"
-      ]
-    },
-    {
       "id": 31,
       "name": "Cute Panda Silicone LED Lamp Light",
       "price": 1599,
