@@ -45,22 +45,6 @@
   ],
   "products": [
     {
-      "id": 1,
-      "name": "Aura Plus Clear Radiance Serum (30ml)",
-      "price": 2999,
-      "compare": 3999,
-      "category": "Beauty & Skincare",
-      "handle": "aura-plus-clear-radiance-serum-anti-acne-glow",
-      "images": 5,
-      "desc": "A powerful anti-acne, dark spot removal serum formulated for Pakistani skin. Lightweight and fast-absorbing for a clear, glass-like glow.",
-      "features": [
-        "Targets acne & dark spots",
-        "Oil control without stripping moisture",
-        "Brightening formula for radiant skin",
-        "Safe for all skin types"
-      ]
-    },
-    {
       "id": 2,
       "name": "Body Shaper For Women & Men",
       "price": 1299,
@@ -127,7 +111,7 @@
     {
       "id": 6,
       "name": "RAF Electric Grinder (Masala & Coffee)",
-      "price": 1999,
+      "price": 1899,
       "compare": 3000,
       "category": "Kitchen & Dining",
       "handle": "raf-electric-masala-grinder-machine",
@@ -143,7 +127,7 @@
     {
       "id": 7,
       "name": "5-in-1 Stainless Steel Vegetable Slicer & Cutter",
-      "price": 1899,
+      "price": 1799,
       "compare": 3000,
       "category": "Kitchen & Dining",
       "handle": "5-in-1-stainless-steel-multifunctional-vegetable-slicer-cutter",
@@ -170,22 +154,6 @@
         "Even colour distribution",
         "Reusable & easy to clean",
         "Works with most hair colours"
-      ]
-    },
-    {
-      "id": 9,
-      "name": "Original Spring Facial Hair Remover for Women",
-      "price": 1099,
-      "compare": 2000,
-      "category": "Personal Care",
-      "handle": "facial-hair-remover-for-women",
-      "images": 8,
-      "desc": "A portable threading tool that removes upper lip, chin, and neck hair naturally without creams or wax.",
-      "features": [
-        "Painless spring threading action",
-        "No chemicals or wax",
-        "Reusable & long-lasting",
-        "Compact for travel use"
       ]
     },
     {
