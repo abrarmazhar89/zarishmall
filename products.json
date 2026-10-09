@@ -581,8 +581,8 @@
     {
       "id": 38,
       "name": "Spa Silicone Socks",
-      "price": 0,
-      "compare": 0,
+      "price": 6,
+      "compare": 999,
       "category": "Personal Care",
       "handle": "spa-silicon-socks",
       "images": 6,
