@@ -894,26 +894,53 @@ function buildGallery(p){
     }
   }
 
-  // Video auto-detect (always try, regardless of imageUrls)
-  const videoExts = ['mp4','mov','webm'];
-  function tryVideo(i){
-    if(i>=videoExts.length) return;
-    const url = `${p.handle}/video.${videoExts[i]}`;
-    const v = document.createElement('video');
-    v.src = url; v.preload='metadata';
-    v.addEventListener('loadedmetadata',()=>{
-      const item = {type:'video', src:url};
-      galleryItems.push(item);
-      const btn = document.createElement('div');
-      btn.className = 'thumb-video';
-      btn.innerHTML = '<i class="ri-play-circle-line"></i>';
-      btn.title = 'Play Video';
-      btn.addEventListener('click',()=>{ setGallery(galleryItems.indexOf(item)); });
-      thumbsWrap.appendChild(btn);
-    });
-    v.addEventListener('error',()=>tryVideo(i+1));
+  // ── VIDEO: check videoUrls array first, then auto-detect from repo ──
+  function addVideoThumb(url) {
+    const platform = detectPlatform(url);
+    const item = { type: 'video', src: url, platform };
+    galleryItems.push(item);
+    const btn = document.createElement('div');
+    btn.className = 'thumb-video';
+    btn.style.position = 'relative';
+    btn.innerHTML = '<i class="ri-play-circle-line"></i>' +
+      (platform ? '<span style="position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:0.45rem;font-weight:700;color:rgba(255,255,255,0.85);text-transform:uppercase;">' + platform + '</span>' : '');
+    btn.title = 'Play: ' + (platform || 'Video');
+    const capturedIdx = galleryItems.length - 1;
+    btn.addEventListener('click', () => setGallery(capturedIdx));
+    thumbsWrap.appendChild(btn);
   }
-  tryVideo(0);
+
+  function detectPlatform(url) {
+    if (!url) return '';
+    const u = url.toLowerCase();
+    if (u.includes('youtube.com') || u.includes('youtu.be')) return 'YouTube';
+    if (u.includes('facebook.com') || u.includes('fb.watch')) return 'Facebook';
+    if (u.includes('tiktok.com')) return 'TikTok';
+    if (u.includes('vimeo.com')) return 'Vimeo';
+    if (u.includes('drive.google.com')) return 'Drive';
+    if (u.match(/\.mp4|\.mov|\.webm/)) return 'MP4';
+    return '';
+  }
+
+  if (p.videoUrls && p.videoUrls.length > 0) {
+    // Use admin-defined video URLs
+    p.videoUrls.forEach(url => { if (url) addVideoThumb(url); });
+  } else if (p.videoUrl) {
+    // Legacy single video
+    addVideoThumb(p.videoUrl);
+  } else {
+    // Auto-detect from repo folder
+    const videoExts = ['mp4','mov','webm'];
+    function tryVideo(i){
+      if(i>=videoExts.length) return;
+      const url = '' + p.handle + '/video.' + videoExts[i];
+      const v = document.createElement('video');
+      v.src = url; v.preload='metadata';
+      v.addEventListener('loadedmetadata', () => addVideoThumb(url));
+      v.addEventListener('error', () => tryVideo(i+1));
+    }
+    tryVideo(0);
+  }
 }
 
 function setMainImage(url){
@@ -925,12 +952,61 @@ function setMainImage(url){
   vid.pause();
 }
 
-function setMainVideo(url){
-  const img = document.getElementById('main-img');
-  const vid = document.getElementById('main-video');
-  vid.src = url;
-  vid.style.display = 'block';
+function getEmbedUrl(url, platform) {
+  const p = platform || detectPlatform(url);
+  if (p === 'YouTube') {
+    // Extract video ID from various YouTube URL formats
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
+    return m ? 'https://www.youtube.com/embed/' + m[1] + '?autoplay=1&rel=0' : null;
+  }
+  if (p === 'Vimeo') {
+    const m = url.match(/vimeo\.com\/(\d+)/);
+    return m ? 'https://player.vimeo.com/video/' + m[1] + '?autoplay=1' : null;
+  }
+  if (p === 'Facebook') {
+    return 'https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url) + '&autoplay=true&width=640';
+  }
+  if (p === 'TikTok') {
+    const m = url.match(/video\/(\d+)/);
+    return m ? 'https://www.tiktok.com/embed/' + m[1] : null;
+  }
+  if (p === 'Drive') {
+    // Convert /view to /preview
+    return url.replace('/view', '/preview').replace('/edit', '/preview');
+  }
+  return null; // direct file — use <video> tag
+}
+
+function setMainVideo(url, platform) {
+  const img  = document.getElementById('main-img');
+  const vid  = document.getElementById('main-video');
+  const wrap = document.getElementById('main-media-wrap') || vid.parentElement;
+
+  // Remove any existing iframe
+  const oldIframe = wrap.querySelector('.video-embed-iframe');
+  if (oldIframe) oldIframe.remove();
+
   img.style.display = 'none';
+  vid.style.display = 'none';
+  vid.pause && vid.pause();
+
+  const embedUrl = getEmbedUrl(url, platform);
+  if (embedUrl) {
+    // Use iframe for YouTube, Vimeo, Facebook, TikTok, Drive
+    const iframe = document.createElement('iframe');
+    iframe.className = 'video-embed-iframe';
+    iframe.src = embedUrl;
+    iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+    iframe.allowFullscreen = true;
+    iframe.style.cssText = 'width:100%;height:100%;border:none;border-radius:inherit;position:absolute;top:0;left:0;';
+    wrap.style.position = 'relative';
+    wrap.appendChild(iframe);
+  } else {
+    // Direct MP4 / video file
+    vid.src = url;
+    vid.style.display = 'block';
+    vid.play && vid.play().catch(() => {});
+  }
 }
 
 function setGallery(idx){
@@ -940,7 +1016,7 @@ function setGallery(idx){
   const item = galleryItems[idx];
   if(!item) return;
   if(item.type==='img') setMainImage(item.src);
-  else setMainVideo(item.src);
+  else setMainVideo(item.src, item.platform || '');
 }
 
 function shiftGallery(dir){
