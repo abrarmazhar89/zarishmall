@@ -301,11 +301,57 @@
               <button type="button" onclick="addImageUrlField()" class="btn btn-ghost" style="font-size:0.8rem;padding:0.4rem 0.9rem;">
                 <i class="ri-add-line"></i> Add Another Image URL
               </button>
-              <!-- Video URL -->
+              <!-- Video URLs -->
               <div style="margin-top:1.1rem;padding-top:1rem;border-top:1px dashed #e5e7eb;">
-                <label class="form-label"><i class="ri-video-line" style="color:var(--teal);"></i> Product Video URL <span style="color:#94a3b8;font-weight:400;font-size:0.7rem;">(optional — YouTube, Vimeo, or direct .mp4)</span></label>
-                <input type="url" id="f-video-url" class="form-input" placeholder="https://youtube.com/watch?v=… or direct .mp4 link" style="margin-top:0.3rem;"/>
-                <p style="font-size:0.72rem;color:#94a3b8;margin-top:0.3rem;">YouTube &amp; Vimeo links embed as player. Direct .mp4 links play inline in the product gallery.</p>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;">
+                  <label class="form-label" style="margin:0;display:flex;align-items:center;gap:0.4rem;">
+                    <i class="ri-video-line" style="color:var(--teal);"></i> Product Videos
+                    <span style="color:#94a3b8;font-weight:400;font-size:0.7rem;">(optional — add as many as you like)</span>
+                  </label>
+                  <button type="button" onclick="addVideoUrlField()" class="btn btn-ghost" style="font-size:0.78rem;padding:0.3rem 0.75rem;">
+                    <i class="ri-add-line"></i> Add Video
+                  </button>
+                </div>
+
+                <!-- Video URL rows -->
+                <div id="video-url-list" style="display:flex;flex-direction:column;gap:0.5rem;margin-bottom:0.75rem;"></div>
+
+                <!-- Platform guide -->
+                <div style="background:#f0f4f8;border-radius:0.65rem;padding:0.85rem 1rem;border-left:3px solid var(--teal);">
+                  <p style="font-size:0.77rem;font-weight:700;color:var(--teal);margin-bottom:0.5rem;"><i class="ri-information-line"></i> Which link to paste — guide</p>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;">
+                    <div style="font-size:0.74rem;color:#475569;line-height:1.6;">
+                      <strong style="color:#1e293b;">📺 YouTube</strong><br/>
+                      Open the video → click <em>Share</em> → copy the short link<br/>
+                      e.g. <code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">https://youtu.be/abc123</code>
+                    </div>
+                    <div style="font-size:0.74rem;color:#475569;line-height:1.6;">
+                      <strong style="color:#1e293b;">📘 Facebook</strong><br/>
+                      Open the video → click ··· → <em>Copy Link</em><br/>
+                      e.g. <code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">https://fb.watch/xxxxx</code>
+                    </div>
+                    <div style="font-size:0.74rem;color:#475569;line-height:1.6;">
+                      <strong style="color:#1e293b;">🎵 TikTok</strong><br/>
+                      Open video → Share → <em>Copy Link</em><br/>
+                      e.g. <code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">https://www.tiktok.com/@user/video/123</code>
+                    </div>
+                    <div style="font-size:0.74rem;color:#475569;line-height:1.6;">
+                      <strong style="color:#1e293b;">📁 Google Drive</strong><br/>
+                      Share file → change <code>view</code> to <code>preview</code> in URL<br/>
+                      e.g. <code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">https://drive.google.com/file/d/ID/preview</code>
+                    </div>
+                    <div style="font-size:0.74rem;color:#475569;line-height:1.6;">
+                      <strong style="color:#1e293b;">🎬 Vimeo</strong><br/>
+                      Copy the video page URL directly<br/>
+                      e.g. <code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">https://vimeo.com/123456789</code>
+                    </div>
+                    <div style="font-size:0.74rem;color:#475569;line-height:1.6;">
+                      <strong style="color:#1e293b;">📂 Direct .mp4</strong><br/>
+                      Any public direct video file URL works<br/>
+                      e.g. <code style="background:#dbeafe;padding:1px 5px;border-radius:3px;">https://example.com/video.mp4</code>
+                    </div>
+                  </div>
+                </div>
               </div>
               <!-- Live preview -->
               <div id="img-preview-strip" style="display:none;margin-top:1rem;">
@@ -334,8 +380,17 @@
                 </div>
               </div>
               <div style="padding-top:0.85rem;border-top:1px dashed #e5e7eb;">
-                <label class="form-label"><i class="ri-video-line" style="color:var(--teal);"></i> Video URL <span style="color:#94a3b8;font-weight:400;font-size:0.7rem;">(optional)</span></label>
-                <input type="url" id="f-video-url-gh" class="form-input" placeholder="https://youtube.com/… or .mp4 URL" style="margin-top:0.3rem;"/>
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem;">
+                  <label class="form-label" style="margin:0;display:flex;align-items:center;gap:0.4rem;">
+                    <i class="ri-video-line" style="color:var(--teal);"></i> Product Videos
+                    <span style="color:#94a3b8;font-weight:400;font-size:0.7rem;">(optional)</span>
+                  </label>
+                  <button type="button" onclick="addVideoUrlField()" class="btn btn-ghost" style="font-size:0.78rem;padding:0.3rem 0.75rem;">
+                    <i class="ri-add-line"></i> Add Video
+                  </button>
+                </div>
+                <div id="video-url-list-gh" style="display:flex;flex-direction:column;gap:0.5rem;"></div>
+                <p style="font-size:0.73rem;color:#94a3b8;margin-top:0.5rem;">Paste YouTube, Facebook, TikTok, Vimeo, Google Drive or direct .mp4 links. See the URL tab for exact instructions.</p>
               </div>
             </div>
           </div>
@@ -1111,7 +1166,7 @@ function switchImgTab(tab) {
 function updateGhPathPreview() {
   const handle = document.getElementById('f-handle').value.trim() || '{handle}';
   const count  = parseInt(document.getElementById('f-images') && document.getElementById('f-images').value) || 1;
-  const lines  = Array.from({length: Math.min(count, 5)}, (_, i) => handle + '/' + (i+1) + '.jpg');
+  const lines  = Array.from({length: Math.min(count, 5)}, (_, i) => '' + handle + '/' + (i+1) + '.jpg');
   if (count > 5) lines.push('…');
   const el = document.getElementById('gh-path-preview');
   if (el) el.innerHTML = lines.join('<br/>');
@@ -1225,18 +1280,20 @@ function updatePreview() {
     wrap.appendChild(badge);
     prevEl.appendChild(wrap);
   });
-  // Show video indicator if set
-  const vUrl = (document.getElementById('f-video-url') || {}).value || '';
-  if (vUrl) {
+  // Show video indicators for all videos
+  const videoUrls = getVideoUrls();
+  videoUrls.forEach((vUrl, vi) => {
     const vWrap = document.createElement('div');
-    vWrap.style.cssText = 'position:relative;display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:0.6rem;background:#1e293b;border:2px solid #334155;';
+    vWrap.style.cssText = 'position:relative;display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:0.6rem;background:#1e293b;border:2px solid #334155;cursor:pointer;';
     vWrap.title = vUrl;
+    const platform = detectVideoPlatform(vUrl);
     vWrap.innerHTML = '<i class="ri-play-circle-line" style="color:#fff;font-size:1.8rem;"></i>' +
-      '<span style="position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:0.55rem;color:rgba(255,255,255,0.6);font-weight:600;">VIDEO</span>';
+      '<span style="position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:0.5rem;color:rgba(255,255,255,0.7);font-weight:700;text-transform:uppercase;">' + platform + '</span>' +
+      '<span style="position:absolute;top:-6px;left:-6px;background:#ef4444;color:#fff;font-size:0.6rem;font-weight:700;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;">' + (vi+1) + '</span>';
     prevEl.appendChild(vWrap);
-  }
+  });
   const countEl = document.getElementById('preview-count');
-  if (countEl) countEl.textContent = urls.length + ' image' + (urls.length !== 1 ? 's' : '') + (vUrl ? ' + 1 video' : '');
+  if (countEl) countEl.textContent = urls.length + ' image' + (urls.length !== 1 ? 's' : '') + (videoUrls.length ? ' + ' + videoUrls.length + ' video' + (videoUrls.length !== 1 ? 's' : '') : '');
 }
 
 function initUrlFields(urls) {
@@ -1275,9 +1332,7 @@ function saveProduct() {
   const githubCount = activeImgTab === 'github'
     ? (parseInt(document.getElementById('f-images').value) || 1)
     : (imageUrls.length || 1);
-  const videoUrl = activeImgTab === 'url'
-    ? (document.getElementById('f-video-url')?.value?.trim() || '')
-    : (document.getElementById('f-video-url-gh')?.value?.trim() || '');
+  const videoUrls = getVideoUrls();
 
   let prods = [...PRODUCTS];
 
@@ -1292,7 +1347,8 @@ function saveProduct() {
         delete updated.imageUrls;
         updated.images = githubCount;
       }
-      if (videoUrl) updated.videoUrl = videoUrl; else delete updated.videoUrl;
+      if (videoUrls.length) updated.videoUrls = videoUrls; else delete updated.videoUrls;
+      delete updated.videoUrl; // remove legacy single-video field
       prods[idx] = updated;
       showToast('Product updated! Click "Publish to GitHub" to go live.');
     }
@@ -1301,7 +1357,7 @@ function saveProduct() {
     const newId   = prods.length ? Math.max(...prods.map(p => p.id)) + 1 : 1;
     const newProd = { id: newId, name, category, handle, price, compare, images: githubCount, desc, features };
     if (activeImgTab === 'url' && imageUrls.length > 0) newProd.imageUrls = imageUrls;
-    if (videoUrl) newProd.videoUrl = videoUrl;
+    if (videoUrls.length) newProd.videoUrls = videoUrls;
     prods.push(newProd);
     showToast('Product added! Click "Publish to GitHub" to go live.');
   }
@@ -1330,14 +1386,15 @@ function editProduct(id) {
   if (p.imageUrls && p.imageUrls.length > 0) {
     switchImgTab('url');
     initUrlFields(p.imageUrls);
-    const vEl = document.getElementById('f-video-url');
-    if (vEl) vEl.value = p.videoUrl || '';
+    // Populate video URLs (support both old single videoUrl and new array)
+    const existingVids = p.videoUrls || (p.videoUrl ? [p.videoUrl] : []);
+    initVideoFields(existingVids);
   } else {
     switchImgTab('github');
     const fImg = document.getElementById('f-images');
     if (fImg) fImg.value = p.images || 1;
-    const vEl = document.getElementById('f-video-url-gh');
-    if (vEl) vEl.value = p.videoUrl || '';
+    const existingVidsGh = p.videoUrls || (p.videoUrl ? [p.videoUrl] : []);
+    initVideoFields(existingVidsGh);
     updateGhPathPreview();
   }
   showPanel('add-product');
@@ -1350,7 +1407,7 @@ function resetForm() {
   document.getElementById('f-category').value = '';
   const fImg = document.getElementById('f-images');
   if (fImg) fImg.value = '1';
-  ['f-video-url','f-video-url-gh'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  initVideoFields([]);
   document.getElementById('form-title').textContent    = 'Add New Product';
   document.getElementById('save-btn-text').textContent = 'Add Product';
   switchImgTab('url');
@@ -1369,11 +1426,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('f-handle').addEventListener('input', updateGhPathPreview);
   const fImgEl = document.getElementById('f-images');
   if (fImgEl) fImgEl.addEventListener('input', updateGhPathPreview);
-  // Video URL live preview
-  ['f-video-url','f-video-url-gh'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', updatePreview);
-  });
+  // Init empty video fields on load
+  initVideoFields([]);
   // Init URL fields with 2 empty slots on load
   switchImgTab('url');
   initUrlFields([]);
@@ -1807,6 +1861,120 @@ function moveReview(idx, dir) {
   [REVIEWS[idx], REVIEWS[newIdx]] = [REVIEWS[newIdx], REVIEWS[idx]];
   saveReviewsLocal();
   renderReviewsAdmin();
+}
+
+// ══════════════════════════════════════
+//  MULTI-VIDEO URL MANAGEMENT
+// ══════════════════════════════════════
+
+function detectVideoPlatform(url) {
+  if (!url) return 'VIDEO';
+  const u = url.toLowerCase();
+  if (u.includes('youtube.com') || u.includes('youtu.be')) return 'YouTube';
+  if (u.includes('facebook.com') || u.includes('fb.watch')) return 'Facebook';
+  if (u.includes('tiktok.com')) return 'TikTok';
+  if (u.includes('vimeo.com')) return 'Vimeo';
+  if (u.includes('drive.google.com')) return 'Drive';
+  if (u.includes('instagram.com')) return 'Instagram';
+  if (u.match(/\.mp4|\,mov|\.webm/)) return 'MP4';
+  return 'VIDEO';
+}
+
+function getVideoUrls() {
+  // Collect from whichever list is visible
+  const list = document.getElementById('video-url-list') || document.getElementById('video-url-list-gh');
+  if (!list) return [];
+  return Array.from(list.querySelectorAll('.video-url-input'))
+    .map(inp => inp.value.trim())
+    .filter(Boolean);
+}
+
+function addVideoUrlField(url) {
+  url = url || '';
+  // Use whichever list is visible (URL tab vs GitHub tab)
+  const listId = activeImgTab === 'github' ? 'video-url-list-gh' : 'video-url-list';
+  const list = document.getElementById(listId);
+  if (!list) return;
+
+  const idx = list.children.length + 1;
+  const platform = url ? detectVideoPlatform(url) : '';
+
+  const row = document.createElement('div');
+  row.className = 'video-url-row';
+  row.style.cssText = 'display:flex;align-items:center;gap:0.5rem;background:#fff;border:1.5px solid #e5e7eb;border-radius:0.5rem;padding:0.4rem 0.5rem;transition:border-color 0.2s;';
+
+  // Number badge
+  const numEl = document.createElement('div');
+  numEl.className = 'vid-num';
+  numEl.style.cssText = 'min-width:22px;height:22px;background:#1e293b;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#fff;flex-shrink:0;';
+  numEl.textContent = idx;
+
+  // Play icon
+  const playIcon = document.createElement('div');
+  playIcon.style.cssText = 'color:#94a3b8;font-size:1rem;flex-shrink:0;';
+  playIcon.innerHTML = '<i class="ri-play-circle-line"></i>';
+
+  // Input
+  const inp = document.createElement('input');
+  inp.type = 'url';
+  inp.className = 'video-url-input';
+  inp.placeholder = 'Paste YouTube, Facebook, TikTok, Vimeo, Drive or .mp4 link…';
+  inp.value = url;
+  inp.style.cssText = 'flex:1;border:none;outline:none;font-size:0.83rem;font-family:inherit;background:transparent;color:#1e293b;min-width:0;';
+  inp.addEventListener('input', function() {
+    const p = detectVideoPlatform(this.value);
+    platLabel.textContent = p !== 'VIDEO' ? p : '';
+    platLabel.style.display = p !== 'VIDEO' ? 'inline-block' : 'none';
+    updatePreview();
+  });
+
+  // Platform label
+  const platLabel = document.createElement('span');
+  platLabel.style.cssText = 'font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:999px;background:rgba(26,82,118,0.1);color:var(--teal);flex-shrink:0;white-space:nowrap;';
+  platLabel.textContent = platform;
+  platLabel.style.display = platform ? 'inline-block' : 'none';
+
+  // Remove button
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.style.cssText = 'background:none;border:none;cursor:pointer;color:#cbd5e1;font-size:1.1rem;padding:0.1rem;flex-shrink:0;transition:color 0.15s;';
+  removeBtn.title = 'Remove';
+  removeBtn.innerHTML = '<i class="ri-close-circle-line"></i>';
+  removeBtn.addEventListener('mouseover', () => { removeBtn.style.color = '#ef4444'; });
+  removeBtn.addEventListener('mouseout',  () => { removeBtn.style.color = '#cbd5e1'; });
+  removeBtn.addEventListener('click', () => {
+    row.remove();
+    renumberVideoFields(list);
+    updatePreview();
+  });
+
+  row.appendChild(numEl);
+  row.appendChild(playIcon);
+  row.appendChild(inp);
+  row.appendChild(platLabel);
+  row.appendChild(removeBtn);
+  list.appendChild(row);
+
+  renumberVideoFields(list);
+  updatePreview();
+  if (!url) inp.focus();
+}
+
+function renumberVideoFields(list) {
+  if (!list) return;
+  list.querySelectorAll('.vid-num').forEach((el, i) => { el.textContent = i + 1; });
+}
+
+function initVideoFields(urls) {
+  urls = urls || [];
+  // Clear both lists
+  ['video-url-list', 'video-url-list-gh'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = '';
+  });
+  // Add existing URLs
+  urls.forEach(url => addVideoUrlField(url));
+  updatePreview();
 }
 
 </script>
