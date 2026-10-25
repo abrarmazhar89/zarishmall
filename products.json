@@ -41,6 +41,13 @@
       "icon": "ri-briefcase-2-line",
       "color": "#1565c0",
       "bg": "#e3f2fd"
+    },
+    {
+      "id": "computers-accessories",
+      "name": "Computers & Accessories",
+      "icon": "ri-book-2-line",
+      "color": "#1a5276",
+      "bg": "#f0f4f8"
     }
   ],
   "products": [
