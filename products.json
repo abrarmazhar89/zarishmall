@@ -55,6 +55,13 @@
       "icon": "ri-book-2-line",
       "color": "#1a5276",
       "bg": "#f0f4f8"
+    },
+    {
+      "id": "baby-kids",
+      "name": "Baby & Kids",
+      "icon": "ri-bike-line",
+      "color": "#1a5276",
+      "bg": "#f0f4f8"
     }
   ],
   "products": [
