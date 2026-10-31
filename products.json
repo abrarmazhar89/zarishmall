@@ -48,6 +48,13 @@
       "icon": "ri-home-3-line",
       "color": "#00695c",
       "bg": "#f0f4f8"
+    },
+    {
+      "id": "mobile-computers-accessories",
+      "name": "Mobile & Computers Accessories",
+      "icon": "ri-book-2-line",
+      "color": "#1a5276",
+      "bg": "#f0f4f8"
     }
   ],
   "products": [
