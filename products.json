@@ -62,6 +62,13 @@
       "icon": "ri-bike-line",
       "color": "#1a5276",
       "bg": "#f0f4f8"
+    },
+    {
+      "id": "electrical-tools",
+      "name": "Electrical Tools",
+      "icon": "ri-scissors-line",
+      "color": "#1a5276",
+      "bg": "#f0f4f8"
     }
   ],
   "products": [
@@ -910,6 +917,42 @@
         "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2023/08/anti_lost_3_1.jpg",
         "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2023/08/anti_lost_7.jpg",
         "https://curiositystores.com/wp-content/uploads/2024/12/61oj8p4-9XL-600x600.jpg"
+      ]
+    },
+    {
+      "id": 51,
+      "name": "Multifunctional Wire Stripper, Crimper & Cable Cutter Tool",
+      "category": "Electrical Tools",
+      "handle": "multifunctional-wire-stripper-crimper-cable-cutter-tool",
+      "price": 1499,
+      "compare": 2999,
+      "images": 7,
+      "desc": "Make electrical work easier with the Multifunctional Wire Stripper & Crimper Tool! Designed for convenience and efficiency, this handy tool combines wire stripping, cutting, and crimping functions in one practical design.\n\nPerfect for electricians, technicians, DIY enthusiasts, and home repairs, it helps you handle everyday wiring tasks with ease.",
+      "features": [
+        "Key Features:",
+        "- 3-in-1 Functionality: Wire stripping, cutting, and crimping.",
+        "- Multi-Purpose Tool: Handles different electrical wiring tasks.",
+        "- Comfortable Grip: Designed for convenient handling.",
+        "- Durable Construction: Suitable for regular workshop and home use.",
+        "- Portable Design: Easy to carry and store.",
+        "- Ideal for DIY Projects, electrical repairs, and professional use.",
+        "Why Buy from Zarish Mall?",
+        "- Cash on Delivery (COD) Available",
+        "- Fast Delivery Across Pakistan",
+        "- 14 Days Easy Return Policy",
+        "Upgrade your toolbox today! Order now from Zarish Mall and make your wiring tasks easier."
+      ],
+      "imageUrls": [
+        "https://ayzelstore.pk/cdn/shop/files/61iP16XG1KL._AC_SX679.jpg?v=1771569091&width=620",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/02/25/b18c8e320949a5488be81b919e351657.jpeg",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/02/25/cb033d5ebcd18b4d701a2a16edc6b837.jpg",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/02/25/9b841d67e8abb565cfa0947040062249.jpg",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/02/25/e65b382d26f111d8e509814076fa494a.jpg",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/02/25/742100521600d230b19c64a706558b17.jpg",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/02/25/f388f6af518c29c759dcf1c6f76574de.jpg"
+      ],
+      "videoUrls": [
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/02/25/31beee92d7644c0852411a14da90c590.mp4"
       ]
     }
   ]
