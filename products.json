@@ -43,13 +43,6 @@
       "bg": "#e3f2fd"
     },
     {
-      "id": "mobile-computers-accessories",
-      "name": "Mobile & Computers  Accessories",
-      "icon": "ri-book-2-line",
-      "color": "#1a5276",
-      "bg": "#f0f4f8"
-    },
-    {
       "id": "home-improvement",
       "name": "Home Improvement",
       "icon": "ri-home-3-line",
