@@ -69,6 +69,13 @@
       "icon": "ri-scissors-line",
       "color": "#1a5276",
       "bg": "#f0f4f8"
+    },
+    {
+      "id": "hair-styling-tools",
+      "name": "Hair Styling Tools",
+      "icon": "ri-scissors-line",
+      "color": "#1a5276",
+      "bg": "#f0f4f8"
     }
   ],
   "products": [
@@ -954,6 +961,41 @@
       "videoUrls": [
         "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/02/25/31beee92d7644c0852411a14da90c590.mp4",
         "https://video.xx.fbcdn.net/o1/v/t2/f2/m412/AQO5Lis2noBMWrZBn8IVGFWHnFt9sODFa612AT00m3PeJ1yHUcBHD4pzEbkGclr5JM2CmQI2YUWgI1U94Vi3D3Yb1aaKEgzT851PaUrSrw.mp4?_nc_cat=100&_nc_oc=AdozO4MdSSxtdNrlo37WZ_UFnQSt0V02l9qS_clVwDPT9NkRhWP7SMPnKlHDVfhmOgE&_nc_sid=ef5aa3&_nc_ht=scontent.flhe5-1.fna.fbcdn.net&_nc_ohc=rRyXr1d7eOkQ7kNvwHQB7Sr&efg=eyJ2ZW5jb2RlX3RhZyI6Inhwdl9wcm9ncmVzc2l2ZS5WSV9VU0VDQVNFX1BST0RVQ1RfVFlQRS4uQzMuMzYwLnN2ZV9zZCIsInhwdl9hc3NldF9pZCI6MTU0Njc3NjQ0MzE3MDYxNSwiYXNzZXRfYWdlX2RheXMiOjM3NSwidmlfdXNlY2FzZV9pZCI6MTA3OTksImR1cmF0aW9uX3MiOjI3LCJ1cmxnZW5fc291cmNlIjoid3d3In0%3D&ccb=17-1&_nc_gid=XGsXjcdpRTEF___28a4mPA&_nc_ss=7b2a8&_nc_map=urlgen_bucketless&_nc_zt=28&oh=00_AQTF1pEzHROA-mRnFsD0kqCUhm3UepNDnxz0FEVZtw5KLg&oe=6AEDA96E"
+      ]
+    },
+    {
+      "id": 52,
+      "name": "One Step 3-in-1 Hot Air Brush – Hair Dryer, Straightener & Volumizer",
+      "category": "Hair Styling Tools",
+      "handle": "one-step-3-in-1-hot-air-brush-hair-dryer-straightener-volumizer",
+      "price": 2399,
+      "compare": 4800,
+      "images": 5,
+      "desc": "One Step 3-in-1 Hot Air Brush – Hair Dryer, Straightener & Volumizer\n\nStyle your hair effortlessly at home with the 3-in-1 Hot Air Brush! Designed to dry, smooth, and add volume to your hair in one easy step, this multifunctional styling tool helps you achieve a beautiful salon-inspired look without the hassle of using multiple styling tools.",
+      "features": [
+        "Key Features:",
+        "3-in-1 Styling: Dries, straightens, and adds volume to your hair.",
+        "Easy Styling: Combines drying and styling in one convenient tool.",
+        "Smooth Finish: Helps create a sleek, polished hairstyle.",
+        "Voluminous Look: Adds body and lift to your hair.",
+        "Time-Saving Design: Simplifies your daily hair styling routine.",
+        "Easy to Use: Suitable for everyday home styling.",
+        "Why Buy from Zarish Mall?",
+        "Cash on Delivery Available Across Pakistan",
+        "Fast Delivery to Your Doorstep",
+        "14 Days Easy Return Policy",
+        "Upgrade your hair styling routine with the One Step 3-in-1 Hot Air Brush and enjoy effortless styling every day!"
+      ],
+      "imageUrls": [
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/14/c21221040b497a863dcf970eb0134df0.jpeg",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/14/46e03469ca6530339977aecfcb8b94ca.jpeg",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/14/c57f809170d7b80fd89908200c81adb6.png",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/14/adf3b87703fa8a168573c60796facb9c.jpeg",
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/14/31c63dcadd95dd8eb69a35afa699d6b3.jpeg"
+      ],
+      "videoUrls": [
+        "https://hhcnewapp.blr1.cdn.digitaloceanspaces.com/uploads/2026/07/18/828bb639d8ba7d49021b36b3e5f54324.mp4",
+        "https://highstreetpakistan.co/cdn/shop/videos/c/vp/caf02e3d40784e7f93db39cb3dc51da5/caf02e3d40784e7f93db39cb3dc51da5.HD-720p-1.6Mbps-23967129.mp4?v=0"
       ]
     }
   ]
