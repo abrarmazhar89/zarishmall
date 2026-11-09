@@ -256,22 +256,6 @@
       ]
     },
     {
-      "id": 14,
-      "name": "Desktop Perfume And Cosmetic Organizer",
-      "price": 1785,
-      "compare": 2500,
-      "category": "Home & Storage",
-      "handle": "desktop-perfume-and-cosmetic-organizer",
-      "images": 8,
-      "desc": "A sleek desktop organizer with multiple tiers for perfumes, skincare bottles, lipsticks, and cosmetic accessories.",
-      "features": [
-        "Multi-tier display design",
-        "Holds perfume & cosmetics",
-        "Sturdy base, elegant finish",
-        "Easy to assemble & clean"
-      ]
-    },
-    {
       "id": 15,
       "name": "2 in 1 Oil Jug (Oil & Vinegar Dispenser)",
       "price": 1000,
