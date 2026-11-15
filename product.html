@@ -376,13 +376,15 @@ tailwind.config = {
           </div>
 
           <div class="flex flex-col sm:flex-row gap-3">
+            <!-- BUY NOW button disabled — all orders now go through the WhatsApp order form
             <button onclick="openCheckout()" class="btn-gold flex-1 py-3.5 rounded-xl text-base flex items-center justify-center gap-2">
               <i class="ri-shopping-bag-line"></i> Buy Now
             </button>
-            <a id="wa-direct" href="#" target="_blank"
+            -->
+            <button id="wa-direct" type="button" onclick="openCheckout()"
                class="btn-wa flex-1 py-3.5 rounded-xl text-base flex items-center justify-center gap-2 wa-pulse">
               <i class="ri-whatsapp-line text-xl"></i> Order on WhatsApp
-            </a>
+            </button>
           </div>
         </div>
 
@@ -553,23 +555,51 @@ tailwind.config = {
       </div>
 
       <!-- Form -->
+      <p class="text-xs text-charcoal/50 mb-3">Fill in your details below. We'll send your order to WhatsApp so we can confirm it right away.</p>
       <div class="space-y-4 mb-5">
         <div>
           <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Full Name *</label>
-          <input id="co-name" type="text" placeholder="Your full name" class="form-input"/>
+          <input id="co-name" type="text" placeholder="Your full name" class="form-input" autocomplete="name"/>
         </div>
         <div>
-          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Phone Number *</label>
-          <input id="co-phone" type="tel" placeholder="e.g. 03001234567" class="form-input"/>
+          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Contact Number *</label>
+          <input id="co-phone" type="tel" placeholder="e.g. 03001234567" class="form-input" autocomplete="tel"/>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">City *</label>
+            <input id="co-city" type="text" placeholder="e.g. Lahore" class="form-input" autocomplete="address-level2"/>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Province *</label>
+            <select id="co-province" class="form-input">
+              <option value="">Select</option>
+              <option>Punjab</option>
+              <option>Sindh</option>
+              <option>Khyber Pakhtunkhwa</option>
+              <option>Balochistan</option>
+              <option>Islamabad (ICT)</option>
+              <option>Azad Kashmir</option>
+              <option>Gilgit-Baltistan</option>
+            </select>
+          </div>
         </div>
         <div>
-          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Delivery Address *</label>
-          <textarea id="co-address" rows="3" placeholder="House/Street, City, Province" class="form-input resize-none"></textarea>
+          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Complete Delivery Address *</label>
+          <textarea id="co-address" rows="3" placeholder="House no., Street, Area" class="form-input resize-none" autocomplete="street-address"></textarea>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Nearest Landmark <span class="normal-case font-normal text-charcoal/30">(optional)</span></label>
+          <input id="co-landmark" type="text" placeholder="e.g. Near Jamia Masjid" class="form-input"/>
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-charcoal/50 uppercase tracking-wide block mb-1">Order Notes <span class="normal-case font-normal text-charcoal/30">(optional)</span></label>
+          <textarea id="co-notes" rows="2" placeholder="Colour, size, delivery timing or any other request" class="form-input resize-none"></textarea>
         </div>
       </div>
       <p id="co-error" class="text-red-500 text-xs mb-3 hidden">Please fill in all required fields.</p>
       <button onclick="sendOrder()" class="w-full btn-wa py-3.5 rounded-xl flex items-center justify-center gap-2 text-base wa-pulse">
-        <i class="ri-whatsapp-line text-xl"></i> Send Order via WhatsApp
+        <i class="ri-whatsapp-line text-xl"></i> Place Order on WhatsApp
       </button>
       <p class="text-center text-xs text-charcoal/40 mt-3">Cash on Delivery · Open parcel before paying</p>
     </div>
@@ -809,9 +839,7 @@ function loadPage(){
       discEl.textContent = `-${disc}%`;
       discEl.classList.remove('hidden');
     }
-    // WhatsApp direct link
-    document.getElementById('wa-direct').href =
-      `https://wa.me/923224061289?text=${encodeURIComponent(`Hi, I want to order: ${p.name}\nPrice: ${fmtPrice(p.price)}\nPlease confirm availability.`)}`;
+    // Order button opens the order form (openCheckout) — no direct link needed
   }
 
   // Description
@@ -1099,8 +1127,6 @@ function updateWALink() {
   if (!p || p.price === 0) return;
   const { qty, subtotal, shipping, grand, dealLabel } = getDealInfo();
   const msg = `Hi, I want to order:\n📦 ${p.name}\n🎁 Deal: ${dealLabel}\n🔢 Qty: ${qty}\n💰 Subtotal: ${fmtPrice(subtotal)}\n🚚 Shipping: ${shipping===0?'Free':'PKR 200'}\n✅ Total: ${fmtPrice(grand)}\nPlease confirm availability.`;
-  const waEl = document.getElementById('wa-direct');
-  if (waEl) waEl.href = `https://wa.me/923224061289?text=${encodeURIComponent(msg)}`;
 }
 
 // Keep for any legacy use
@@ -1121,9 +1147,16 @@ function openCheckout(){
   const shipEl = document.querySelector('#checkout-modal .co-shipping-val');
   if (shipEl) shipEl.textContent = shippingLabel;
   document.getElementById('co-grand').textContent = fmtPrice(grand);
-  document.getElementById('co-name').value='';
-  document.getElementById('co-phone').value='';
-  document.getElementById('co-address').value='';
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem('zm_customer') || '{}'); } catch(e) {}
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+  setVal('co-name', saved.name);
+  setVal('co-phone', saved.phone);
+  setVal('co-city', saved.city);
+  setVal('co-province', saved.province);
+  setVal('co-address', saved.address);
+  setVal('co-landmark', saved.landmark);
+  setVal('co-notes', '');
   document.getElementById('co-error').classList.add('hidden');
   document.getElementById('checkout-modal').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1142,15 +1175,46 @@ function closeCheckout(){
 }
 
 function sendOrder(){
-  const name    = document.getElementById('co-name').value.trim();
-  const phone   = document.getElementById('co-phone').value.trim();
-  const address = document.getElementById('co-address').value.trim();
-  if(!name||!phone||!address){ document.getElementById('co-error').classList.remove('hidden'); return; }
+  const val = id => (document.getElementById(id)?.value || '').trim();
+  const name     = val('co-name');
+  const phone    = val('co-phone');
+  const city     = val('co-city');
+  const province = val('co-province');
+  const address  = val('co-address');
+  const landmark = val('co-landmark');
+  const notes    = val('co-notes');
+  const errEl    = document.getElementById('co-error');
+
+  if (!name || !phone || !city || !province || !address) {
+    errEl.textContent = 'Please fill in all required fields.';
+    errEl.classList.remove('hidden'); return;
+  }
+  // Accept 03XXXXXXXXX, +923XXXXXXXXX, 923XXXXXXXXX (spaces/dashes allowed)
+  const digits = phone.replace(/[\s\-()]/g, '');
+  if (!/^(\+92|92|0)?3\d{9}$/.test(digits)) {
+    errEl.textContent = 'Please enter a valid Pakistani mobile number, e.g. 03001234567.';
+    errEl.classList.remove('hidden'); return;
+  }
+  errEl.classList.add('hidden');
+
+  // Remember details for next time (this device only)
+  try { localStorage.setItem('zm_customer', JSON.stringify({ name, phone, city, province, address, landmark })); } catch(e) {}
+
   const p = currentProduct;
   const { qty, subtotal, shipping, grand, dealLabel } = getDealInfo();
   const shippingText = shipping === 0 ? 'Free (Deal Offer)' : 'PKR 200';
-  const msg = `🛍️ *New Order – Zarish Mall*\n\n📦 Product: ${p.name}\n🎁 Deal: ${dealLabel}\n🔢 Quantity: ${qty}\n💰 Subtotal: ${fmtPrice(subtotal)}\n🚚 Shipping: ${shippingText}\n✅ Grand Total: ${fmtPrice(grand)}\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n📍 Address: ${address}\n\nKindly confirm my order. Thank you!`;
-  window.open(`https://wa.me/923224061289?text=${encodeURIComponent(msg)}`,'_blank');
+  const orderId = 'ZM' + Date.now().toString().slice(-6);
+
+  let msg = `🛍️ *New Order – Zarish Mall*\n🧾 Order Ref: ${orderId}\n\n` +
+    `📦 *Product:* ${p.name}\n🎁 Deal: ${dealLabel}\n🔢 Quantity: ${qty}\n` +
+    `💰 Subtotal: ${fmtPrice(subtotal)}\n🚚 Shipping: ${shippingText}\n✅ *Grand Total: ${fmtPrice(grand)}* (Cash on Delivery)\n\n` +
+    `👤 *Customer Details*\nName: ${name}\n📞 Contact: ${phone}\n🏙️ City: ${city}\n🗺️ Province: ${province}\n📍 Address: ${address}\n`;
+  if (landmark) msg += `📌 Landmark: ${landmark}\n`;
+  if (notes)    msg += `📝 Notes: ${notes}\n`;
+  msg += `\n🔗 Product link: ${location.href}\n\nKindly confirm my order. Thank you!`;
+
+  window.open(`https://wa.me/923224061289?text=${encodeURIComponent(msg)}`, '_blank');
+  closeCheckout();
 
   if (typeof fbq !== 'undefined') {
     fbq('track', 'Purchase', {
